@@ -1,0 +1,36 @@
+﻿@using OA.Data.Model
+﻿﻿
+@model List<Enrollment>
+
+<div class="card my-2">
+    <h2>Enrollments</h2>
+</div>
+
+<table class="table">
+    <tr>
+        <th>Student Id</th>
+        <th>Student Name</th>
+    </tr>
+    @foreach (var enrollment in Model)
+    {
+        <tr>
+            <td>@enrollment.Student?.Id</td>
+            <td>@enrollment.Student?.Name</td>
+        </tr>
+    }
+</table>
+
+<div class="card my-2">
+    <h3>Add Enrollment</h3>
+</div>
+
+<form asp-action="AddEnrollment" method="post">
+    <input type="hidden" name="courseId" value="@ViewBag.CourseId" />
+    <select name="studentId" class="form-control">
+        @foreach (var student in (List<Student>)ViewBag.Students)
+        {
+            <option value="@student.Id">@student.Name</option>
+        }
+    </select>
+    <button type="submit" class="btn btn-success my-2">Add</button>
+</form>

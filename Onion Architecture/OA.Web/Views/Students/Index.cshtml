@@ -1,0 +1,31 @@
+﻿@using OA.Data.Model
+﻿﻿
+@model IList<Student>
+
+@{
+    ViewData["Title"] = "Students";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between my-2">
+        <h2>Students</h2>
+        <a asp-action="Create" class="btn btn-primary">Add Student</a>
+    </div>
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+        @foreach (var student in Model)
+        {
+            <tr>
+                <td>@student.Name</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@student.Id" class="btn btn-info">Details</a>
+                    <a asp-action="Edit" asp-route-id="@student.Id" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@student.Id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
