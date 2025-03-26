@@ -1,0 +1,22 @@
+﻿@using OA.Data.Model
+﻿﻿
+@model Student
+
+<div class="container-fluid">
+    <div class="card p-2">
+        <h4>Details</h4>
+    </div>
+    <div class="text-center my-2">
+        <h6>Name: @Model.Name</h6>
+        <p>Bio: @Model.Profile?.Bio</p>
+    </div>
+    <div class="card p-2 my-4">
+        <h4>Enrollments:</h4>
+    </div>
+    <ul>
+        @foreach (var enrollment in Model.Enrollments)
+        {
+            <li>@enrollment.Course?.Title</li>
+        }
+    </ul>
+</div>
