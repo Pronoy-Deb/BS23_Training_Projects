@@ -15,7 +15,7 @@ namespace OA.Data.Model
         [MaxLength(100)]
         public string Name { get; set; } = string.Empty;
         [Required]
-        [MaxLength(200)]
+        //[MaxLength(200)]
         public StudentProfile? Profile { get; set; }
         public ICollection<Enrollment> Enrollments { get; set; } = [];
     }
