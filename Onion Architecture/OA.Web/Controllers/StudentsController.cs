@@ -67,5 +67,36 @@ namespace OA.Web.Controllers
 
             return RedirectToAction("Index");
         }
+
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var student = await _studentRepository.GetByIdAsync(id);
+            if (student == null)
+            {
+                return NotFound(new { message = $"Student with ID {id} not found" });
+            }
+
+            await _studentRepository.DeleteAsync(student);
+
+            return Ok(new { message = "Student deleted successfully" });
+        }
+
+
+        //public async Task<IActionResult> Delete(int id)
+        //{
+        //    var student = await _studentRepository.GetByIdAsync(id);
+        //    if (student == null)
+        //        return NotFound($"Student with {id} not found");
+        //    return View(student);
+        //}
+
+        //[HttpPost]
+        //public async Task<IActionResult> Delete(Student student)
+        //{
+        //    await _studentRepository.DeleteAsync(student);
+        //    return RedirectToAction("Index");
+        //}
     }
 }

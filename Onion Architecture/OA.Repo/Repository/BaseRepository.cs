@@ -32,8 +32,9 @@ namespace OA.Repo.Repository
         public virtual async Task AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
-            await SaveChangesAsync();
+            await SaveChangesAsync();   
         }
+
 
         public async Task DeleteAsync(T entity)
         {
