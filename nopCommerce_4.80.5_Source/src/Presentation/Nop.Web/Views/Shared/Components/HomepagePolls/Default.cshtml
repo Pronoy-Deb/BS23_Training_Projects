@@ -1,16 +1,28 @@
 ﻿@model IList<PollModel>
 @if (Model.Count > 0)
 {
-    <div class="home-page-polls">
-        <div class="title">
-            <strong>@T("Polls.Title")</strong>
-        </div>
-        @foreach (var poll in Model)
-        { 
-            @await Html.PartialAsync("_Poll", poll)
-        }
-    </div>
+    @* <div class="home-page-polls"> *@
+    @*     <div class="title"> *@
+    @*         <strong>@T("Polls.Title")</strong> *@
+    @*     </div> *@
+    @*     @foreach (var poll in Model) *@
+    @*     {  *@
+    @*         @await Html.PartialAsync("_Poll", poll) *@
+    @*     } *@
+    @* </div> *@
+
+	<div class="home-page-polls with-background">
+		<div class="title">
+			<strong>@T("Polls.Title")</strong>
+		</div>
+		@foreach (var poll in Model)
+		{
+			@await Html.PartialAsync("_Poll", poll)
+		}
+	</div>
+
 }
+
 
 
 

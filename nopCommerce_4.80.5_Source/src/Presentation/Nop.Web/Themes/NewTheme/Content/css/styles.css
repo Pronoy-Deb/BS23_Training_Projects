@@ -1914,7 +1914,7 @@ label, label + * {
 .home-page-category-grid .title a,
 .sub-category-grid .title a {
   display: block;
-  padding: 0 0 15px;
+  padding: 7px 0 15px;
 }
 
 .home-page-category-grid .picture,
@@ -6811,7 +6811,8 @@ label, label + * {
     width: 90%;
     max-width: 600px;
     margin: 0 auto 40px;
-    background-color: #000000
+    background-color: #000000;
+/*    padding: 1px, 0;*/
   }
 
   .menu-toggle {
@@ -8110,7 +8111,7 @@ label, label + * {
     margin: 0 auto 30px;
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
-    padding: 25px 0;
+    padding: 5px 0;
     text-align: center;
     background-color: #7e68ff;
   }
@@ -8922,7 +8923,6 @@ label, label + * {
   text-align: center;
   font-size: 18px;
   background: #fff;
-  /* Center slide text vertically */
   display: -webkit-box;
   display: -ms-flexbox;
   display: -webkit-flex;
@@ -9116,10 +9116,80 @@ button.button-2.email-a-friend-button {
 }
 
 .footer {
-  background: black;
+  background: black ;
   color: grey
 }
 
 .title strong {
   color: snow;
+}
+
+button#checkout {
+  background: green;
+  border-radius: 25px;
+}
+
+.title strong {
+  color: black;
+}
+
+.footer-block .title strong {
+  color: snow;
+}
+
+.with-background {
+  position: relative;
+  color: #fff;
+  overflow: hidden;
+  min-height: 230px;
+}
+
+  .with-background::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/background.jpg');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.3;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .with-background > * {
+    position: relative;
+    z-index: 1;
+  }
+
+strong.poll-display-text {
+  background: none !important;
+  background-color: transparent !important;
+  border: none;
+  padding: 0;
+  margin: auto;
+  font-weight: bold;
+  color: #000
+}
+
+.item-box .picture a img {
+  height: 150px;
+  width: 232px;
+  transition: 0.3s;
+}
+
+.item-box:hover .picture a img {
+  height: 100%;
+  width: 100%;
+}
+
+.category-item .title {
+  background: #87ceeb;
+  height: 40px;
+  border-radius: 10px;
+  margin: 0 auto;
+  width: 250px;
 }

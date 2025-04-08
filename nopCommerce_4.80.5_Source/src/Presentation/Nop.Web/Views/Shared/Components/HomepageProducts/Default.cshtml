@@ -1,17 +1,115 @@
-﻿@model IList<ProductOverviewModel>
+﻿
+@model IList<ProductOverviewModel>
 @if (Model.Count > 0)
 {
-    <div class="product-grid home-page-product-grid">
-        <div class="title">
-            <strong>@T("Homepage.Products")</strong>
-        </div>
-        <div class="item-grid">
-            @foreach (var item in Model)
-            {
-                <div class="item-box">
-                    @await Html.PartialAsync("_ProductBox", item)
-                </div>
-            }
-        </div>
-    </div>
+	<div class="product-grid home-page-product-grid">
+		<div class="title">
+			<strong>@T("Homepage.Products")</strong>
+		</div>
+
+		<div class="slider-container">
+			<button class="scroll-btn left" onclick="scrollCircular('left')">&#10094;</button>
+
+			<div class="item-scroll-wrapper" id="circularScroll">
+				<div class="item-grid" id="circularGrid">
+					@foreach (var item in Model)
+					{
+						<div class="item-box">
+							@await Html.PartialAsync("_ProductBox", item)
+						</div>
+					}
+				</div>
+			</div>
+
+			<button class="scroll-btn right" onclick="scrollCircular('right')">&#10095;</button>
+		</div>
+	</div>
 }
+
+
+<style>
+	.product-slider-wrapper {
+		margin-bottom: 40px;
+	}
+
+	.slider-container {
+		position: relative;
+		display: flex;
+		align-items: center;
+		overflow: hidden;
+	}
+
+	.item-scroll-wrapper {
+		overflow: hidden;
+		width: 100%;
+	}
+
+	.item-grid {
+		display: flex;
+		gap: 16px;
+		transition: transform 0.5s ease-in-out;
+	}
+
+	.item-box {
+		flex: 0 0 auto;
+		width: 300px;
+	}
+
+	.scroll-btn {
+		background-color: lavender;
+		border: none;
+		color: black;
+		font-size: 24px;
+		cursor: pointer;
+		padding: 10px;
+		z-index: 1;
+		height: 60px;
+		border-radius: 50%;
+	}
+
+		.scroll-btn.left {
+			position: absolute;
+			left: 0;
+		}
+
+		.scroll-btn.right {
+			position: absolute;
+			right: 0;
+		}
+
+		.scroll-btn:hover {
+			background-color: white;
+		}
+</style>
+
+
+<script>
+	function scrollCircular(direction) {
+		const container = document.getElementById('circularGrid');
+		const items = container.children;
+		const itemWidth = items[0].offsetWidth + 16;
+
+		if (direction === 'right') {
+			const first = container.children[0];
+			container.style.transition = 'transform 0.5s ease-in-out';
+			container.style.transform = `translateX(-${itemWidth}px)`;
+
+			setTimeout(() => {
+				container.appendChild(first);
+				container.style.transition = 'none';
+				container.style.transform = 'translateX(0)';
+			}, 500);
+		}
+		else if (direction === 'left') {
+			const last = container.children[container.children.length - 1];
+			container.insertBefore(last, container.firstChild);
+			container.style.transition = 'none';
+			container.style.transform = `translateX(-${itemWidth}px)`;
+
+			setTimeout(() => {
+				container.style.transition = 'transform 0.5s ease-in-out';
+				container.style.transform = 'translateX(0)';
+			}, 10);
+		}
+	}
+</script>
