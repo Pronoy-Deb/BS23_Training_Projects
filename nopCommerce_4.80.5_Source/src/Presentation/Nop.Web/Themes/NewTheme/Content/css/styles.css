@@ -8987,9 +8987,6 @@ label {
   color: red;
 }
 
-img {
-}
-
 .search-box.store-search-box input {
   border-radius: 25px 0 0 25px;
 }
@@ -9054,9 +9051,6 @@ ul.sublist.first-level {
   padding: 15px;
 }
 
-img {
-}
-
 .picture {
   padding: 10px;
 }
@@ -9076,4 +9070,56 @@ button#add-to-cart-button {
 button#add-review {
   background: green;
   border-radius: 25px;
+}
+
+.footer-block .social {
+  margin-top: 30px;
+}
+
+button.button-2.product-box-add-to-cart-button {
+  border-radius: 25px 0px;
+}
+
+button.button-2.add-to-compare-list-button {
+  border-radius: 25px;
+}
+
+button.button-2.add-to-wishlist-button {
+  border-radius: 25px;
+}
+
+strong.poll-display-text {
+  background: darkturquoise;
+  border-radius: 25px 0px;
+  width: 400px;
+  margin: 0 auto;
+}
+
+.title {
+  background: skyblue;
+  height: 40px;
+  border-radius: 10px;
+  margin: 0 auto;
+}
+
+span.news-date {
+  background: moccasin;
+  border-radius: 50%;
+}
+
+button.button-2.email-a-friend-button {
+  border-radius: 25px;
+}
+
+.header-menu {
+  background: lightcyan;
+}
+
+.footer {
+  background: black;
+  color: grey
+}
+
+.title strong {
+  color: snow;
 }

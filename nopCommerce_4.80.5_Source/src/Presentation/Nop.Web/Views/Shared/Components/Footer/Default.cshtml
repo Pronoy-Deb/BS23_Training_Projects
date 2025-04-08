@@ -106,13 +106,13 @@
             </ul>
         </div>
         <div class="footer-block follow-us">
+            @await Component.InvokeAsync(typeof(NewsletterBoxViewComponent))
             <div class="social">
                 <div class="title">
                     <strong>@T("Footer.FollowUs")</strong>
                 </div>
                 @await Component.InvokeAsync(typeof(SocialButtonsViewComponent))
             </div>
-            @await Component.InvokeAsync(typeof(NewsletterBoxViewComponent))
         </div>
     </div>
     <div class="footer-lower">
