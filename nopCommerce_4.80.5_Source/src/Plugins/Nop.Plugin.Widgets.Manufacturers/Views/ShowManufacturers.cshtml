@@ -1,41 +1,104 @@
 ﻿@model List<string>
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+
 @if (Model?.Count > 0)
 {
-	<!-- Swiper CSS -->
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
-
-	<div class="manufacturer-gallery" style="margin: 40px 0;">
-		<h1>Manufacturers</h1>
-
-		<!-- Swiper container -->
-		<div class="swiper mySwiper">
-			<div class="swiper-wrapper">
-				@foreach (var imageUrl in Model)
-				{
-					<div class="swiper-slide">
-						<img src="@imageUrl" alt="Manufacturer" style="width: 100%; height: auto; border-radius: 10px;" />
-					</div>
-				}
+	<div class="manufacturer-gallery">
+		<h1 style="text-align: center;">Manufacturers</h1>
+		<div class="swiper-container">
+			<div class="swiper mySwiper">
+				<div class="swiper-wrapper">
+					@foreach (var imageUrl in Model)
+					{
+						<div class="swiper-slide">
+							<img src="@imageUrl" alt="Manufacturer" class="swiper-image" />
+						</div>
+					}
+				</div>
+				<div class="swiper-button-prev"></div>
+				<div class="swiper-button-next"></div>
+				<div class="swiper-pagination"></div>
 			</div>
-
-			<!-- Navigation buttons -->
-			<div class="swiper-button-next"></div>
-			<div class="swiper-button-prev"></div>
-
-			<!-- Pagination (dots) -->
-			<div class="swiper-pagination"></div>
 		</div>
 	</div>
+}
 
-	<!-- Swiper JS -->
-	<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+<style>
+	.manufacturer-gallery {
+		width: 100%;
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 15px;
+	}
 
-	<script>
+	.swiper-container {
+		width: 100%;
+		padding: 10px 0;
+	}
+
+	.swiper {
+		width: 100%;
+		height: 100%;
+	}
+
+	.swiper-slide {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.swiper-image {
+		width: 100%;
+		max-width: 250px;
+		height: auto;
+		border-radius: 10px;
+		transition: transform 0.3s ease;
+	}
+
+		.swiper-image:hover {
+			transform: scale(1.05);
+		}
+
+	.swiper-button-next,
+	.swiper-button-prev {
+		position: absolute;
+		top: 50%;
+		width: 40px;
+		height: 40px;
+		background-color: rgba(0, 0, 0, 0.5);
+		color: white;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		z-index: 10;
+	}
+
+	.swiper-button-prev {
+		left: 0;
+	}
+
+	.swiper-button-next {
+		right: 0;
+	}
+
+	.swiper-pagination {
+		position: relative;
+		margin-top: 20px;
+	}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
 		const swiper = new Swiper('.mySwiper', {
 			loop: true,
-			spaceBetween: 20,
-			slidesPerView: 3,
+			spaceBetween: 10,
+			slidesPerView: 1,
+			centeredSlides: true,
 			autoplay: {
 				delay: 2500,
 				disableOnInteraction: false,
@@ -48,18 +111,20 @@
 				el: '.swiper-pagination',
 				clickable: true,
 			},
-			speed: 800, // smooth transition speed (ms)
+			speed: 800,
 			breakpoints: {
 				320: {
 					slidesPerView: 1,
-				},
-				768: {
-					slidesPerView: 2,
-				},
-				1024: {
-					slidesPerView: 3,
+					spaceBetween: 15
 				}
 			}
 		});
-	</script>
-}
+
+		document.querySelectorAll('.swiper-image').forEach(img => {
+			img.addEventListener('click', () => {
+				swiper.slideNext();
+				swiper.autoplay.start();
+			});
+		});
+	});
+</script>

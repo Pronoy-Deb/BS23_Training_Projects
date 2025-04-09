@@ -1,9 +1,6 @@
-﻿using DocumentFormat.OpenXml.Bibliography;
-using DocumentFormat.OpenXml.Spreadsheet;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Nop.Services.Catalog;
 using Nop.Services.Media;
-using Nop.Services.Plugins;
 using Nop.Web.Framework.Components;
 
 namespace Nop.Plugin.Widgets.Manufacturers.Components;
