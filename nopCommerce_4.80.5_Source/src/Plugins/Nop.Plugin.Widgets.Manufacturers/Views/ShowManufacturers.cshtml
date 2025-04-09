@@ -1,0 +1,65 @@
+﻿@model List<string>
+
+@if (Model?.Count > 0)
+{
+	<!-- Swiper CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+
+	<div class="manufacturer-gallery" style="margin: 40px 0;">
+		<h1>Manufacturers</h1>
+
+		<!-- Swiper container -->
+		<div class="swiper mySwiper">
+			<div class="swiper-wrapper">
+				@foreach (var imageUrl in Model)
+				{
+					<div class="swiper-slide">
+						<img src="@imageUrl" alt="Manufacturer" style="width: 100%; height: auto; border-radius: 10px;" />
+					</div>
+				}
+			</div>
+
+			<!-- Navigation buttons -->
+			<div class="swiper-button-next"></div>
+			<div class="swiper-button-prev"></div>
+
+			<!-- Pagination (dots) -->
+			<div class="swiper-pagination"></div>
+		</div>
+	</div>
+
+	<!-- Swiper JS -->
+	<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+	<script>
+		const swiper = new Swiper('.mySwiper', {
+			loop: true,
+			spaceBetween: 20,
+			slidesPerView: 3,
+			autoplay: {
+				delay: 2500,
+				disableOnInteraction: false,
+			},
+			navigation: {
+				nextEl: '.swiper-button-next',
+				prevEl: '.swiper-button-prev',
+			},
+			pagination: {
+				el: '.swiper-pagination',
+				clickable: true,
+			},
+			speed: 800, // smooth transition speed (ms)
+			breakpoints: {
+				320: {
+					slidesPerView: 1,
+				},
+				768: {
+					slidesPerView: 2,
+				},
+				1024: {
+					slidesPerView: 3,
+				}
+			}
+		});
+	</script>
+}

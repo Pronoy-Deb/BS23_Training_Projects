@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Widgets",
+  "FriendlyName": "Manufacturers",
+  "SystemName": "Widgets.Manufacturers",
+  "Version": "4.80.1",
+  "SupportedVersions": [ "4.80" ],
+  "Author": "BS23",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Widgets.Manufacturers.dll",
+  "Description": "This is a sample plugin to display the manufacturers on the site."
+}
