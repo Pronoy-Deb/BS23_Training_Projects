@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Misc",
+  "FriendlyName": "Suppliers",
+  "SystemName": "Misc.Suppliers",
+  "Version": "4.80.1",
+  "SupportedVersions": [ "4.80" ],
+  "Author": "BS23",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Misc.Suppliers.dll",
+  "Description": "This is a simple plugin to manage suppliers from admin side."
+}
