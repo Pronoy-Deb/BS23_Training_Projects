@@ -6,7 +6,7 @@ using Nop.Data.Extensions;
 using System.Data;
 using Nop.Plugin.Misc.ProductViewTracker.Domain;
 
-namespace Nop.Plugin.Other.ProductViewTracker.Mapping.Builders;
+namespace Nop.Plugin.Misc.ProductViewTracker.Data.Mapping;
 
 public class ProductViewTrackerRecordBuilder : NopEntityBuilder<ProductViewTrackerRecord>
 {

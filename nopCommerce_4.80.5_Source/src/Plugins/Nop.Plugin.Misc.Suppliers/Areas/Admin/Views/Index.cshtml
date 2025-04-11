@@ -1,0 +1,49 @@
+﻿@model IList<Nop.Plugin.Misc.Suppliers.Domain.SuppliersRecord>
+
+@{
+	Layout = "_AdminLayout";
+	ViewBag.Title = "Suppliers List";
+}
+
+<div class="content-header clearfix">
+	<h1 class="float-left">Suppliers</h1>
+	<div class="float-right">
+		<a class="btn btn-primary" asp-action="Create">Add new</a>
+	</div>
+</div>
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Active</th>
+			<th>Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var supplier in Model)
+		{
+			<tr>
+				<td>@supplier.Name</td>
+				<td>@supplier.Email</td>
+				<td>
+					@if (supplier.IsActive)
+					{
+						<span style="color:green;">✔</span>
+					}
+					else
+					{
+						<span style="color:red;">✘</span>
+					}
+				</td>
+				<td>
+					<a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@supplier.Id">Edit</a>
+					<form asp-action="Delete" asp-route-id="@supplier.Id" method="post" style="display:inline;">
+						<button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+					</form>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
