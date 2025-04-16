@@ -1,4 +1,5 @@
-﻿using Nop.Plugin.Misc.Suppliers.Domain;
+﻿using Nop.Core;
+using Nop.Plugin.Misc.Suppliers.Domain;
 
 namespace Nop.Plugin.Misc.Suppliers.Services
 {
@@ -8,6 +9,16 @@ namespace Nop.Plugin.Misc.Suppliers.Services
         Task UpdateAsync(SuppliersRecord supplier);
         Task DeleteAsync(SuppliersRecord supplier);
         Task<SuppliersRecord> GetByIdAsync(int id);
-        Task<IList<SuppliersRecord>> GetAllAsync();
+        Task<IList<SuppliersRecord>> GetAllAsync(
+        string name = null,
+        string email = null,
+        int pageIndex = 0,
+        int pageSize = int.MaxValue);
+        Task<IPagedList<SuppliersRecord>> GetAllSuppliersAsync(
+            string name = null,
+            string email = null,
+            bool? active = null,
+            int pageIndex = 0,
+            int pageSize = int.MaxValue);
     }
 }

@@ -1,4 +1,6 @@
-﻿using Nop.Services.Events;
+﻿using Microsoft.EntityFrameworkCore;
+using Nop.Core.Infrastructure;
+using Nop.Services.Events;
 using Nop.Services.Plugins;
 using Nop.Services.Security;
 using Nop.Web.Framework.Events;
@@ -46,7 +48,7 @@ public class EventConsumer : IConsumer<AdminMenuCreatedEvent>
             {
                 SystemName = "Misc.Suppliers",
                 Title = "Suppliers",
-                Url = eventMessage.GetMenuItemUrl("Suppliers", "Index"),
+                Url = eventMessage.GetMenuItemUrl("Suppliers", "List"),
                 IconClass = "far fa-dot-circle",
                 Visible = true,
             });

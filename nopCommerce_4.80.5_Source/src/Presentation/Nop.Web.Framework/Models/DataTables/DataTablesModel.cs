@@ -166,6 +166,7 @@ public partial record DataTablesModel : BaseNopModel
     /// Gets or set column collection 
     /// </summary>
     public IList<ColumnProperty> ColumnCollection { get; set; }
+    public int Total { get; set; }
 
     #endregion
 }

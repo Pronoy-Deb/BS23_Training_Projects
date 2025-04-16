@@ -27,8 +27,6 @@ public partial class PermissionService : IPermissionService
 
     #endregion
 
-    #region Ctor
-
     public PermissionService(ICustomerService customerService,
         ILocalizationService localizationService,
         IRepository<CustomerRole> customerRoleRepository,
@@ -47,8 +45,6 @@ public partial class PermissionService : IPermissionService
         _typeFinder = typeFinder;
         _workContext = workContext;
     }
-
-    #endregion
 
     #region Utilities
 
@@ -455,6 +451,11 @@ public partial class PermissionService : IPermissionService
                     PermissionRecordId = permission.Id
                 });
         }
+    }
+
+    public Task<bool> AuthorizeAsync(object managePlugins)
+    {
+        throw new NotImplementedException();
     }
 
     #endregion

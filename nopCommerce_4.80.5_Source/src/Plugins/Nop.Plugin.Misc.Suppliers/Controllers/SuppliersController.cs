@@ -3,8 +3,9 @@ using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
 using Nop.Plugin.Misc.Suppliers.Domain;
 using Nop.Plugin.Misc.Suppliers.Services;
-
 using Microsoft.AspNetCore.Mvc;
+using Nop.Plugin.Misc.Suppliers.Models;
+using Nop.Web.Framework.Models.Extensions;
 
 namespace Nop.Plugin.Misc.Suppliers.Controllers
 {
@@ -21,10 +22,43 @@ namespace Nop.Plugin.Misc.Suppliers.Controllers
             _supplierService = supplierService;
             _permissionService = permissionService;
         }
-        public async Task<IActionResult> Index()
+
+        public IActionResult List()
         {
-            var suppliers = await _supplierService.GetAllAsync();
-            return View("~/Plugins/Misc.Suppliers/Areas/Admin/Views/Index.cshtml", suppliers);
+            var model = new SuppliersSearchModel();
+            model.SetGridPageSize();
+            return View("~/Plugins/Misc.Suppliers/Areas/Admin/Views/List.cshtml", model);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> List(SuppliersSearchModel searchModel)
+        {
+            var suppliers = await _supplierService.GetAllSuppliersAsync(
+                searchModel.SearchName,
+                searchModel.SearchEmail,
+                searchModel.Active,
+                searchModel.Page - 1,
+                searchModel.PageSize
+                );
+
+            var model = await new SuppliersListModel().PrepareToGridAsync(searchModel, suppliers, () =>
+            {
+                return suppliers.SelectAwait(async supplier =>
+                {
+                    var supplierModel = new SuppliersModel
+                    {
+                        Id = supplier.Id,
+                        Name = supplier.Name ?? string.Empty,
+                        Email = supplier.Email ?? string.Empty,
+                        IsActive = supplier.IsActive
+                    };
+
+                    return supplierModel;
+                });
+            });
+
+            return Json(model);
         }
 
         public IActionResult Create()

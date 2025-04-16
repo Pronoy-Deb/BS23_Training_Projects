@@ -146,4 +146,5 @@ public partial interface IPermissionService
     /// <param name="permissions">Permissions</param>
     /// <returns>A task that represents the asynchronous operation</returns>
     Task InsertPermissionMappingAsync(int customerRoleId, params string[] permissions);
+    Task<bool> AuthorizeAsync(object managePlugins);
 }
