@@ -72,10 +72,12 @@ namespace Nop.Plugin.Misc.Suppliers.Controllers
             if (ModelState.IsValid)
             {
                 await _supplierService.InsertAsync(supplier);
-                return RedirectToAction("Index");
+                return RedirectToAction("List");
             }
+
             return View("~/Plugins/Misc.Suppliers/Areas/Admin/Views/Create.cshtml", supplier);
         }
+
 
         public async Task<IActionResult> Edit(int id)
         {
@@ -89,10 +91,12 @@ namespace Nop.Plugin.Misc.Suppliers.Controllers
             if (ModelState.IsValid)
             {
                 await _supplierService.UpdateAsync(supplier);
-                return RedirectToAction("Index");
+                return RedirectToAction("List");
             }
+
             return View("~/Plugins/Misc.Suppliers/Areas/Admin/Views/Edit.cshtml", supplier);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
@@ -101,7 +105,7 @@ namespace Nop.Plugin.Misc.Suppliers.Controllers
             if (supplier != null)
                 await _supplierService.DeleteAsync(supplier);
 
-            return RedirectToAction("Index");
+            return RedirectToAction("List");
         }
     }
 }
