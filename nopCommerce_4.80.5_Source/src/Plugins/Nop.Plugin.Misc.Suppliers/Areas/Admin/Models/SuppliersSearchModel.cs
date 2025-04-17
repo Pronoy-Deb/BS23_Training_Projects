@@ -1,6 +1,6 @@
 ﻿using Nop.Web.Framework.Models;
 
-namespace Nop.Plugin.Misc.Suppliers.Models
+namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Models
 {
     public record SuppliersSearchModel : BaseSearchModel
     {
