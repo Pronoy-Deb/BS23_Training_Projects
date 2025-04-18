@@ -3,7 +3,7 @@
 @{
 	Layout = "_AdminLayout";
 	//page title
-	ViewBag.PageTitle = T("Suppliers").Text;
+	ViewBag.PageTitle = T("Admin.Suppliers").Text;
 	//active menu item (system name)
 	NopHtml.SetActiveMenuItemSystemName("Suppliers");
 }
@@ -103,7 +103,7 @@
 						Width = "300",
 						ClassName =  NopColumnClassDefaults.CenterAll
 						},
-						new ColumnProperty(nameof(SuppliersModel.IsActive))
+						new ColumnProperty(nameof(SuppliersModel.Active))
 						{
 						Title = "Active",
 						Width = "50",

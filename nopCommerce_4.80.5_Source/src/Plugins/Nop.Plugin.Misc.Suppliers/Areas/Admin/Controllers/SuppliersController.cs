@@ -43,28 +43,34 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
             return Json(model);
         }
 
-        public IActionResult Create()
+
+        public async Task<IActionResult> Create()
         {
-            var model = new SuppliersRecord
-            {
-                IsActive = true
-            };
+            var model = await _suppliersModelFactory.PrepareSuppliersModelAsync(new SuppliersModel(), null);
             return View("Create", model);
         }
 
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
-        public async Task<IActionResult> Create(SuppliersRecord model, bool continueEditing)
+        public async Task<IActionResult> Create(SuppliersModel model, bool continueEditing)
         {
             if (ModelState.IsValid)
             {
-                await _supplierService.InsertAsync(model);
+                var entity = new SuppliersRecord
+                {
+                    Name = model.Name,
+                    Email = model.Email,
+                    IsActive = model.Active
+                };
+
+                await _supplierService.InsertAsync(entity);
 
                 if (continueEditing)
-                    return RedirectToAction("Edit", new { id = model.Id });
+                    return RedirectToAction("Edit", new { id = entity.Id });
 
                 return RedirectToAction("List");
             }
 
+            model = await _suppliersModelFactory.PrepareSuppliersModelAsync(model, null);
             return View("Create", model);
         }
 
@@ -86,7 +92,6 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
 
             return View("Edit", supplier);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Delete(int id)

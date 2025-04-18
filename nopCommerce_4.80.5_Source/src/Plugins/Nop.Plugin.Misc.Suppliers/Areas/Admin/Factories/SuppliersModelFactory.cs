@@ -4,6 +4,7 @@ using Nop.Plugin.Misc.Suppliers.Services;
 using Nop.Plugin.Misc.Suppliers.Areas.Admin.Models;
 using Nop.Web.Framework.Models.Extensions;
 using Nop.Plugin.Misc.Suppliers.Areas.Admin.Factories;
+using Nop.Plugin.Misc.Suppliers.Domain;
 
 namespace Nop.Plugin.Misc.Suppliers.Factories
 {
@@ -35,12 +36,44 @@ namespace Nop.Plugin.Misc.Suppliers.Factories
                         Id = supplier.Id,
                         Name = supplier.Name ?? string.Empty,
                         Email = supplier.Email ?? string.Empty,
-                        IsActive = supplier.IsActive
+                        Active = supplier.IsActive
                     };
                 });
             });
 
             return model;
+        }
+
+        public async Task<SuppliersModel> PrepareSuppliersModelAsync(SuppliersModel model, SuppliersRecord supplier)
+        {
+            if (supplier != null)
+            {
+                if (model == null)
+                {
+                    model = new SuppliersModel()
+                    {
+                        Id = supplier.Id,
+                        Name = supplier.Name,
+                        Email = supplier.Email,
+                        Active = supplier.IsActive
+                    };
+                }
+            }
+            await Task.CompletedTask;
+
+            return model;
+        }
+
+        public async Task<SuppliersSearchModel> PrepareSuppliersSearchModelAsync(SuppliersSearchModel searchModel)
+        {
+            if (searchModel == null)
+                throw new ArgumentNullException(nameof(searchModel));
+
+            await Task.CompletedTask;
+
+            searchModel.SetGridPageSize();
+
+            return searchModel;
         }
     }
 }
