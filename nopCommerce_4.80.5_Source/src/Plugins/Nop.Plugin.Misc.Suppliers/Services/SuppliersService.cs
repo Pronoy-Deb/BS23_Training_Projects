@@ -34,7 +34,7 @@ namespace Nop.Plugin.Misc.Suppliers.Services
                 query = query.Where(s => s.Email.Contains(email));
             
             if (active.HasValue)
-                query = query.Where(s => s.IsActive == active.Value);
+                query = query.Where(s => s.Active == active.Value);
             
             return await query.ToPagedListAsync(pageIndex, pageSize);
         }

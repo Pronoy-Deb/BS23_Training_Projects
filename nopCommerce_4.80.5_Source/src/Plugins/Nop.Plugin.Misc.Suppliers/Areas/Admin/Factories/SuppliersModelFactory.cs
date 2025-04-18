@@ -36,7 +36,10 @@ namespace Nop.Plugin.Misc.Suppliers.Factories
                         Id = supplier.Id,
                         Name = supplier.Name ?? string.Empty,
                         Email = supplier.Email ?? string.Empty,
-                        Active = supplier.IsActive
+                        Description = supplier.Description ?? string.Empty,
+                        PictureId = supplier.PictureId,
+                        AdminComment = supplier.AdminComment ?? string.Empty,
+                        Active = supplier.Active
                     };
                 });
             });
@@ -55,7 +58,10 @@ namespace Nop.Plugin.Misc.Suppliers.Factories
                         Id = supplier.Id,
                         Name = supplier.Name,
                         Email = supplier.Email,
-                        Active = supplier.IsActive
+                        Description = supplier.Description,
+                        PictureId = supplier.PictureId,
+                        AdminComment = supplier.AdminComment,
+                        Active = supplier.Active
                     };
                 }
             }

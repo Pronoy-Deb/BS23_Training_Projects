@@ -59,7 +59,10 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
                 {
                     Name = model.Name,
                     Email = model.Email,
-                    IsActive = model.Active
+                    Description = model.Description,
+                    PictureId = model.PictureId,
+                    AdminComment = model.AdminComment,
+                    Active = model.Active
                 };
 
                 await _supplierService.InsertAsync(entity);
@@ -78,19 +81,36 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var supplier = await _supplierService.GetByIdAsync(id);
-            return View("Edit", supplier);
+            if (supplier == null)
+                return RedirectToAction("List");
+
+            var model = await _suppliersModelFactory.PrepareSuppliersModelAsync(null, supplier);
+            return View("Edit", model);
         }
 
+
         [HttpPost]
-        public async Task<IActionResult> Edit(SuppliersRecord supplier)
+        public async Task<IActionResult> Edit(SuppliersModel model)
         {
+            var entity = await _supplierService.GetByIdAsync(model.Id);
+            if (entity == null)
+                return RedirectToAction("List");
+
             if (ModelState.IsValid)
             {
-                await _supplierService.UpdateAsync(supplier);
+                entity.Name = model.Name;
+                entity.Email = model.Email;
+                entity.Description = model.Description;
+                entity.PictureId = model.PictureId;
+                entity.AdminComment = model.AdminComment;
+                entity.Active = model.Active;
+
+                await _supplierService.UpdateAsync(entity);
                 return RedirectToAction("List");
             }
 
-            return View("Edit", supplier);
+            model = await _suppliersModelFactory.PrepareSuppliersModelAsync(model, entity);
+            return View("Edit", model);
         }
 
         [HttpPost]

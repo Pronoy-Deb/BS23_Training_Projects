@@ -1,4 +1,5 @@
-﻿using Nop.Services.Events;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Nop.Services.Events;
 using Nop.Services.Localization;
 using Nop.Services.Plugins;
 using Nop.Services.Security;
@@ -25,7 +26,7 @@ public class SuppliersPlugin : BasePlugin
 
             ["Admin.Suppliers"] = "Suppliers",
             ["Admin.Suppliers.AddNew"] = "Add a New Supplier",
-            ["Admin.Suppliers.EditDetails"] = "Edit Supplier Details",
+            ["Admin.Suppliers.EditSuppliersDetails"] = "Edit Supplier Details",
             ["Admin.Suppliers.BackToList"] = "Back to Suppliers List",
              
             ["Admin.Suppliers.Fields.Name"] = "Name",
@@ -33,10 +34,10 @@ public class SuppliersPlugin : BasePlugin
             ["Admin.Suppliers.Fields.Email"] = "Supplier Email",
             ["Admin.Suppliers.Fields.Email.Hint"] = "Enter Supplier Email.",
 
-            ["Admin.Suppliers.Fields.Name"] = "Supplier Name",
-            ["Admin.Suppliers.Fields.Email"] = "Supplier Email",
-            ["Admin.Suppliers.Fields.Name.Hint"] = "Search by Supplier Name",
-            ["Admin.Suppliers.Fields.Email.Hint"] = "Search by Supplier Email",
+            ["Admin.Suppliers.Fields.Name.Show"] = "Supplier Name",
+            ["Admin.Suppliers.Fields.Email.Show"] = "Supplier Email",
+            ["Admin.Suppliers.Fields.Name.Show.Hint"] = "Search by Supplier Name",
+            ["Admin.Suppliers.Fields.Email.Show.Hint"] = "Search by Supplier Email",
 
             ["Admin.Suppliers.Info"] = "Supplier Info",
             ["Admin.Suppliers.Fields.Description"] = "Description",
@@ -70,7 +71,7 @@ public class EventConsumer : IConsumer<AdminMenuCreatedEvent>
         if (!await _permissionService.AuthorizeAsync(StandardPermission.Configuration.MANAGE_PLUGINS))
             return;
 
-        eventMessage.RootMenuItem.InsertBefore("Local plugins",
+        eventMessage.RootMenuItem.InsertAfter("Help",
             new AdminMenuItem
             {
                 SystemName = "Misc.Suppliers",

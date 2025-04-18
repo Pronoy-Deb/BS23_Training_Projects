@@ -28,12 +28,12 @@ public partial record SuppliersLocalizedModel : ILocalizedLocaleModel
 {
     public int LanguageId { get; set; }
     [Required]
-    [NopResourceDisplayName("Admin.Suppliers.Fields.Name")]
+    [NopResourceDisplayName("Admin.Suppliers.Fields.Name.Show")]
     public string Name { get; set; }
     [Required]
-    [NopResourceDisplayName("Admin.Suppliers.Fields.Description")]
+    [NopResourceDisplayName("Admin.Suppliers.Fields.Description.Show")]
     public string Description { get; set; }
     [Required]
-    [NopResourceDisplayName("Admin.Suppliers.Fields.Email")]
+    [NopResourceDisplayName("Admin.Suppliers.Fields.Email.Show")]
     public string Email { get; set; }
 }

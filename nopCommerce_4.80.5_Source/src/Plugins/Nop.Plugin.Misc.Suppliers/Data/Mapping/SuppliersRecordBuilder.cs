@@ -16,6 +16,9 @@ public class SuppliersRecordBuilder : NopEntityBuilder<SuppliersRecord>
                .WithColumn(nameof(SuppliersRecord.Id)).AsInt32().PrimaryKey().Identity()
                .WithColumn(nameof(SuppliersRecord.Name)).AsString(400).NotNullable()
                .WithColumn(nameof(SuppliersRecord.Email)).AsString(200).Nullable()
-               .WithColumn(nameof(SuppliersRecord.IsActive)).AsBoolean().Nullable();
+               .WithColumn(nameof(SuppliersRecord.Description)).AsString(400).Nullable()
+               .WithColumn(nameof(SuppliersRecord.AdminComment)).AsString(400).Nullable()
+               .WithColumn(nameof(SuppliersRecord.PictureId)).AsInt32().Nullable()
+               .WithColumn(nameof(SuppliersRecord.Active)).AsBoolean().Nullable();
     }
 }
