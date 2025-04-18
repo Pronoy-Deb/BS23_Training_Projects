@@ -43,6 +43,10 @@ public class SuppliersPlugin : BasePlugin
         ["Admin.Suppliers.Fields.PictureId"] = "Picture",
         ["Admin.Suppliers.Fields.AdminComment"] = "Admin Comment",
         ["Admin.Suppliers.Address"] = "Address (optional)",
+        ["Admin.Suppliers.Fields.SeName"] = "Search engine friendly page name",
+        ["Admin.Suppliers.Fields.Metatitle"] = "Meta title",
+        ["Admin.Suppliers.Fields.MetaKeywords"] = "Meta keywords",
+        ["Admin.Suppliers.Fields.MetaDescription"] = "Meta description",
 
     };
 

@@ -134,4 +134,16 @@ public partial record SuppliersLocalizedModel : ILocalizedLocaleModel
     public string Description { get; set; }
     [NopResourceDisplayName("Admin.Suppliers.Fields.Email")]
     public string Email { get; set; }
+
+    [NopResourceDisplayName("Admin.Suppliers.Fields.MetaKeywords")]
+    public string MetaKeywords { get; set; }
+
+    [NopResourceDisplayName("Admin.Suppliers.Fields.MetaDescription")]
+    public string MetaDescription { get; set; }
+
+    [NopResourceDisplayName("Admin.Suppliers.Fields.MetaTitle")]
+    public string MetaTitle { get; set; }
+
+    [NopResourceDisplayName("Admin.Suppliers.Fields.SeName")]
+    public string SeName { get; set; }
 }
