@@ -6,6 +6,7 @@ using Nop.Web.Framework.Models.Extensions;
 using Nop.Plugin.Misc.Suppliers.Areas.Admin.Factories;
 using Nop.Plugin.Misc.Suppliers.Domain;
 using Nop.Services.Localization;
+using Nop.Services.Configuration;
 
 namespace Nop.Plugin.Misc.Suppliers.Factories
 {
@@ -88,9 +89,13 @@ namespace Nop.Plugin.Misc.Suppliers.Factories
             {
                 model ??= new SuppliersModel();
                 var languages = await _languageService.GetAllLanguagesAsync(true);
+                var defaultLanguage = languages.FirstOrDefault(l => l.Published) ?? languages.First();
+
                 model.Locales = languages.Select(language => new SuppliersLocalizedModel
                 {
-                    LanguageId = language.Id
+                    LanguageId = language.Id,
+                    Name = language.Id == defaultLanguage.Id ? model.Name : string.Empty,
+                    Description = language.Id == defaultLanguage.Id ? model.Description : string.Empty
                 }).ToList();
             }
 
