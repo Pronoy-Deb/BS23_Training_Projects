@@ -30,6 +30,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Areas\Admin\Views\Suppliers\ProductSupplier.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Areas\Admin\Views\Suppliers\Edit.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
