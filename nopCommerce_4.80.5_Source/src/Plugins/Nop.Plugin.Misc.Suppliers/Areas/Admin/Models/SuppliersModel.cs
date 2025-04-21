@@ -87,6 +87,7 @@ public record SuppliersModel : BaseNopEntityModel, ILocalizedModel<SuppliersLoca
 
     public List<SuppliersAttributeModel> VendorAttributes { get; set; }
 
+    [UIHint("MultiLanguage")]
     public IList<SuppliersLocalizedModel> Locales { get; set; }
 
     [NopResourceDisplayName("Admin.Suppliers.Fields.AssociatedCustomerEmails")]

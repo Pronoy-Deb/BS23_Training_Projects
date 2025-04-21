@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Nop.Web.Framework.Models.Extensions;
 using Nop.Plugin.Misc.Suppliers.Areas.Admin.Models;
 using Nop.Plugin.Misc.Suppliers.Areas.Admin.Factories;
+using Nop.Services.Localization;
 
 namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
 {
@@ -15,17 +16,25 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
 
     public class SuppliersController : BasePluginController
     {
+
         private readonly ISuppliersService _supplierService;
         private readonly IPermissionService _permissionService;
         private readonly ISuppliersModelFactory _suppliersModelFactory;
+        private readonly ILocalizationService _localizationService;
+        private readonly ILocalizedEntityService _localizedEntityService;
 
-        public SuppliersController(ISuppliersService supplierService,
+        public SuppliersController(
+            ISuppliersService supplierService,
             IPermissionService permissionService,
-            ISuppliersModelFactory suppliersModelFactory)
+            ISuppliersModelFactory suppliersModelFactory,
+            ILocalizationService localizationService,
+            ILocalizedEntityService localizedEntityService)
         {
             _supplierService = supplierService;
             _permissionService = permissionService;
             _suppliersModelFactory = suppliersModelFactory;
+            _localizationService = localizationService;
+            _localizedEntityService = localizedEntityService;
         }
 
         public IActionResult List()
@@ -67,6 +76,8 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
 
                 await _supplierService.InsertAsync(entity);
 
+                await UpdateLocales(entity, model);
+
                 if (continueEditing)
                     return RedirectToAction("Edit", new { id = entity.Id });
 
@@ -106,6 +117,9 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
                 entity.Active = model.Active;
 
                 await _supplierService.UpdateAsync(entity);
+
+                await UpdateLocales(entity, model);
+
                 return RedirectToAction("List");
             }
 
@@ -121,6 +135,23 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
                 await _supplierService.DeleteAsync(supplier);
 
             return RedirectToAction("List");
+        }
+
+
+        protected virtual async Task UpdateLocales(SuppliersRecord supplier, SuppliersModel model)
+        {
+            foreach (var localized in model.Locales)
+            {
+                await _localizedEntityService.SaveLocalizedValueAsync(supplier,
+                    x => x.Name,
+                    localized.Name,
+                    localized.LanguageId);
+
+                await _localizedEntityService.SaveLocalizedValueAsync(supplier,
+                    x => x.Description,
+                    localized.Description,
+                    localized.LanguageId);
+            }
         }
     }
 }
