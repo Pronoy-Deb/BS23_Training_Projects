@@ -13,13 +13,6 @@ public class ProductSupplierService : IProductSupplierService
 
     public async Task UpdateProductSupplierAsync(int productId, int supplierId)
     {
-        var existing = await _productSupplierRepository.Table
-            .FirstOrDefaultAsync(ps => ps.ProductId == productId);
-
-        if (existing != null)
-        {
-            await _productSupplierRepository.DeleteAsync(existing);
-        }
 
         if (supplierId > 0)
         {
@@ -38,5 +31,4 @@ public class ProductSupplierService : IProductSupplierService
             .Select(ps => ps.SupplierId)
             .ToListAsync();
     }
-
 }

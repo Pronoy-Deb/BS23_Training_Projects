@@ -1,19 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Nop.Web.Framework.Models;
+using Nop.Web.Framework.Mvc.ModelBinding;
 
 namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Models
 {
-    public class ProductSupplierModel
+    public record ProductSupplierModel : BaseNopModel
     {
-        public int ProductId { get; set; }
-        public int SelectedSupplierId { get; set; }
-        public List<SelectListItem> AvailableSuppliers { get; set; } = new();
-        public List<AssignedSupplierModel> AssignedSuppliers { get; set; } = new();
-    }
-}
+        public ProductSupplierModel()
+        {
+            AvailableSuppliers = new List<SelectListItem>();
+            AssignedSuppliers = new List<AssignedSupplierModel>();
+        }
 
-public class AssignedSupplierModel
-{
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public string Email { get; set; }
+        public int ProductId { get; set; }
+
+        public List<SelectListItem> AvailableSuppliers { get; set; }
+
+        public List<AssignedSupplierModel> AssignedSuppliers { get; set; }
+    }
+
+    public record AssignedSupplierModel : BaseNopEntityModel
+    {
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public bool Active { get; set; }
+    }
 }

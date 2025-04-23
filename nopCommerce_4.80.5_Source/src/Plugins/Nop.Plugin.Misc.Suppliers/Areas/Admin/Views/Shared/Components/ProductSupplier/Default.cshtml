@@ -1,47 +1,94 @@
 ﻿@model ProductSupplierModel
+@addTagHelper *, Nop.Web
 
-<div class="form-group">
-	<h4>Assigned Suppliers</h4>
-	@if (Model.AssignedSuppliers.Any())
-	{
-		<ul>
-			@foreach (var supplier in Model.AssignedSuppliers)
-			{
-				<li><strong>@supplier.Name</strong> - @supplier.Email</li>
-			}
-		</ul>
-	}
-	else
-	{
-		<p>No suppliers assigned yet!</p>
-	}
-</div>
+@{
+	const string hideSupplierBlockAttributeName = "ProductPage.HideSupplierBlock";
+	var customer = await workContext.GetCurrentCustomerAsync();
+	var hideSupplierBlock = await genericAttributeService.GetAttributeAsync<bool>(customer, hideSupplierBlockAttributeName);
+}
 
-<div class="form-group row align-items-end">
-	<div class="col-md-8">
-		<label>Select Supplier</label>
-		<select id="supplierDropdown" class="form-control" data-product-id="@Model.ProductId">
-			<option value="">Select Supplier</option>
-			@foreach (var supplier in Model.AvailableSuppliers)
-			{
-				<option value="@supplier.Value">@supplier.Text</option>
-			}
-		</select>
+<nop-card asp-name="supplier-info" asp-icon="fa-solid fa-truck-field" asp-title="Suppliers" asp-hide-block-attribute-name="@hideSupplierBlockAttributeName" asp-hide="@hideSupplierBlock" asp-advanced="false">
+	<div class="card-body">
+		@if (Model.ProductId > 0)
+		{
+			<div class="form-group">
+				<h4>Assigned Suppliers</h4>
+				@if (Model.AssignedSuppliers.Any())
+				{
+					<div class="table-responsive">
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Email</th>
+									<th>Status</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var supplier in Model.AssignedSuppliers)
+								{
+									<tr>
+										<td><strong>@supplier.Name</strong></td>
+										<td>@supplier.Email</td>
+										<td>
+											<span class="badge @(supplier.Active ? "badge-success" : "badge-danger")">
+												@(supplier.Active ? "Active" : "Inactive")
+											</span>
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+				else
+				{
+					<div class="alert alert-info">
+						No suppliers assigned yet!
+					</div>
+				}
+			</div>
+
+			<div class="form-group row align-items-end">
+				<div class="col-md-8">
+					<select id="supplierDropdown" class="form-control" data-product-id="@Model.ProductId">
+						<option value="">Select New Supplier</option>
+						@foreach (var supplier in Model.AvailableSuppliers)
+						{
+							<option value="@supplier.Value">@supplier.Text</option>
+						}
+					</select>
+				</div>
+				<div class="col-md-4 text-right">
+					<button id="btnSaveSupplier" type="button" class="btn btn-primary mt-2">
+						<i class="far fa-save"></i> Save
+					</button>
+				</div>
+			</div>
+
+			<span id="supplier-status" class="text-success" style="display:none;"></span>
+		}
+		else
+		{
+			<div class="alert alert-warning">
+				@T("Admin.Catalog.Products.ProductSupplier.SaveBeforeEdit")
+			</div>
+		}
 	</div>
-	<div class="col-md-4 text-right">
-		<button id="btnSaveSupplier" type="button" class="btn btn-primary mt-2">
-			Save
-		</button>
-	</div>
-</div>
-
-<span id="supplier-status" style="color:green; display:none;"></span>
+</nop-card>
 
 <script>
 	$(document).ready(function () {
 		$('#btnSaveSupplier').on('click', function () {
 			var productId = @Model.ProductId;
 			var supplierId = $('#supplierDropdown').val();
+
+			if (!supplierId) {
+				alert('Please select a supplier');
+				return;
+			}
+
+			$('#btnSaveSupplier').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Saving...');
 
 			$.ajax({
 				url: '@Url.Action("AssignSupplier", "Suppliers", new { area = "Admin" })',
@@ -51,11 +98,16 @@
 					supplierId: supplierId
 				},
 				success: function () {
-					$('#supplier-status').text("Saved").fadeIn().delay(1000).fadeOut();
-					location.reload();
+					$('#supplier-status').text("Saved successfully").removeClass('text-danger').addClass('text-success').fadeIn().delay(1000).fadeOut();
+					setTimeout(function() {
+						location.reload();
+					}, 1000);
 				},
 				error: function () {
-					$('#supplier-status').text("Error saving").css('color', 'red').fadeIn().delay(2000).fadeOut();
+					$('#supplier-status').text("Error saving").removeClass('text-success').addClass('text-danger').fadeIn().delay(2000).fadeOut();
+				},
+				complete: function() {
+					$('#btnSaveSupplier').prop('disabled', false).html('<i class="far fa-save"></i> Save');
 				}
 			});
 		});

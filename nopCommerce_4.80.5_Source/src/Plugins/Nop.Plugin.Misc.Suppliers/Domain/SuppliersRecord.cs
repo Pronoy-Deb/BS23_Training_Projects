@@ -8,5 +8,5 @@ public class SuppliersRecord : BaseEntity, ILocalizedEntity
     public string Description { get; set; }
     public int PictureId { get; set; }
     public string AdminComment { get; set; }
-    public bool Active { get; set; }
+    public bool Active { get; set; } = true;
 }

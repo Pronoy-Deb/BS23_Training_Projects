@@ -31,7 +31,27 @@ public class ProductSupplierViewComponent : ViewComponent
             productId = productModel.Id;
         }
 
+        if (productId <= 0)
+        {
+            return View(new ProductSupplierModel
+            {
+                ProductId = 0,
+                AvailableSuppliers = new List<SelectListItem>(),
+                AssignedSuppliers = new List<AssignedSupplierModel>()
+            });
+        }
+
         var product = await _productService.GetProductByIdAsync(productId);
+
+        if (product == null)
+        {
+            return View(new ProductSupplierModel
+            {
+                ProductId = productId,
+                AvailableSuppliers = new List<SelectListItem>(),
+                AssignedSuppliers = new List<AssignedSupplierModel>()
+            });
+        }
 
         var allSuppliers = await _supplierService.GetAllAsync();
         var assignedSupplierIds = await _productSupplierService.GetSupplierIdsByProductIdAsync(product.Id);
@@ -42,7 +62,8 @@ public class ProductSupplierViewComponent : ViewComponent
             {
                 Id = s.Id,
                 Name = s.Name,
-                Email = s.Email
+                Email = s.Email,
+                Active = s.Active
             }).ToList();
 
         var availableSuppliers = allSuppliers
@@ -56,7 +77,6 @@ public class ProductSupplierViewComponent : ViewComponent
         var viewModel = new ProductSupplierModel
         {
             ProductId = product?.Id ?? 0,
-            SelectedSupplierId = 0,
             AvailableSuppliers = availableSuppliers,
             AssignedSuppliers = assignedSuppliers
         };

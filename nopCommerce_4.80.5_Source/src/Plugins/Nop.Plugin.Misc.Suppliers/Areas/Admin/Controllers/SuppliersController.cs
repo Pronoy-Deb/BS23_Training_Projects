@@ -156,8 +156,6 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
 
             await _productSupplierService.UpdateProductSupplierAsync(productId, supplierId);
 
-            //return Ok();
-            //await _productSupplierService.UpdateProductSupplierAsync(productId, supplierId);
             return Json(new { success = true });
         }
     }
