@@ -15,8 +15,6 @@ public record SuppliersModel : BaseNopEntityModel, ILocalizedModel<SuppliersLoca
         SuppliersAttributes = new List<SuppliersAttributeModel>();
         Address = new AddressModel();
         Locales = new List<SuppliersLocalizedModel>();
-        AssociatedCustomers = new List<SuppliersAssociatedCustomerModel>();
-        SuppliersNoteSearchModel = new SuppliersNoteSearchModel();
     }
 
     [NopResourceDisplayName("Admin.Suppliers.Fields.SuppliersAttributes")]
@@ -69,36 +67,8 @@ public record SuppliersModel : BaseNopEntityModel, ILocalizedModel<SuppliersLoca
     [NopResourceDisplayName("Admin.Suppliers.Fields.PageSizeOptions")]
     public string PageSizeOptions { get; set; }
 
-    [NopResourceDisplayName("Admin.Suppliers.Fields.PmCustomerId")]
-    public int? PmCustomerId { get; set; }
-    public string PmCustomerInfo { get; set; }
-
-    [NopResourceDisplayName("Admin.Suppliers.Fields.PriceRangeFiltering")]
-    public bool PriceRangeFiltering { get; set; }
-
-    [NopResourceDisplayName("Admin.Suppliers.Fields.PriceFrom")]
-    public decimal PriceFrom { get; set; }
-
-    [NopResourceDisplayName("Admin.Suppliers.Fields.PriceTo")]
-    public decimal PriceTo { get; set; }
-
-    [NopResourceDisplayName("Admin.Suppliers.Fields.ManuallyPriceRange")]
-    public bool ManuallyPriceRange { get; set; }
-
-    public List<SuppliersAttributeModel> VendorAttributes { get; set; }
-
     [UIHint("MultiLanguage")]
     public IList<SuppliersLocalizedModel> Locales { get; set; }
-
-    [NopResourceDisplayName("Admin.Suppliers.Fields.AssociatedCustomerEmails")]
-    public IList<SuppliersAssociatedCustomerModel> AssociatedCustomers { get; set; }
-
-    [NopResourceDisplayName("Admin.Suppliers.SuppliersNotes.Fields.Note")]
-    public string AddSuppliersNoteMessage { get; set; }
-
-    public SuppliersNoteSearchModel SuppliersNoteSearchModel { get; set; }
-
-    public string PrimaryStoreCurrencyCode { get; set; }
 
     public partial record SuppliersAttributeModel : BaseNopEntityModel
     {

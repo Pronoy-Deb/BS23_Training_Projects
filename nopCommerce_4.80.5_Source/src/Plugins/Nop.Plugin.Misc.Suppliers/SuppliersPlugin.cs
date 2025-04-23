@@ -1,15 +1,15 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using Microsoft.CodeAnalysis;
+﻿using Nop.Services.Cms;
 using Nop.Services.Events;
 using Nop.Services.Localization;
 using Nop.Services.Plugins;
 using Nop.Services.Security;
 using Nop.Web.Framework.Events;
 using Nop.Web.Framework.Menu;
+using Nop.Plugin.Misc.Suppliers.Components;
 
 namespace Nop.Plugin.Misc.Suppliers;
 
-public class SuppliersPlugin : BasePlugin
+public class SuppliersPlugin : BasePlugin, IWidgetPlugin
 {
     private readonly IPermissionService _permissionService;
     private readonly ILocalizationService _localizationService;
@@ -48,7 +48,11 @@ public class SuppliersPlugin : BasePlugin
         ["Admin.Suppliers.Fields.MetaKeywords"] = "Meta keywords",
         ["Admin.Suppliers.Fields.MetaDescription"] = "Meta description",
 
+        ["Plugins.Misc.Suppliers.Product.Suppliers"] = "Supplier",
+        ["Admin.Catalog.Products.Productsupplier.Savebeforeedit"] = "Please save the product first!",
     };
+
+    public bool HideInWidgetList => false;
 
     public override async Task InstallAsync()
     {
@@ -67,6 +71,16 @@ public class SuppliersPlugin : BasePlugin
         await _localizationService.AddOrUpdateLocaleResourceAsync(new Dictionary<string, string>(_resourceString));
 
         await base.UpdateAsync(currentVersion, targetVersion);
+    }
+
+    public Task<IList<string>> GetWidgetZonesAsync()
+    {
+        return Task.FromResult<IList<string>>(new List<string> { "admin_product_details_block" });
+    }
+
+    public Type GetWidgetViewComponent(string widgetZone)
+    {
+        return typeof(ProductSupplierViewComponent);
     }
 }
 
@@ -94,4 +108,5 @@ public class EventConsumer : IConsumer<AdminMenuCreatedEvent>
                 Visible = true,
             });
     }
+
 }

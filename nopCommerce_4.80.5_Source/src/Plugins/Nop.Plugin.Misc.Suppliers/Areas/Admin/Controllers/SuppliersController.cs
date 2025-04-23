@@ -4,7 +4,6 @@ using Nop.Web.Framework.Mvc.Filters;
 using Nop.Plugin.Misc.Suppliers.Domain;
 using Nop.Plugin.Misc.Suppliers.Services;
 using Microsoft.AspNetCore.Mvc;
-using Nop.Web.Framework.Models.Extensions;
 using Nop.Plugin.Misc.Suppliers.Areas.Admin.Models;
 using Nop.Plugin.Misc.Suppliers.Areas.Admin.Factories;
 using Nop.Services.Localization;
@@ -18,32 +17,28 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
     {
 
         private readonly ISuppliersService _supplierService;
-        private readonly IPermissionService _permissionService;
+        private readonly IProductSupplierService _productSupplierService;
         private readonly ISuppliersModelFactory _suppliersModelFactory;
-        private readonly ILocalizationService _localizationService;
         private readonly ILocalizedEntityService _localizedEntityService;
 
         public SuppliersController(
             ISuppliersService supplierService,
-            IPermissionService permissionService,
             ISuppliersModelFactory suppliersModelFactory,
-            ILocalizationService localizationService,
-            ILocalizedEntityService localizedEntityService)
+            ILocalizedEntityService localizedEntityService,
+            IProductSupplierService productSupplierService)
         {
             _supplierService = supplierService;
-            _permissionService = permissionService;
             _suppliersModelFactory = suppliersModelFactory;
-            _localizationService = localizationService;
             _localizedEntityService = localizedEntityService;
+            _productSupplierService = productSupplierService;
         }
 
         public IActionResult List()
         {
             var model = new SuppliersSearchModel();
             model.SetGridPageSize();
-            return View("List", model);
+            return View(model);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> List(SuppliersSearchModel searchModel)
@@ -56,7 +51,7 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
         public async Task<IActionResult> Create()
         {
             var model = await _suppliersModelFactory.PrepareSuppliersModelAsync(new SuppliersModel(), null);
-            return View("Create", model);
+            return View(model);
         }
 
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
@@ -85,7 +80,7 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
             }
 
             model = await _suppliersModelFactory.PrepareSuppliersModelAsync(model, null);
-            return View("Create", model);
+            return View(model);
         }
 
 
@@ -96,7 +91,7 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
                 return RedirectToAction("List");
 
             var model = await _suppliersModelFactory.PrepareSuppliersModelAsync(null, supplier);
-            return View("Edit", model);
+            return View(model);
         }
 
 
@@ -124,7 +119,7 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
             }
 
             model = await _suppliersModelFactory.PrepareSuppliersModelAsync(model, entity);
-            return View("Edit", model);
+            return View(model);
         }
 
         [HttpPost]
@@ -136,7 +131,6 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
 
             return RedirectToAction("List");
         }
-
 
         protected virtual async Task UpdateLocales(SuppliersRecord supplier, SuppliersModel model)
         {
@@ -152,6 +146,19 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
                     localized.Description,
                     localized.LanguageId);
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AssignSupplier(int productId, int supplierId)
+        {
+            if (productId == 0 || supplierId == 0)
+                return BadRequest("Invalid product or supplier ID");
+
+            await _productSupplierService.UpdateProductSupplierAsync(productId, supplierId);
+
+            //return Ok();
+            //await _productSupplierService.UpdateProductSupplierAsync(productId, supplierId);
+            return Json(new { success = true });
         }
     }
 }

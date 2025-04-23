@@ -2,9 +2,7 @@
 
 @{
 	Layout = "_AdminLayout";
-	//page title
 	ViewBag.PageTitle = T("Admin.Suppliers.EditSuppliersDetails").Text;
-	//active menu item (system name)
 	NopHtml.SetActiveMenuItemSystemName("Suppliers");
 }
 
@@ -30,7 +28,6 @@
 				<i class="far fa-trash-can"></i>
 				@T("Admin.Common.Delete")
 			</span>
-			@* @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.SuppliersDetailsButtons, additionalData = Model }) *@
 		</div>
 	</div>
 	@await Html.PartialAsync("_CreateOrUpdate", Model)

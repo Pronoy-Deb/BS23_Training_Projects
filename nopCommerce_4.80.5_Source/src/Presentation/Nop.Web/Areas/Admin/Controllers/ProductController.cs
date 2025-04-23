@@ -1079,7 +1079,7 @@ public partial class ProductController : BaseAdminController
     }
 
     [CheckPermission(StandardPermission.Catalog.PRODUCTS_VIEW)]
-    public virtual async Task<IActionResult> Edit(int id)
+    public virtual async Task<IActionResult> Edit(int id, bool showtour)
     {
         //try to get a product with the specified id
         var product = await _productService.GetProductByIdAsync(id);

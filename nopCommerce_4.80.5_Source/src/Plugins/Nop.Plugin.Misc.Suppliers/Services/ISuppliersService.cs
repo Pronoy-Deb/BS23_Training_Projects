@@ -1,4 +1,5 @@
-﻿using Nop.Core;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Nop.Core;
 using Nop.Plugin.Misc.Suppliers.Domain;
 
 namespace Nop.Plugin.Misc.Suppliers.Services
@@ -9,11 +10,7 @@ namespace Nop.Plugin.Misc.Suppliers.Services
         Task UpdateAsync(SuppliersRecord supplier);
         Task DeleteAsync(SuppliersRecord supplier);
         Task<SuppliersRecord> GetByIdAsync(int id);
-        Task<IList<SuppliersRecord>> GetAllAsync(
-        string name = null,
-        string email = null,
-        int pageIndex = 0,
-        int pageSize = int.MaxValue);
+        Task<IList<SuppliersRecord>> GetAllAsync();
         Task<IPagedList<SuppliersRecord>> GetAllSuppliersAsync(
             string name = null,
             string email = null,

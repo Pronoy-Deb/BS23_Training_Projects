@@ -1,12 +1,9 @@
-﻿@* @model Nop.Plugin.Misc.Suppliers.Domain.SuppliersRecord *@
-@using Nop.Plugin.Misc.Suppliers.Areas.Admin.Models
+﻿@using Nop.Plugin.Misc.Suppliers.Areas.Admin.Models
 @model SuppliersModel
 
 @{
 	Layout = "_AdminLayout";
-	//page title
 	ViewBag.PageTitle = T("Admin.Suppliers.AddNew").Text;
-	//active menu item (system name)
 	NopHtml.SetActiveMenuItemSystemName("Suppliers");
 }
 
@@ -28,7 +25,6 @@
 				<i class="far fa-floppy-disk"></i>
 				@T("Admin.Common.SaveContinue")
 			</button>
-			@* @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.SuppliersDetailsButtons, additionalData = Model }) *@
 		</div>
 	</div>
 	@await Html.PartialAsync("_CreateOrUpdate", Model)

@@ -1,0 +1,63 @@
+﻿@model ProductSupplierModel
+
+<div class="form-group">
+	<h4>Assigned Suppliers</h4>
+	@if (Model.AssignedSuppliers.Any())
+	{
+		<ul>
+			@foreach (var supplier in Model.AssignedSuppliers)
+			{
+				<li><strong>@supplier.Name</strong> - @supplier.Email</li>
+			}
+		</ul>
+	}
+	else
+	{
+		<p>No suppliers assigned yet!</p>
+	}
+</div>
+
+<div class="form-group row align-items-end">
+	<div class="col-md-8">
+		<label>Select Supplier</label>
+		<select id="supplierDropdown" class="form-control" data-product-id="@Model.ProductId">
+			<option value="">Select Supplier</option>
+			@foreach (var supplier in Model.AvailableSuppliers)
+			{
+				<option value="@supplier.Value">@supplier.Text</option>
+			}
+		</select>
+	</div>
+	<div class="col-md-4 text-right">
+		<button id="btnSaveSupplier" type="button" class="btn btn-primary mt-2">
+			Save
+		</button>
+	</div>
+</div>
+
+<span id="supplier-status" style="color:green; display:none;"></span>
+
+<script>
+	$(document).ready(function () {
+		$('#btnSaveSupplier').on('click', function () {
+			var productId = @Model.ProductId;
+			var supplierId = $('#supplierDropdown').val();
+
+			$.ajax({
+				url: '@Url.Action("AssignSupplier", "Suppliers", new { area = "Admin" })',
+				type: 'POST',
+				data: {
+					productId: productId,
+					supplierId: supplierId
+				},
+				success: function () {
+					$('#supplier-status').text("Saved").fadeIn().delay(1000).fadeOut();
+					location.reload();
+				},
+				error: function () {
+					$('#supplier-status').text("Error saving").css('color', 'red').fadeIn().delay(2000).fadeOut();
+				}
+			});
+		});
+	});
+</script>

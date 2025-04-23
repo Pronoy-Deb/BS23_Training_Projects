@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Nop.Data;
+﻿using Nop.Data;
 using Nop.Plugin.Misc.Suppliers.Domain;
 
 namespace Nop.Plugin.Misc.Suppliers.Services;
@@ -16,28 +11,32 @@ public class ProductSupplierService : IProductSupplierService
         _productSupplierRepository = productSupplierRepository;
     }
 
-    public Task DeleteProductSupplierAsync(ProductSupplier productSupplier)
+    public async Task UpdateProductSupplierAsync(int productId, int supplierId)
     {
-        throw new NotImplementedException();
+        var existing = await _productSupplierRepository.Table
+            .FirstOrDefaultAsync(ps => ps.ProductId == productId);
+
+        if (existing != null)
+        {
+            await _productSupplierRepository.DeleteAsync(existing);
+        }
+
+        if (supplierId > 0)
+        {
+            await _productSupplierRepository.InsertAsync(new ProductSupplier
+            {
+                ProductId = productId,
+                SupplierId = supplierId
+            });
+        }
     }
 
-    public Task<IList<ProductSupplier>> GetProductSuppliersByProductIdAsync(int productId)
+    public async Task<IList<int>> GetSupplierIdsByProductIdAsync(int productId)
     {
-        throw new NotImplementedException();
+        return await _productSupplierRepository.Table
+            .Where(ps => ps.ProductId == productId)
+            .Select(ps => ps.SupplierId)
+            .ToListAsync();
     }
 
-    public Task<IList<ProductSupplier>> GetProductSuppliersBySupplierIdAsync(int supplierId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task InsertProductSupplierAsync(ProductSupplier productSupplier)
-    {
-        await _productSupplierRepository.InsertAsync(productSupplier);
-    }
-
-    public Task UpdateProductSupplierAsync(ProductSupplier productSupplier)
-    {
-        throw new NotImplementedException();
-    }
 }

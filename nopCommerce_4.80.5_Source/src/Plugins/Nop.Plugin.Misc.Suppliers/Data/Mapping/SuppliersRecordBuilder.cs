@@ -6,10 +6,6 @@ namespace Nop.Plugin.Misc.Suppliers.Data.Mapping;
 
 public class SuppliersRecordBuilder : NopEntityBuilder<SuppliersRecord>
 {
-    /// <summary>
-    /// Apply entity configuration
-    /// </summary>
-    /// <param name="table">Create table expression builder</param>
     public override void MapEntity(CreateTableExpressionBuilder table)
     {
         table

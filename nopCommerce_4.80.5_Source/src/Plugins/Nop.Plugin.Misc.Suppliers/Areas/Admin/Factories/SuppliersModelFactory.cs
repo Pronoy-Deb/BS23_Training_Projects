@@ -1,12 +1,9 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Nop.Plugin.Misc.Suppliers.Services;
+﻿using Nop.Plugin.Misc.Suppliers.Services;
 using Nop.Plugin.Misc.Suppliers.Areas.Admin.Models;
 using Nop.Web.Framework.Models.Extensions;
 using Nop.Plugin.Misc.Suppliers.Areas.Admin.Factories;
 using Nop.Plugin.Misc.Suppliers.Domain;
 using Nop.Services.Localization;
-using Nop.Services.Configuration;
 
 namespace Nop.Plugin.Misc.Suppliers.Factories
 {
@@ -15,7 +12,6 @@ namespace Nop.Plugin.Misc.Suppliers.Factories
 
         private readonly ISuppliersService _supplierService;
         private readonly ILocalizationService _localizationService;
-        private readonly ILocalizedEntityService _localizedEntityService;
         private readonly ILanguageService _languageService;
 
         public SuppliersModelFactory(
@@ -26,7 +22,6 @@ namespace Nop.Plugin.Misc.Suppliers.Factories
         {
             _supplierService = supplierService;
             _localizationService = localizationService;
-            _localizedEntityService = localizedEntityService;
             _languageService = languageService;
         }
 
@@ -101,7 +96,6 @@ namespace Nop.Plugin.Misc.Suppliers.Factories
 
             return model;
         }
-
 
         public async Task<SuppliersSearchModel> PrepareSuppliersSearchModelAsync(SuppliersSearchModel searchModel)
         {
