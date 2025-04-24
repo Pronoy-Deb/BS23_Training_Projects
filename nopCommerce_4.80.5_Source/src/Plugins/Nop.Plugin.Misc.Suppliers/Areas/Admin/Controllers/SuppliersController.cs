@@ -47,7 +47,6 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
             return Json(model);
         }
 
-
         public async Task<IActionResult> Create()
         {
             var model = await _suppliersModelFactory.PrepareSuppliersModelAsync(new SuppliersModel(), null);
@@ -83,7 +82,6 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
             return View(model);
         }
 
-
         public async Task<IActionResult> Edit(int id)
         {
             var supplier = await _supplierService.GetByIdAsync(id);
@@ -93,7 +91,6 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
             var model = await _suppliersModelFactory.PrepareSuppliersModelAsync(null, supplier);
             return View(model);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Edit(SuppliersModel model)
@@ -131,7 +128,6 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Controllers
 
             return RedirectToAction("List");
         }
-
         protected virtual async Task UpdateLocales(SuppliersRecord supplier, SuppliersModel model)
         {
             foreach (var localized in model.Locales)

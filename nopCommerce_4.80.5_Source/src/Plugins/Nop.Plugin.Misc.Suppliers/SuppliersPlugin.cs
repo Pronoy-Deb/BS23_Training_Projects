@@ -108,5 +108,4 @@ public class EventConsumer : IConsumer<AdminMenuCreatedEvent>
                 Visible = true,
             });
     }
-
 }

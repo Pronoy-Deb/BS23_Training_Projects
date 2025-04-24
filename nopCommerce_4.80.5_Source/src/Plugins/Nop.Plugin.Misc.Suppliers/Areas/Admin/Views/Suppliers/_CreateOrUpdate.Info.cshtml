@@ -1,4 +1,3 @@
-@using Nop.Plugin.Misc.Suppliers.Areas.Admin.Models
 @model SuppliersModel
 
 <div class="card-body">
@@ -86,11 +85,6 @@
 			<span asp-validation-for="AdminComment"></span>
 		</div>
 	</div>
-
-	@if (Model.SuppliersAttributes.Count > 0)
-	{
-		@await Html.PartialAsync("_SuppliersAttributes", Model.SuppliersAttributes)
-	}
 
 	<div class="card card-default advanced-setting">
 		<div class="card-header">
