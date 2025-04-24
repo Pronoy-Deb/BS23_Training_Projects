@@ -8,14 +8,13 @@ namespace Nop.Plugin.Misc.Suppliers.Areas.Admin.Models
         public ProductSupplierModel()
         {
             AvailableSuppliers = new List<SelectListItem>();
-            AssignedSuppliers = new List<AssignedSupplierModel>();
         }
 
         public int ProductId { get; set; }
 
-        public List<SelectListItem> AvailableSuppliers { get; set; }
+        public AssignedSupplierModel AssignedSupplier { get; set; }
 
-        public List<AssignedSupplierModel> AssignedSuppliers { get; set; }
+        public List<SelectListItem> AvailableSuppliers { get; set; }
     }
 
     public record AssignedSupplierModel : BaseNopEntityModel

@@ -16,17 +16,21 @@ public class ProductSupplierService : IProductSupplierService
 
     public async Task UpdateProductSupplierAsync(int productId, int supplierId)
     {
-
         if (supplierId > 0)
         {
+            var existingMapping = await _productSupplierRepository.Table
+                .FirstOrDefaultAsync(ps => ps.ProductId == productId);
+
+            if (existingMapping != null)
+                await _productSupplierRepository.DeleteAsync(existingMapping);
+
             await _productSupplierRepository.InsertAsync(new ProductSupplier
             {
                 ProductId = productId,
                 SupplierId = supplierId
             });
+
             await _staticCacheManager.RemoveByPrefixAsync(string.Format(SuppliersDefaults.ProductSuppliersPrefixCacheKey, productId));
-            //await _staticCacheManager.RemoveByPrefixAsync(SuppliersDefaults.AdminSupplierAllPrefixCacheKey);
-            //await _staticCacheManager.RemoveByPrefixAsync(string.Format(SuppliersDefaults.ProductSuppliersPrefixCacheKey, productId));
         }
     }
 
@@ -42,27 +46,4 @@ public class ProductSupplierService : IProductSupplierService
                 .ToListAsync();
         });
     }
-
-
-    //public async Task<IList<int>> GetSupplierIdsByProductIdAsync(int productId)
-    //{
-    //    var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(
-    //        SuppliersDefaults.ProductSuppliersByProductIdCacheKey, productId);
-
-    //    return await _staticCacheManager.GetAsync(cacheKey, async () =>
-    //    {
-    //        return await _productSupplierRepository.Table
-    //            .Where(ps => ps.ProductId == productId)
-    //            .Select(ps => ps.SupplierId)
-    //            .ToListAsync();
-    //    });
-    //}
-
-    //public async Task<IList<int>> GetSupplierIdsByProductIdAsync(int productId)
-    //{
-    //    return await _productSupplierRepository.Table
-    //        .Where(ps => ps.ProductId == productId)
-    //        .Select(ps => ps.SupplierId)
-    //        .ToListAsync();
-    //}
 }
