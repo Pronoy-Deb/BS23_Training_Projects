@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Misc",
+  "FriendlyName": "Purchase Order",
+  "SystemName": "Misc.PurchaseOrder",
+  "Version": "4.80.2",
+  "SupportedVersions": [ "4.80" ],
+  "Author": "BS23",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Misc.PurchaseOrder.dll",
+  "Description": "This is a simple plugin to manage puchase orders from admin side."
+}
