@@ -16,7 +16,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.ExportImport
 
                 foreach (var order in orders)
                 {
-                    writer.WriteLine($"{order.Id},{order.SupplierName},{order.OrderDate},{order.Price},{order.CreatedBy}");
+                    writer.WriteLine($"{order.Id},{order.SupplierName},{order.OrderDate},{order.TotalPrice},{order.CreatedBy}");
                 }
             }
 

@@ -5,14 +5,20 @@ using Nop.Plugin.Misc.PurchaseOrder.Domain;
 
 namespace Nop.Plugin.Misc.PurchaseOrder.Data.Migrations
 {
-    [NopSchemaMigration("2025/05/02 03:10:00", "PurchaseOrder base schema", MigrationProcessType.Installation)]
+    [NopSchemaMigration("2025/05/02 04:59:00", "PurchaseOrder base schema", MigrationProcessType.Installation)]
     public class SchemaMigration : AutoReversingMigration
     {
-
         public override void Up()
         {
-            Create.TableFor<PurchaseOrderRecord>();
-            Create.TableFor<PurchaseOrderProductRecord>();
+            //IfDatabase("sqlserver").Delete.Column("OrderNumber").FromTable("PurchaseOrderRecord");
+
+            // Create new tables
+            //Create.TableFor<PurchaseOrderProductRecord>();
+
+            // Add OrderNumber column
+            //Alter.Table("PurchaseOrderRecord")
+            //    .AddColumn("OrderNumber").AsString(50).NotNullable().WithDefaultValue("");
+
         }
     }
 }

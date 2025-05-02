@@ -92,7 +92,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
                     Id = order.Id,
                     SupplierId = order.SupplierId,
                     //Quantity = order.Quantity,
-                    Price = order.TotalAmount,
+                    TotalPrice = order.TotalAmount,
                     OrderDate = DateTime.UtcNow,
                     //OrderStatus = order.OrderStatus
                 };
@@ -116,7 +116,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
                 model ??= new PurchaseOrderCreateModel
                 {
                     OrderDate = DateTime.UtcNow,
-                    SupplierId = order.SupplierId,
+                    SelectedSupplierId = order.SupplierId,
                     OrderTotal = order.TotalAmount,
                 };
             }
@@ -126,7 +126,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
             {
                 Text = s.Name,
                 Value = s.Id.ToString(),
-                Selected = s.Id == model.SupplierId
+                Selected = s.Id == model.SelectedSupplierId
             }).ToList();
 
             model.AvailableSuppliers.Insert(0, new SelectListItem
@@ -324,7 +324,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
             {
                 SupplierId = model.SupplierId,
                 //Quantity = model.Quantity,
-                TotalAmount = model.Price,
+                TotalAmount = model.TotalPrice,
                 OrderDate = DateTime.UtcNow,
                 //OrderStatus = model.OrderStatus
             };
@@ -343,7 +343,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
                 Id = entity.Id,
                 SupplierId = entity.SupplierId,
                 //Quantity = entity.Quantity,
-                Price = entity.TotalAmount,
+                TotalPrice = entity.TotalAmount,
                 OrderDate = DateTime.UtcNow,
                 //OrderStatus = entity.OrderStatus
             };
@@ -367,7 +367,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
 
             entity.SupplierId = model.SupplierId;
             //entity.Quantity = model.Quantity;
-            entity.TotalAmount = model.Price;
+            entity.TotalAmount = model.TotalPrice;
             entity.OrderDate = DateTime.UtcNow;
             //entity.OrderStatus = model.OrderStatus;
 

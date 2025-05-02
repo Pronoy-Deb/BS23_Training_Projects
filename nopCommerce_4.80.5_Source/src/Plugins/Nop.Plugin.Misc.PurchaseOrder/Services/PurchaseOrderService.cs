@@ -44,10 +44,9 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Services
                     //OrderStatus = po.OrderStatus,
                     SupplierId = po.SupplierId,
                     //Quantity = po.Quantity,
-                    Price = po.TotalAmount,
+                    TotalPrice = po.TotalAmount,
                     CreatedBy = "Admin",
                     SupplierName = supplier.Name,
-                    //ProductName = product.Name
                 };
 
             if (searchModel != null)
@@ -64,6 +63,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Services
                 if (!string.IsNullOrEmpty(searchModel.ProductName))
                     query = query.Where(x => x.ProductName.Contains(searchModel.ProductName));
             }
+            query = query.OrderByDescending(po => po.OrderDate);
 
             return await query.ToPagedListAsync(searchModel.Page - 1, searchModel.PageSize);
         }
@@ -148,33 +148,70 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Services
 
         public async Task<int> CreatePurchaseOrderAsync(int supplierId, List<OrderProductItem> products)
         {
-            var order = new PurchaseOrderRecord
+            // Validate supplier exists
+            var supplier = await _suppliersRepository.GetByIdAsync(supplierId);
+            if (supplier == null)
             {
-                OrderNumber = GenerateOrderNumber(),
-                OrderDate = DateTime.UtcNow,
-                SupplierId = supplierId,
-                //OrderStatus = "Pending",
-                TotalAmount = products.Sum(p => p.Quantity * p.UnitPrice)
-            };
-
-            // Insert the main order first
-            await _purchaseOrderRepository.InsertAsync(order);
-
-            // Then add products
-            foreach (var product in products)
-            {
-                var orderProduct = new PurchaseOrderProductRecord
-                {
-                    PurchaseOrderId = order.Id,
-                    ProductId = product.ProductId,
-                    Quantity = product.Quantity,
-                    UnitPrice = product.UnitPrice
-                };
-                await _purchaseOrderProductRepository.InsertAsync(orderProduct);
+                throw new ArgumentException($"Supplier with ID {supplierId} does not exist");
             }
 
+            // Validate products exist
+            var productIds = products.Select(p => p.ProductId).ToList();
+            var existingProducts = await _productRepository.GetByIdsAsync(productIds.ToArray());
+            if (existingProducts.Count != productIds.Count)
+            {
+                var missingIds = productIds.Except(existingProducts.Select(p => p.Id));
+                throw new ArgumentException($"Products with IDs {string.Join(",", missingIds)} do not exist");
+            }
+
+            // Create the order
+            var order = new PurchaseOrderRecord
+            {
+                OrderDate = DateTime.UtcNow,
+                //OrderNumber = GenerateOrderNumber(), // Implement this method
+                SupplierId = supplierId,
+                TotalAmount = products.Sum(p => p.Quantity * p.UnitPrice),
+                Products = products.Select(p => new PurchaseOrderProductRecord
+                {
+                    ProductId = p.ProductId,
+                    Quantity = p.Quantity,
+                    UnitPrice = p.UnitPrice
+                }).ToList()
+            };
+
+            await _purchaseOrderRepository.InsertAsync(order);
             return order.Id;
         }
+
+        //public async Task<int> CreatePurchaseOrderAsync(int supplierId, List<OrderProductItem> products)
+        //{
+        //    var order = new PurchaseOrderRecord
+        //    {
+        //        OrderNumber = GenerateOrderNumber(),
+        //        OrderDate = DateTime.UtcNow,
+        //        SupplierId = supplierId,
+        //        //OrderStatus = "Pending",
+        //        TotalAmount = products.Sum(p => p.Quantity * p.UnitPrice)
+        //    };
+
+        //    // Insert the main order first
+        //    await _purchaseOrderRepository.InsertAsync(order);
+
+        //    // Then add products
+        //    foreach (var product in products)
+        //    {
+        //        var orderProduct = new PurchaseOrderProductRecord
+        //        {
+        //            PurchaseOrderId = order.Id,
+        //            ProductId = product.ProductId,
+        //            Quantity = product.Quantity,
+        //            UnitPrice = product.UnitPrice
+        //        };
+        //        await _purchaseOrderProductRepository.InsertAsync(orderProduct);
+        //    }
+
+        //    return order.Id;
+        //}
 
         private string GenerateOrderNumber()
         {

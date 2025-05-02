@@ -7,8 +7,6 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Domain
     public class PurchaseOrderRecord : BaseEntity, ILocalizedEntity
     {
         public DateTime OrderDate { get; set; } // Changed to non-nullable
-        public string OrderNumber { get; set; } // Added for tracking
-        //public string OrderStatus { get; set; }
         public int SupplierId { get; set; }
         public decimal TotalAmount { get; set; } // Renamed from Price
 

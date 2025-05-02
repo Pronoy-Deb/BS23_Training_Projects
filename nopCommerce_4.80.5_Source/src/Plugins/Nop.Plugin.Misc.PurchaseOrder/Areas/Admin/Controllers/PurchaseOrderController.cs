@@ -30,8 +30,8 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
         private readonly IRepository<PurchaseOrderRecord> _purchaseOrderRepository;
         private readonly IProductService _productService;
         private readonly IPurchaseOrderSupplierService _purchaseOrderSupplierService;
-        private readonly ISuppliersService _supplierService;
         private readonly IPictureService _pictureService;
+        private readonly IRepository<PurchaseOrderProductRecord> _purchaseOrderProductRepository;
 
         public PurchaseOrderController(IPurchaseOrderModelFactory purchaseOrderModelFactory,
             IPurchaseOrderService purchaseOrderService,
@@ -42,8 +42,8 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
             IRepository<PurchaseOrderRecord> purchaseOrderRepository,
             IProductService productService,
             IPurchaseOrderSupplierService purchaseOrderSupplierService,
-            ISuppliersService supplierService,
-            IPictureService pictureService)
+            IPictureService pictureService,
+            IRepository<PurchaseOrderProductRecord> purchaseOrderProductRepository)
         {
             _purchaseOrderModelFactory = purchaseOrderModelFactory;
             _purchaseOrderService = purchaseOrderService;
@@ -54,8 +54,8 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
             _purchaseOrderRepository = purchaseOrderRepository;
             _productService = productService;
             _purchaseOrderSupplierService = purchaseOrderSupplierService;
-            _supplierService = supplierService;
             _pictureService = pictureService;
+            _purchaseOrderProductRepository = purchaseOrderProductRepository;
         }
 
         public async Task<IActionResult> List()
@@ -83,7 +83,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
-                model.AvailableSuppliers = await _supplierService.GetAllSuppliersForDropdownAsync();
+                model.AvailableSuppliers = await _suppliersService.GetAllSuppliersForDropdownAsync();
                 return View(model);
             }
 
@@ -116,23 +116,40 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
             if (!selectedProducts.Any())
             {
                 ModelState.AddModelError("", "Please select at least one product");
-                model.AvailableSuppliers = await _supplierService.GetAllSuppliersForDropdownAsync();
+                model.AvailableSuppliers = await _suppliersService.GetAllSuppliersForDropdownAsync();
                 return View(model);
             }
 
             try
             {
-                var orderId = await _purchaseOrderService.CreatePurchaseOrderAsync(
-                    model.SelectedSupplierId,
-                    selectedProducts);
+                // Create the purchase order
+                var order = new PurchaseOrderRecord
+                {
+                    OrderDate = DateTime.UtcNow,
+                    SupplierId = model.SelectedSupplierId,
+                    TotalAmount = selectedProducts.Sum(p => p.Quantity * p.UnitPrice)
+                };
 
-                return RedirectToAction("List");
+                // Insert the order
+                await _purchaseOrderRepository.InsertAsync(order);
+
+                // Add order products
+                foreach (var product in selectedProducts)
+                {
+                    await _purchaseOrderProductRepository.InsertAsync(new PurchaseOrderProductRecord
+                    {
+                        PurchaseOrderId = order.Id,
+                        ProductId = product.ProductId,
+                        Quantity = product.Quantity,
+                        UnitPrice = product.UnitPrice
+                    });
+                }
+
+                return Json(new { success = true, redirect = Url.Action("List") });
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", $"Error creating order: {ex.Message}");
-                model.AvailableSuppliers = await _supplierService.GetAllSuppliersForDropdownAsync();
-                return View(model);
+                return Json(new { success = false, message = ex.Message });
             }
         }
 
