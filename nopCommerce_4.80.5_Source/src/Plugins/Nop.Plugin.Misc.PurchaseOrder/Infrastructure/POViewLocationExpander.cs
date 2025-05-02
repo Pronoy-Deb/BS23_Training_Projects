@@ -2,7 +2,7 @@
 using Nop.Core.Infrastructure;
 using Nop.Web.Framework.Themes;
 
-namespace Nop.Plugin.Misc.Suppliers.Infrastructure;
+namespace Nop.Plugin.Misc.PurchaseOrder.Infrastructure;
 
 public class POViewLocationExpander : IViewLocationExpander
 {
@@ -14,12 +14,15 @@ public class POViewLocationExpander : IViewLocationExpander
 
     public IEnumerable<string> ExpandViewLocations(ViewLocationExpanderContext context, IEnumerable<string> viewLocations)
     {
-        viewLocations = new string[]
+        if (context.AreaName == "admin")
         {
-            $"/Plugins/Misc.PurchaseOrder/Areas/Admin/Views/{{0}}.cshtml",
-            $"/Plugins/Misc.PurchaseOrder/Areas/Admin/Views/{{1}}/{{0}}.cshtml",
-        }.Concat(viewLocations);
-
+            viewLocations = new string[]
+            {
+                $"/Plugins/Misc.PurchaseOrder/Areas/Admin/Views/{{0}}.cshtml",
+                $"/Plugins/Misc.PurchaseOrder/Areas/Admin/Views/PurchaseOrder/{{0}}.cshtml",
+                $"/Plugins/Misc.PurchaseOrder/Areas/Admin/Views/{{1}}/{{0}}.cshtml",
+            }.Concat(viewLocations);
+        }
         return viewLocations;
     }
 }

@@ -67,6 +67,7 @@ namespace Nop.Plugin.Misc.Suppliers.Components
                 .FirstOrDefault();
 
             var availableSuppliers = allSuppliers
+                .Where(s => !assignedSupplierIds.Contains(s.Id))
                 .Select(s => new SelectListItem
                 {
                     Text = s.Name,

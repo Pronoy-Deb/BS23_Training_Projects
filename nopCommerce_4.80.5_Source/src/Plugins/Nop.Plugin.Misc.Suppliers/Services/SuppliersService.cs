@@ -2,6 +2,7 @@
 using Nop.Data;
 using Nop.Core;
 using Nop.Core.Caching;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Nop.Plugin.Misc.Suppliers.Services
 {
@@ -61,9 +62,34 @@ namespace Nop.Plugin.Misc.Suppliers.Services
             });
         }
 
+        public async Task<IList<SuppliersRecord>> GetSuppliersByIdsAsync(IList<int> ids)
+        {
+            if (ids == null || !ids.Any())
+                return new List<SuppliersRecord>();
+
+            return await _repository.Table
+                .Where(s => ids.Contains(s.Id))
+                .ToListAsync();
+        }
+
         public virtual async Task<IList<SuppliersRecord>> GetAllAsync()
         {
             return await _repository.GetAllAsync(query => query.OrderBy(s => s.Name));
         }
+        public async Task<List<SelectListItem>> GetAllSuppliersForDropdownAsync()
+        {
+            var suppliers = await GetAllAsync();
+
+            var items = suppliers.Select(s => new SelectListItem
+            {
+                Text = s.Name, // Or $"{s.Name} ({s.Email})" if you want more detail
+                Value = s.Id.ToString()
+            }).ToList();
+
+            items.Insert(0, new SelectListItem { Text = "Select a supplier", Value = "0" });
+
+            return items;
+        }
+
     }
 }

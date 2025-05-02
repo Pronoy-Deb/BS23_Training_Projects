@@ -14,15 +14,16 @@ public class ViewLocationExpander : IViewLocationExpander
 
     public IEnumerable<string> ExpandViewLocations(ViewLocationExpanderContext context, IEnumerable<string> viewLocations)
     {
-        viewLocations = new string[]
+        if (context.AreaName == "admin")
         {
-            $"/Plugins/Misc.Suppliers/Areas/Admin/Views/{{0}}.cshtml",
-            $"/Plugins/Misc.Suppliers/Areas/Admin/Views/{{1}}/{{0}}.cshtml",
-            $"/Plugins/Misc.Suppliers/Areas/Admin/Views/Shared/{{0}}.cshtml",
-            $"/Plugins/Misc.Suppliers/Areas/Admin/Views/Shared/{{1}}/{{0}}.cshtml"
-        }.Concat(viewLocations);
-
+            viewLocations = new string[]
+            {
+                $"/Plugins/Misc.Suppliers/Areas/Admin/Views/{{0}}.cshtml",
+                $"/Plugins/Misc.Suppliers/Areas/Admin/Views/{{1}}/{{0}}.cshtml",
+                $"/Plugins/Misc.Suppliers/Areas/Admin/Views/Shared/{{0}}.cshtml",
+                $"/Plugins/Misc.Suppliers/Areas/Admin/Views/Shared/{{1}}/{{0}}.cshtml"
+            }.Concat(viewLocations);
+        }
         return viewLocations;
     }
-
 }

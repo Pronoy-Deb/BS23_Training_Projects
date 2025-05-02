@@ -10,12 +10,11 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Data.Mapping
         {
             table
                 .WithColumn(nameof(PurchaseOrderRecord.Id)).AsInt32().PrimaryKey().Identity()
+                .WithColumn(nameof(PurchaseOrderRecord.OrderNumber)).AsString(50).NotNullable()
                 .WithColumn(nameof(PurchaseOrderRecord.OrderDate)).AsDateTime().NotNullable()
                 .WithColumn(nameof(PurchaseOrderRecord.SupplierId)).AsInt32().NotNullable()
-                .WithColumn(nameof(PurchaseOrderRecord.ProductId)).AsInt32().NotNullable()
-                .WithColumn(nameof(PurchaseOrderRecord.OrderStatus)).AsString(100).NotNullable()
-                .WithColumn(nameof(PurchaseOrderRecord.Quantity)).AsInt32().NotNullable()
-                .WithColumn(nameof(PurchaseOrderRecord.Price)).AsDecimal().NotNullable();
+                .ForeignKey("FK_PurchaseOrder_Supplier", "SuppliersRecord", "Id")
+                .WithColumn(nameof(PurchaseOrderRecord.TotalAmount)).AsDecimal(18, 4).NotNullable();
         }
     }
 }

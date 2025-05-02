@@ -1,5 +1,4 @@
-﻿using Nop.Services.Security;
-using Nop.Web.Framework.Controllers;
+﻿using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
 using Nop.Plugin.Misc.Suppliers.Domain;
 using Nop.Plugin.Misc.Suppliers.Services;

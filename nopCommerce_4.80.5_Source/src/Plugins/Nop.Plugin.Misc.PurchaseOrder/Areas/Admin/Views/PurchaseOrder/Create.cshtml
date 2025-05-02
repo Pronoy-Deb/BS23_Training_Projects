@@ -1,0 +1,422 @@
+﻿@model PurchaseOrderCreateModel
+
+@{
+	ViewBag.PageTitle = T("Admin.PurchaseOrders.SelectProducts").Text;
+}
+
+<nop-antiforgery-token />
+
+<form asp-controller="PurchaseOrder" asp-action="Create" method="post" id="purchase-order-form">
+<div class="content-header clearfix">
+	<h1 class="pull-left">
+		@T("Admin.PurchaseOrders.SelectProducts")
+	</h1>
+</div>
+
+<div class="form-horizontal">
+	<div class="row justify-content-center">
+		<div class="col-md-4">
+			<div class="form-group row">
+				<div class="col-md-4 text-right">
+					<nop-label asp-for="SupplierId" />
+				</div>
+				<div class="col-md-8">
+					<nop-select asp-for="SupplierId" asp-items="Model.AvailableSuppliers" />
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="card-body">
+		<div class="form-group row">
+			<div class="col-md-12" style="overflow-x: auto;">
+				@if (Model.SelectedProducts != null)
+				{
+					foreach (var item in Model.SelectedProducts.Where(p => p.Selected))
+					{
+						<script>
+							$(function() {
+								togglePurchaseOrderItemEdit@(item.ProductId)(false);
+							});
+
+							function togglePurchaseOrderItemEdit@(item.ProductId)(editMode) {
+								if (editMode) {
+									$('#pnlEditQuantity@(item.ProductId)').showElement();
+									$('#pnlEditUnitCost@(item.ProductId)').showElement();
+									$('#btnSaveItem@(item.ProductId)').showElement();
+									$('#btnCancelItem@(item.ProductId)').showElement();
+
+									$('#quantity@(item.ProductId)').prop("disabled", false);
+									$('#unitCost@(item.ProductId)').prop("disabled", false);
+
+									$('#btnEditItem@(item.ProductId)').hideElement();
+									$('#btnDeleteItem@(item.ProductId)').hideElement();
+								} else {
+									$('#pnlEditQuantity@(item.ProductId)').hideElement();
+									$('#pnlEditUnitCost@(item.ProductId)').hideElement();
+									$('#btnSaveItem@(item.ProductId)').hideElement();
+									$('#btnCancelItem@(item.ProductId)').hideElement();
+
+									$('#quantity@(item.ProductId)').prop("disabled", true);
+									$('#unitCost@(item.ProductId)').prop("disabled", true);
+
+									$('#btnEditItem@(item.ProductId)').showElement();
+									$('#btnDeleteItem@(item.ProductId)').showElement();
+								}
+							}
+						</script>
+					}
+				}
+
+				<table class="table table-hover table-bordered">
+					<thead>
+						<tr>
+							<th>@T("Admin.Orders.Products.Picture")</th>
+							<th>@T("Admin.Orders.Products.ProductName")</th>
+							<th>@T("Admin.Orders.Products.Price")</th>
+							<th>@T("Admin.Orders.Products.Quantity")</th>
+							<th>@T("Admin.Orders.Products.Total")</th>
+							<th>@T("Admin.Common.Edit")</th>
+						</tr>
+					</thead>
+					<tbody>
+						@if (Model.SelectedProducts != null)
+						{
+							foreach (var item in Model.SelectedProducts.Where(p => p.Selected))
+							{
+								<tr>
+									<td class="text-center">
+										<img src="@item.PictureThumbnailUrl" alt="" width="50" />
+									</td>
+									<td>
+										<em>@item.ProductName</em>
+										@if (!string.IsNullOrEmpty(item.ProductSku))
+										{
+											<p>
+												<strong>@T("Admin.Orders.Products.SKU")</strong><text>:</text>
+												@item.ProductSku
+											</p>
+										}
+									</td>
+									<td class="text-center">
+										<div id="pnlEditUnitCost@(item.ProductId)">
+											<div class="form-group row">
+												<div class="col-md-12">
+													<input name="SelectedProducts[@item.ProductId].UnitCost"
+														   type="number"
+														   value="@item.UnitCost.ToString("0.00")"
+														   id="unitCost@(item.ProductId)"
+														   step="0.01"
+														   min="0"
+														   class="form-control input-sm" />
+												</div>
+											</div>
+										</div>
+										<div id="displayUnitCost@(item.ProductId)">
+											@item.UnitCost.ToString("0.00")
+										</div>
+									</td>
+									<td class="text-center">
+										<div id="pnlEditQuantity@(item.ProductId)">
+											<div class="form-group row">
+												<div class="col-md-12">
+													<input name="SelectedProducts[@item.ProductId].QuantityToOrder"
+														   type="number"
+														   value="@item.QuantityToOrder"
+														   id="quantity@(item.ProductId)"
+														   min="1"
+														   class="form-control input-sm" />
+												</div>
+											</div>
+										</div>
+										<div id="displayQuantity@(item.ProductId)">
+											@item.QuantityToOrder
+										</div>
+									</td>
+									<td class="text-center">
+										@((item.QuantityToOrder * item.UnitCost).ToString("0.00"))
+									</td>
+									<td class="text-center">
+										<button type="button" class="btn btn-default"
+												onclick="togglePurchaseOrderItemEdit@(item.ProductId)(true);return false;"
+												id="btnEditItem@(item.ProductId)">
+											<i class="fas fa-pencil"></i>
+											@T("Admin.Common.Edit")
+										</button>
+
+										<button type="button" class="btn btn-default"
+												id="btnDeleteItem@(item.ProductId)">
+											<i class="far fa-trash-can"></i>
+											@T("Admin.Common.Delete")
+										</button>
+										<nop-action-confirmation asp-button-id="btnDeleteItem@(item.ProductId)" />
+
+										<button type="button" class="btn btn-default"
+												id="btnSaveItem@(item.ProductId)">
+											<i class="far fa-floppy-disk"></i>
+											@T("Admin.Common.Save")
+										</button>
+
+										<button type="button" class="btn btn-default"
+												onclick="togglePurchaseOrderItemEdit@(item.ProductId)(false);return false;"
+												id="btnCancelItem@(item.ProductId)">
+											<i class="fas fa-times"></i>
+											@T("Admin.Common.Cancel")
+										</button>
+									</td>
+								</tr>
+							}
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+    
+        <!-- Your existing form content -->
+    
+        <div class="card-footer">
+            <button type="button" id="btnAddProduct" class="btn btn-primary">
+                @T("Admin.PurchaseOrders.AddProduct")
+            </button>
+
+            <button type="submit" class="btn btn-primary" id="place-order-button">
+                @T("Admin.Catalog.PurchaseOrder.PlaceOrder")
+            </button>
+        </div>
+</div>
+
+
+<script>
+	$(document).ready(function() {
+		// Initialize popup window for adding products
+		$('#btnAddProduct').click(function () {
+			var supplierId = $('#@Html.IdFor(model => model.SupplierId)').val();
+			if (!supplierId || supplierId == 0) {
+				alert('@T("Admin.PurchaseOrders.SelectSupplierWarning")');
+				return;
+			}
+			OpenWindow('@(Url.Action("ProductAddPopup", "PurchaseOrder", new { btnId = "btnRefreshSelectedProducts", formId = "purchase-order-form" }))' + '&supplierId=' + supplierId, 800, 800, true);
+		});
+
+		// Handle delete confirmation - using event delegation
+		$(document).on('click', '[id^="btnDeleteItem"]', function(e) {
+			e.preventDefault();
+			var productId = this.id.replace('btnDeleteItem', '');
+			var $btn = $(this);
+
+			// Use NopCommerce's confirmation dialog
+			$('#delete-selected-product-confirmation').attr('data-productid', productId);
+			$("#delete-selected-product-confirmation").modal('show');
+		});
+
+		// Handle confirmed delete
+		$('#delete-selected-product-confirmation-button').click(function() {
+			var productId = $('#delete-selected-product-confirmation').attr('data-productid');
+			$('input[name="SelectedProducts[' + productId + '].Selected"]').val('false');
+			$('tr[data-product-id="' + productId + '"]').remove();
+			$("#delete-selected-product-confirmation").modal('hide');
+		});
+
+		// Handle save button
+		$(document).on('click', '[id^="btnSaveItem"]', function() {
+			var productId = this.id.replace('btnSaveItem', '');
+			var quantity = $('#quantity' + productId).val();
+			var unitCost = $('#unitCost' + productId).val();
+
+			$('#displayQuantity' + productId).text(quantity);
+			$('#displayUnitCost' + productId).text(parseFloat(unitCost).toFixed(2));
+
+			// Update the line total
+			var lineTotal = (parseFloat(quantity) * parseFloat(unitCost)).toFixed(2);
+			$(this).closest('tr').find('td:eq(4)').text(lineTotal);
+
+			// Hide edit controls and show display values
+			$('#pnlEditQuantity' + productId).hide();
+			$('#pnlEditUnitCost' + productId).hide();
+			$('#btnSaveItem' + productId).hide();
+			$('#btnCancelItem' + productId).hide();
+
+			$('#quantity' + productId).prop("disabled", true);
+			$('#unitCost' + productId).prop("disabled", true);
+
+			$('#btnEditItem' + productId).show();
+			$('#btnDeleteItem' + productId).show();
+
+			return false;
+		});
+
+		// Handle edit button
+		$(document).on('click', '[id^="btnEditItem"]', function() {
+			var productId = this.id.replace('btnEditItem', '');
+
+			// Show edit controls and hide display values
+			$('#pnlEditQuantity' + productId).show();
+			$('#pnlEditUnitCost' + productId).show();
+			$('#btnSaveItem' + productId).show();
+			$('#btnCancelItem' + productId).show();
+
+			$('#quantity' + productId).prop("disabled", false);
+			$('#unitCost' + productId).prop("disabled", false);
+
+			$('#btnEditItem' + productId).hide();
+			$('#btnDeleteItem' + productId).hide();
+
+			return false;
+		});
+
+		// Handle cancel button
+		$(document).on('click', '[id^="btnCancelItem"]', function() {
+			var productId = this.id.replace('btnCancelItem', '');
+
+			// Hide edit controls and show display values
+			$('#pnlEditQuantity' + productId).hide();
+			$('#pnlEditUnitCost' + productId).hide();
+			$('#btnSaveItem' + productId).hide();
+			$('#btnCancelItem' + productId).hide();
+
+			$('#quantity' + productId).prop("disabled", true);
+			$('#unitCost' + productId).prop("disabled", true);
+
+			$('#btnEditItem' + productId).show();
+			$('#btnDeleteItem' + productId).show();
+
+			// Reset values to original
+			var originalQuantity = $('#displayQuantity' + productId).text();
+			var originalUnitCost = $('#displayUnitCost' + productId).text();
+			$('#quantity' + productId).val(originalQuantity);
+			$('#unitCost' + productId).val(originalUnitCost);
+
+			return false;
+		});
+	});
+
+			// This function will be called from the popup window
+		function updateSelectedProducts(products) {
+			var tbody = $('table tbody');
+
+			products.forEach(function(product) {
+				// Check if product already exists
+				if (tbody.find('tr[data-product-id="' + product.ProductId + '"]').length === 0) {
+					var row = `
+						<tr data-product-id="${product.ProductId}">
+							<td class="text-center">
+								<img src="${product.PictureThumbnailUrl || '/images/default-image.png'}" alt="" width="50" />
+							</td>
+							<td>
+								<input type="hidden" name="SelectedProducts[${product.ProductId}].ProductId" value="${product.ProductId}" />
+								<input type="hidden" name="SelectedProducts[${product.ProductId}].Selected" value="true" />
+								<input type="hidden" name="SelectedProducts[${product.ProductId}].ProductName" value="${product.ProductName}" />
+								<input type="hidden" name="SelectedProducts[${product.ProductId}].ProductSku" value="${product.ProductSku}" />
+								<input type="hidden" name="SelectedProducts[${product.ProductId}].PictureThumbnailUrl" value="${product.PictureThumbnailUrl}" />
+								<em>${product.ProductName}</em>
+								<p>
+									<strong>@T("Admin.Orders.Products.SKU")</strong>: ${product.ProductSku}
+								</p>
+							</td>
+							<td class="text-center">
+								<div id="pnlEditUnitCost${product.ProductId}" style="display:none">
+									<input name="SelectedProducts[${product.ProductId}].UnitCost"
+										   type="number"
+										   value="${product.UnitCost.toFixed(2)}"
+										   id="unitCost${product.ProductId}"
+										   step="0.01"
+										   min="0"
+										   class="form-control input-sm"/>
+								</div>
+								<div id="displayUnitCost${product.ProductId}">
+									${product.UnitCost.toFixed(2)}
+								</div>
+							</td>
+							<td class="text-center">
+								<div id="pnlEditQuantity${product.ProductId}" style="display:none">
+									<input name="SelectedProducts[${product.ProductId}].QuantityToOrder"
+										   type="number"
+										   value="${product.QuantityToOrder}"
+										   id="quantity${product.ProductId}"
+										   min="1"
+										   class="form-control input-sm"/>
+								</div>
+								<div id="displayQuantity${product.ProductId}">
+									${product.QuantityToOrder}
+								</div>
+							</td>
+							<td class="text-center">
+								${(product.QuantityToOrder * product.UnitCost).toFixed(2)}
+							</td>
+							<td class="text-center">
+								<button type="button" class="btn btn-default"
+										onclick="togglePurchaseOrderItemEdit${product.ProductId}(true);return false;"
+										id="btnEditItem${product.ProductId}">
+									<i class="fas fa-pencil"></i>
+		@T("Admin.Common.Edit")
+								</button>
+								<button type="button" class="btn btn-default"
+										id="btnDeleteItem${product.ProductId}">
+									<i class="far fa-trash-can"></i>
+		@T("Admin.Common.Delete")
+								</button>
+								<button type="button" class="btn btn-default"
+										id="btnSaveItem${product.ProductId}" style="display:none">
+									<i class="far fa-floppy-disk"></i>
+		@T("Admin.Common.Save")
+								</button>
+								<button type="button" class="btn btn-default"
+										onclick="togglePurchaseOrderItemEdit${product.ProductId}(false);return false;"
+										id="btnCancelItem${product.ProductId}" style="display:none">
+									<i class="fas fa-times"></i>
+		@T("Admin.Common.Cancel")
+								</button>
+							</td>
+						</tr>
+					`;
+					tbody.append(row);
+
+					// Initialize the edit toggle for this new row
+					eval(`
+						function togglePurchaseOrderItemEdit${product.ProductId}(editMode) {
+							if (editMode) {
+								$('#pnlEditQuantity${product.ProductId}').show();
+								$('#pnlEditUnitCost${product.ProductId}').show();
+								$('#btnSaveItem${product.ProductId}').show();
+								$('#btnCancelItem${product.ProductId}').show();
+								$('#quantity${product.ProductId}').prop("disabled", false);
+								$('#unitCost${product.ProductId}').prop("disabled", false);
+								$('#btnEditItem${product.ProductId}').hide();
+								$('#btnDeleteItem${product.ProductId}').hide();
+							} else {
+								$('#pnlEditQuantity${product.ProductId}').hide();
+								$('#pnlEditUnitCost${product.ProductId}').hide();
+								$('#btnSaveItem${product.ProductId}').hide();
+								$('#btnCancelItem${product.ProductId}').hide();
+								$('#quantity${product.ProductId}').prop("disabled", true);
+								$('#unitCost${product.ProductId}').prop("disabled", true);
+								$('#btnEditItem${product.ProductId}').show();
+								$('#btnDeleteItem${product.ProductId}').show();
+							}
+						}
+					`);
+				}
+			});
+		}
+</script>
+
+<!-- Add this confirmation dialog at the bottom of your page -->
+<div id="delete-selected-product-confirmation" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="delete-selected-product-confirmation-title">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="delete-selected-product-confirmation-title">@T("Admin.Common.AreYouSure")</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			</div>
+			<div class="modal-body">
+				@T("Admin.Common.DeleteConfirmation")
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">@T("Admin.Common.NoCancel")</button>
+				<button type="button" id="delete-selected-product-confirmation-button" class="btn btn-primary">@T("Admin.Common.YesDelete")</button>
+			</div>
+		</div>
+	</div>
+</div>
+</form>

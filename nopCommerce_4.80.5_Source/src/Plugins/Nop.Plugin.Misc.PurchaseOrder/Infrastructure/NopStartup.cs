@@ -15,7 +15,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Infrastructure
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<SuppliersService>();
+            services.AddScoped<ISuppliersService, SuppliersService>();
             services.AddScoped<IPurchaseOrderSupplierService, PurchaseOrderSupplierService>();
             services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
             services.AddScoped<IPurchaseOrderModelFactory, PurchaseOrderModelFactory>();

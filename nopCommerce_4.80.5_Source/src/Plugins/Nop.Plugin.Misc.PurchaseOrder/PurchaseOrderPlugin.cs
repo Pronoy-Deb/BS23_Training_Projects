@@ -25,17 +25,28 @@ public class PurchaseOrderPlugin : BasePlugin
         ["Plugins.Misc.PurchaseOrder.PurchaseOrderList.SearchByStartDate.Hint"] = "Search by Start Date",
         ["Plugins.Misc.PurchaseOrder.PurchaseOrderList.SearchByEndDate"] = "End Date",
         ["Plugins.Misc.PurchaseOrder.PurchaseOrderList.SearchByEndDate.Hint"] = "Search by End Date",
-        ["Plugins.Misc.PurchaseOrder.PurchaseOrderList.SearchBySupplierName"] = "Supplier Name",
+        ["Plugins.Misc.PurchaseOrder.PurchaseOrderList.SearchBySupplierName"] = "Supplier",
         ["Plugins.Misc.PurchaseOrder.PurchaseOrderList.SearchBySupplierName.Hint"] = "Search by Supplier Name",
-        ["Plugins.Misc.PurchaseOrder.PurchaseOrderList.SearchByProductName"] = "Product Name",
+        ["Plugins.Misc.PurchaseOrder.PurchaseOrderList.SearchByProductName"] = "Product",
         ["Plugins.Misc.PurchaseOrder.PurchaseOrderList.SearchByProductName.Hint"] = "Search by Product Name",
 
         ["Plugins.Misc.PurchaseOrder.Fields.OrderId"] = "Order #",
         ["Plugins.Misc.PurchaseOrder.Fields.SupplierName"] = "Supplier",
         ["Plugins.Misc.PurchaseOrder.Fields.OrderDate"] = "Created on",
         ["Plugins.Misc.PurchaseOrder.Fields.TotalAmount"] = "Order Total",
-        ["Plugins.Misc.PurchaseOrder.Fields.CreatedBy"] = "Created By"
+        ["Plugins.Misc.PurchaseOrder.Fields.View"] = "View",
 
+        ["admin.purchaseorders.selectproducts"] = "Place the Order",
+        ["Admin.PurchaseOrders.AddProduct"] = "Add Product",
+        ["admin.catalog.products.purchaseorderproducts.addnew"] = "Add New Product",
+        ["Admin.Catalog.PurchaseOrder.PlaceOrder"] = "Place Order",
+        ["admin.catalog.products.fields.picture"] = "Picture",
+        ["admin.purchaseorders.fields.quantity"] = "Quantity",
+        ["admin.purchaseorders.fields.total"] = "Total",
+
+        ["Admin.PurchaseOrders.SelectSupplierWarning"] = "Please Select a Supplier First!",
+        ["Admin.Common.YesDelete"] = "Yes, Delete",
+        ["Admin.PurchaseOrders.SelectProductsWarning"] = "No Products Selected!"
     };
 
     public bool HideInWidgetList => false;
@@ -78,9 +89,9 @@ public class EventConsumer : IConsumer<AdminMenuCreatedEvent>
             new AdminMenuItem
             {
                 SystemName = "Misc.PurchaseOrder",
-                Title = "PurchaseOrder",
+                Title = "Purchase Order",
                 Url = eventMessage.GetMenuItemUrl("PurchaseOrder", "List"),
-                IconClass = "far fa-dot-circle",
+                IconClass = "fas fa-file-invoice-dollar",
                 Visible = true,
             });
     }

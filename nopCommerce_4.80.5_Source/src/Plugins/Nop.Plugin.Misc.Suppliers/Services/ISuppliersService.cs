@@ -1,4 +1,5 @@
-﻿using Nop.Core;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Nop.Core;
 using Nop.Plugin.Misc.Suppliers.Domain;
 
 namespace Nop.Plugin.Misc.Suppliers.Services
@@ -10,6 +11,9 @@ namespace Nop.Plugin.Misc.Suppliers.Services
         Task DeleteAsync(SuppliersRecord supplier);
         Task<SuppliersRecord> GetByIdAsync(int id);
         Task<IList<SuppliersRecord>> GetAllAsync();
+        Task<List<SelectListItem>> GetAllSuppliersForDropdownAsync();
+        Task<IList<SuppliersRecord>> GetSuppliersByIdsAsync(IList<int> ids);
+
         Task<IPagedList<SuppliersRecord>> GetAllSuppliersAsync(
             string name = null,
             string email = null,
