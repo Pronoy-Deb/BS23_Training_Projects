@@ -28,114 +28,133 @@
 			</div>
 		</div>
 
-		<div class="card-body">
-			<div class="form-group row">
-				<div class="col-md-12" style="overflow-x: auto;">
-					<table class="table table-hover table-bordered">
-						<thead>
-							<tr>
-								<th>@T("Admin.Orders.Products.Picture")</th>
-								<th>@T("Admin.Orders.Products.ProductName")</th>
-								<th>@T("Admin.Orders.Products.Price")</th>
-								<th>@T("Admin.Orders.Products.Quantity")</th>
-								<th>@T("Admin.Orders.Products.Total")</th>
-								<th>@T("Admin.Common.Edit")</th>
-							</tr>
-						</thead>
-						<tbody id="selected-products-container">
-							@if (Model.SelectedProducts != null)
-							{
-								foreach (var item in Model.SelectedProducts.Where(p => p.Selected))
-								{
-									<tr data-product-id="@item.ProductId">
-										<td class="text-center">
-											<img src="@item.PictureThumbnailUrl" alt="" width="50" />
-										</td>
-										<td>
-											<input type="hidden" name="SelectedProducts[@item.ProductId].ProductId" value="@item.ProductId" />
-											<input type="hidden" name="SelectedProducts[@item.ProductId].Selected" value="true" />
-											<input type="hidden" name="SelectedProducts[@item.ProductId].ProductName" value="@item.ProductName" />
-											<input type="hidden" name="SelectedProducts[@item.ProductId].ProductSku" value="@item.ProductSku" />
-											<input type="hidden" name="SelectedProducts[@item.ProductId].PictureThumbnailUrl" value="@item.PictureThumbnailUrl" />
-											<em>@item.ProductName</em>
-											@if (!string.IsNullOrEmpty(item.ProductSku))
-											{
-												<p>
-													<strong>@T("Admin.Orders.Products.SKU")</strong><text>:</text>
-													@item.ProductSku
-												</p>
-											}
-										</td>
-										<td class="text-center">
-											<div id="pnlEditUnitCost@(item.ProductId)" style="display:none">
-												<input name="SelectedProducts[@item.ProductId].UnitCost"
-													   type="number"
-													   value="@item.UnitCost.ToString("0.00")"
-													   id="unitCost@(item.ProductId)"
-													   step="0.01"
-													   min="0"
-													   class="form-control input-sm" />
-											</div>
-											<div id="displayUnitCost@(item.ProductId)">
-												@item.UnitCost.ToString("0.00")
-											</div>
-										</td>
-										<td class="text-center">
-											<div id="pnlEditQuantity@(item.ProductId)" style="display:none">
-												<input name="SelectedProducts[@item.ProductId].QuantityToOrder"
-													   type="number"
-													   value="@item.QuantityToOrder"
-													   id="quantity@(item.ProductId)"
-													   min="1"
-													   class="form-control input-sm" />
-											</div>
-											<div id="displayQuantity@(item.ProductId)">
-												@item.QuantityToOrder
-											</div>
-										</td>
-										<td class="text-center">
-											@((item.QuantityToOrder * item.UnitCost).ToString("0.00"))
-										</td>
-										<td class="text-center">
-											<button type="button" class="btn btn-default edit-product-btn"
-													data-product-id="@item.ProductId">
-												<i class="fas fa-pencil"></i>
-												@T("Admin.Common.Edit")
-											</button>
-											<button type="button" class="btn btn-default delete-product-btn"
-													data-product-id="@item.ProductId">
-												<i class="far fa-trash-can"></i>
-												@T("Admin.Common.Delete")
-											</button>
-											<button type="button" class="btn btn-default save-product-btn"
-													data-product-id="@item.ProductId" style="display:none">
-												<i class="far fa-floppy-disk"></i>
-												@T("Admin.Common.Save")
-											</button>
-											<button type="button" class="btn btn-default cancel-edit-btn"
-													data-product-id="@item.ProductId" style="display:none">
-												<i class="fas fa-times"></i>
-												@T("Admin.Common.Cancel")
-											</button>
-										</td>
-									</tr>
-								}
-							}
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
+        <div class="card-body">
+            <div class="form-group row">
+                <div class="col-md-12" style="overflow-x: auto;">
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                        <tr>
+                            <th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Picture")</th>
+                            <th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.ProductName")</th>
+                            <th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Price")</th>
+                            <th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Quantity")</th>
+                            <th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Total")</th>
+                            <th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Common.Edit")</th>
+                        </tr>
+                        </thead>
+                        <tbody id="selected-products-container">
+                        @if (Model.SelectedProducts != null)
+                        {
+                            foreach (var item in Model.SelectedProducts.Where(p => p.Selected))
+                            {
+                                <tr data-product-id="@item.ProductId">
+                                    <td class="text-center">
+                                        <img src="@item.PictureThumbnailUrl" alt="" width="50" />
+                                    </td>
+                                    <td>
+                                        <input type="hidden" name="SelectedProducts[@item.ProductId].ProductId" value="@item.ProductId" />
+                                        <input type="hidden" name="SelectedProducts[@item.ProductId].Selected" value="true" />
+                                        <input type="hidden" name="SelectedProducts[@item.ProductId].ProductName" value="@item.ProductName" />
+                                        <input type="hidden" name="SelectedProducts[@item.ProductId].ProductSku" value="@item.ProductSku" />
+                                        <input type="hidden" name="SelectedProducts[@item.ProductId].PictureThumbnailUrl" value="@item.PictureThumbnailUrl" />
+                                        <em>@item.ProductName</em>
+                                        @if (!string.IsNullOrEmpty(item.ProductSku))
+                                        {
+                                            <p>
+                                                <strong>@T("Admin.Orders.Products.SKU")</strong><text>:</text>
+                                                @item.ProductSku
+                                            </p>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div id="pnlEditUnitCost@(item.ProductId)" style="display:none">
+                                            <input name="SelectedProducts[@item.ProductId].UnitCost"
+                                                   type="number"
+                                                   value="@item.UnitCost.ToString("0.00")"
+                                                   id="unitCost@(item.ProductId)"
+                                                   step="0.01"
+                                                   min="0"
+                                                   class="form-control input-sm" />
+                                        </div>
+                                        <div id="displayUnitCost@(item.ProductId)">
+                                            @item.UnitCost.ToString("0.00")
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div id="pnlEditQuantity@(item.ProductId)" style="display:none">
+                                            <input name="SelectedProducts[@item.ProductId].QuantityToOrder"
+                                                   type="number"
+                                                   value="@item.QuantityToOrder"
+                                                   id="quantity@(item.ProductId)"
+                                                   min="1"
+                                                   class="form-control input-sm" />
+                                        </div>
+                                        <div id="displayQuantity@(item.ProductId)">
+                                            @item.QuantityToOrder
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        @((item.QuantityToOrder * item.UnitCost).ToString("0.00"))
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-default edit-product-btn"
+                                                data-product-id="@item.ProductId">
+                                            <i class="fas fa-pencil"></i>
+                                            @T("Admin.Common.Edit")
+                                        </button>
+                                        <button type="button" class="btn btn-default delete-product-btn"
+                                                data-product-id="@item.ProductId">
+                                            <i class="far fa-trash-can"></i>
+                                            @T("Admin.Common.Delete")
+                                        </button>
+                                        <button type="button" class="btn btn-default save-product-btn"
+                                                data-product-id="@item.ProductId" style="display:none">
+                                            <i class="far fa-floppy-disk"></i>
+                                            @T("Admin.Common.Save")
+                                        </button>
+                                        <button type="button" class="btn btn-default cancel-edit-btn"
+                                                data-product-id="@item.ProductId" style="display:none">
+                                            <i class="fas fa-times"></i>
+                                            @T("Admin.Common.Cancel")
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+						else
+                        {
+                            <tr class="no-data">
+                                <td colspan="6" class="@NopColumnClassDefaults.CenterAll">@T("Admin.Common.NoDataAvailableInTable")</td>
+                            </tr>
+                        }
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="4" class="text-right"><strong>@T("Admin.Orders.Products.GrandTotal")</strong></td>
+                            <td class="text-center" id="grand-total-amount">0.00</td>
+                            <td></td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
 
-		<div class="card-footer">
-			<button type="button" id="btnAddProduct" class="btn btn-primary">
-				@T("Admin.PurchaseOrders.AddProduct")
-			</button>
-
-			<button type="submit" class="btn btn-primary" id="place-order-button">
-				@T("Admin.Catalog.PurchaseOrder.PlaceOrder")
-			</button>
-		</div>
+        <div class="card-footer">
+            <div class="row">
+                <div class="col-md-6">
+                    <button type="button" id="btnAddProduct" class="btn btn-primary">
+                        @T("Admin.PurchaseOrders.AddProduct")
+                    </button>
+                </div>
+                <div class="col-md-6 text-right">
+                    <button type="submit" class="btn btn-success" id="place-order-button">
+                        <i class="fas fa-check"></i>
+                        @T("Admin.Catalog.PurchaseOrder.PlaceOrder")
+                    </button>
+                </div>
+            </div>
+        </div>
 	</div>
 </form>
 
@@ -149,6 +168,7 @@
 				return;
 			}
 			OpenWindow('@(Url.Action("ProductAddPopup", "PurchaseOrder", new { btnId = "btnRefreshSelectedProducts", formId = "purchase-order-form" }))' + '&supplierId=' + supplierId, 800, 800, true);
+			updateGrandTotal();
 		});
 
 		// Handle edit button click
@@ -158,21 +178,20 @@
 		});
 
 		// Handle save button click
-		$(document).on('click', '.save-product-btn', function() {
-			var productId = $(this).data('product-id');
-			var quantity = $('#quantity' + productId).val();
-			var unitCost = $('#unitCost' + productId).val();
+			$(document).on('click', '.save-product-btn', function() {
+		var productId = $(this).data('product-id');
+		var quantity = $('#quantity' + productId).val();
+		var unitCost = $('#unitCost' + productId).val();
 
-			// Update display values
-			$('#displayQuantity' + productId).text(quantity);
-			$('#displayUnitCost' + productId).text(parseFloat(unitCost).toFixed(2));
+		// Update display values
+		$('#displayQuantity' + productId).text(quantity);
+		$('#displayUnitCost' + productId).text(parseFloat(unitCost).toFixed(2));
 
-			// Update line total
-			var lineTotal = (parseFloat(quantity) * parseFloat(unitCost)).toFixed(2);
-			$(this).closest('tr').find('td:eq(4)').text(lineTotal);
-
-			toggleEditMode(productId, false);
-		});
+		updateNoDataMessage();
+		// Update totals
+		updateGrandTotal();
+		toggleEditMode(productId, false);
+	});
 
 		// Handle cancel button click
 		$(document).on('click', '.cancel-edit-btn', function() {
@@ -194,16 +213,18 @@
 		});
 
 		// Handle confirmed delete
-		$('#delete-selected-product-confirmation-button').click(function() {
-			var productId = $('#delete-selected-product-confirmation').attr('data-productid');
-			$('tr[data-product-id="' + productId + '"]').remove();
-			$("#delete-selected-product-confirmation").modal('hide');
+			$('#delete-selected-product-confirmation-button').click(function() {
+		var productId = $('#delete-selected-product-confirmation').attr('data-productid');
+		$('tr[data-product-id="' + productId + '"]').remove();
+		$("#delete-selected-product-confirmation").modal('hide');
 
-			// If no products left, show message
-			if ($('#selected-products-container tr').length === 0) {
-				alert('@T("Admin.PurchaseOrders.SelectProductsWarning")');
-			}
-		});
+		// Update grand total after deletion
+		updateGrandTotal();
+
+		if ($('#selected-products-container tr').length === 0) {
+			alert('@T("Admin.PurchaseOrders.SelectProductsWarning")');
+		}
+	});
 
 		// Form submission handler
 	$('#purchase-order-form').on('submit', function(e) {
@@ -220,6 +241,15 @@
 			alert('@T("Admin.PurchaseOrders.SelectProductsWarning")');
 			return false;
 		}
+
+		var totalAmount = updateGrandTotal();
+
+	// Add hidden field for total amount if it doesn't exist
+	if ($('#TotalAmount').length === 0) {
+		$(this).append('<input type="hidden" id="TotalAmount" name="TotalAmount" value="' + totalAmount + '" />');
+	} else {
+		$('#TotalAmount').val(totalAmount);
+	}
 
 		// Show loading indicator
 		var $submitButton = $('#place-order-button');
@@ -273,6 +303,40 @@
 			}
 		}
 	});
+
+		function updateNoDataMessage() {
+		var container = $('#selected-products-container');
+		var noDataRow = container.find('tr.no-data');
+
+		if (container.find('tr[data-product-id]').length === 0) {
+			if (noDataRow.length === 0) {
+				container.append('<tr class="no-data"><td colspan="6" class="@NopColumnClassDefaults.CenterAll">@T("Admin.Common.NoDataAvailableInTable")</td></tr>');
+			}
+		} else {
+			noDataRow.remove();
+		}
+	}
+
+		function updateGrandTotal() {
+		var grandTotal = 0;
+
+		// Calculate sum of all product totals
+		$('#selected-products-container tr').each(function() {
+			var quantity = parseFloat($(this).find('td:eq(3)').text().trim()) || 0;
+			var unitCost = parseFloat($(this).find('td:eq(2)').text().trim()) || 0;
+			var lineTotal = quantity * unitCost;
+
+			// Update the line total cell (just in case)
+			$(this).find('td:eq(4)').text(lineTotal.toFixed(2));
+
+			grandTotal += lineTotal;
+		});
+
+		// Update the grand total display
+		$('#grand-total-amount').text(grandTotal.toFixed(2));
+		 updateNoDataMessage();
+		return grandTotal;
+	}
 
 	// This function will be called from the popup window
 	function updateSelectedProducts(products) {
@@ -351,25 +415,37 @@
 				</tr>
 			`;
 			container.append(rowHtml);
+			updateGrandTotal();
 		});
 	}
 </script>
 
 <!-- Add this confirmation dialog at the bottom of your page -->
 <div id="delete-selected-product-confirmation" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="delete-selected-product-confirmation-title">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title" id="delete-selected-product-confirmation-title">@T("Admin.Common.AreYouSure")</h4>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			</div>
-			<div class="modal-body">
-				@T("Admin.Common.DeleteConfirmation")
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">@T("Admin.Common.NoCancel")</button>
-				<button type="button" id="delete-selected-product-confirmation-button" class="btn btn-primary">@T("Admin.Common.YesDelete")</button>
-			</div>
-		</div>
-	</div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="delete-selected-product-confirmation-title">@T("Admin.Common.AreYouSure")</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                @T("Admin.Common.DeleteConfirmation")
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@T("Admin.Common.NoCancel")</button>
+                <button type="button" id="delete-selected-product-confirmation-button" class="btn btn-primary">@T("Admin.Common.YesDelete")</button>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    #grand-total-amount {
+        font-weight: bold;
+        font-size: 1.1em;
+        color: #007bff;
+    }
+    tfoot tr {
+        background-color: #f8f9fa;
+    }
+</style>

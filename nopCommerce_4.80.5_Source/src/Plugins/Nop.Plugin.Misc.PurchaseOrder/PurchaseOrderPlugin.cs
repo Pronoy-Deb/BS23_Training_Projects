@@ -46,7 +46,9 @@ public class PurchaseOrderPlugin : BasePlugin
 
         ["Admin.PurchaseOrders.SelectSupplierWarning"] = "Please Select a Supplier First!",
         ["Admin.Common.YesDelete"] = "Yes, Delete",
-        ["Admin.PurchaseOrders.SelectProductsWarning"] = "No Products Selected!"
+        ["Admin.PurchaseOrders.SelectProductsWarning"] = "No Products Selected!",
+        ["admin.orders.products.grandtotal"] = "Grand Total",
+        ["Admin.Common.NoDataAvailableInTable"] = "No data available in table"
     };
 
     public bool HideInWidgetList => false;

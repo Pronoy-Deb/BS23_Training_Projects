@@ -127,6 +127,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
                 {
                     OrderDate = DateTime.UtcNow,
                     SupplierId = model.SelectedSupplierId,
+                    SupplierName = model.SelectedSupplierName,
                     TotalAmount = selectedProducts.Sum(p => p.Quantity * p.UnitPrice)
                 };
 

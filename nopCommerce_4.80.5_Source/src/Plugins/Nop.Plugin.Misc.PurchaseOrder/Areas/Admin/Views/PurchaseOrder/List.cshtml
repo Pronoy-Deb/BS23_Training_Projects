@@ -12,203 +12,203 @@
 }
 
 <form asp-controller="PurchaseOrder" asp-action="List" method="post">
-	<div class="content-header clearfix">
-		<h1 class="float-left">
-			@T("Plugins.Misc.PurchaseOrder.PurchaseOrders")
-		</h1>
-		<div class="float-right">
-			<div class="btn-group">
-				<a asp-action="Create" class="btn btn-primary">
-					<i class="fas fa-plus-square"></i>
-					@T("Admin.Common.AddNew")
-				</a>
-			</div>
-			<div class="btn-group">
-				<button type="button" class="btn btn-success">
-					<i class="fas fa-download"></i>
-					@T("Admin.Common.Export")
-				</button>
-				<button type="button" class="btn btn-success dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
-					<span class="sr-only">&nbsp;</span>
-				</button>
-				<ul class="dropdown-menu" role="menu">
-					<li class="dropdown-item">
-						<button type="submit" name="exportxml-all">
-							<i class="far fa-file-code"></i>
-							@T("Admin.Common.ExportToXml.All")
-						</button>
-					</li>
-					<li class="dropdown-item">
-						<button type="button" id="exportxml-selected">
-							<i class="far fa-file-code"></i>
-							@T("Admin.Common.ExportToXml.Selected")
-						</button>
-					</li>
-					<li class="dropdown-divider"></li>
-					<li class="dropdown-item">
-						<button type="submit" name="exportexcel-all">
-							<i class="far fa-file-excel"></i>
-							@T("Admin.Common.ExportToExcel.All")
-						</button>
-					</li>
-					<li class="dropdown-item">
-						<button type="button" id="exportexcel-selected">
-							<i class="far fa-file-excel"></i>
-							@T("Admin.Common.ExportToExcel.Selected")
-						</button>
-					</li>
-				</ul>
-			</div>
-			@await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.OrderListButtons, additionalData = Model })
-		</div>
-	</div>
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T("Plugins.Misc.PurchaseOrder.PurchaseOrders")
+        </h1>
+        <div class="float-right">
+            <div class="btn-group">
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus-square"></i>
+                    @T("Admin.Common.AddNew")
+                </a>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-success">
+                    <i class="fas fa-download"></i>
+                    @T("Admin.Common.Export")
+                </button>
+                <button type="button" class="btn btn-success dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
+                    <span class="sr-only">&nbsp;</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="dropdown-item">
+                        <button type="submit" name="exportxml-all">
+                            <i class="far fa-file-code"></i>
+                            @T("Admin.Common.ExportToXml.All")
+                        </button>
+                    </li>
+                    <li class="dropdown-item">
+                        <button type="button" id="exportxml-selected">
+                            <i class="far fa-file-code"></i>
+                            @T("Admin.Common.ExportToXml.Selected")
+                        </button>
+                    </li>
+                    <li class="dropdown-divider"></li>
+                    <li class="dropdown-item">
+                        <button type="submit" name="exportexcel-all">
+                            <i class="far fa-file-excel"></i>
+                            @T("Admin.Common.ExportToExcel.All")
+                        </button>
+                    </li>
+                    <li class="dropdown-item">
+                        <button type="button" id="exportexcel-selected">
+                            <i class="far fa-file-excel"></i>
+                            @T("Admin.Common.ExportToExcel.Selected")
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.OrderListButtons, additionalData = Model })
+        </div>
+    </div>
 
-	<section class="content">
-		<div class="container-fluid">
-			<div class="form-horizontal">
-				<div class="cards-group">
-					<div class="card card-default card-search">
-						<div class="card-body">
-							<div class="row search-row @(!hideSearchBlock ? "opened" : "")" data-hideAttribute="@hideSearchBlockAttributeName">
-								<div class="search-text">@T("Admin.Common.Search")</div>
-								<div class="icon-search"><i class="fas fa-magnifying-glass" aria-hidden="true"></i></div>
-								<div class="icon-collapse"><i class="far fa-angle-@(!hideSearchBlock ? "up" : "down")" aria-hidden="true"></i></div>
-							</div>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="form-horizontal">
+                <div class="cards-group">
+                    <div class="card card-default card-search">
+                        <div class="card-body">
+                            <div class="row search-row @(!hideSearchBlock ? "opened" : "")" data-hideAttribute="@hideSearchBlockAttributeName">
+                                <div class="search-text">@T("Admin.Common.Search")</div>
+                                <div class="icon-search"><i class="fas fa-magnifying-glass" aria-hidden="true"></i></div>
+                                <div class="icon-collapse"><i class="far fa-angle-@(!hideSearchBlock ? "up" : "down")" aria-hidden="true"></i></div>
+                            </div>
 
-							<div class="search-body @(hideSearchBlock ? "closed" : "")">
-								<div class="row">
-									<div class="col-md-6">
-										<div class="form-group row">
-											<div class="col-md-4">
-												<nop-label asp-for="StartDate" />
-											</div>
-											<div class="col-md-8">
-												<nop-editor asp-for="StartDate" asp-format="g" />
-											</div>
-										</div>
-									</div>
+                            <div class="search-body @(hideSearchBlock ? "closed" : "")">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <nop-label asp-for="StartDate" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-editor asp-for="StartDate" asp-format="g" />
+                                            </div>
+                                        </div>
+                                    </div>
 
-									<div class="col-md-6">
-										<div class="form-group row">
-											<div class="col-md-4">
-												<nop-label asp-for="SupplierId" />
-											</div>
-											<div class="col-md-8">
-												<nop-select asp-for="SupplierId" asp-items="Model.AvailableSuppliers" />
-											</div>
-										</div>
-									</div>
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <nop-label asp-for="SupplierId" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-select asp-for="SupplierId" asp-items="Model.AvailableSuppliers" />
+                                            </div>
+                                        </div>
+                                    </div>
 
-								</div>
+                                </div>
 
-								<div class="row">
-									<div class="col-md-6">
-										<div class="form-group row">
-											<div class="col-md-4">
-												<nop-label asp-for="EndDate" />
-											</div>
-											<div class="col-md-8">
-												<nop-editor asp-for="EndDate" asp-format="g" />
-											</div>
-										</div>
-									</div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <nop-label asp-for="EndDate" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-editor asp-for="EndDate" asp-format="g" />
+                                            </div>
+                                        </div>
+                                    </div>
 
-									<div class="col-md-6">
-										<div class="form-group row">
-											<div class="col-md-4">
-												<nop-label asp-for="ProductName" />
-											</div>
-											<div class="col-md-8">
-												<nop-editor asp-for="ProductName" />
-											</div>
-										</div>
-									</div>
-								</div>
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <nop-label asp-for="ProductName" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-editor asp-for="ProductName" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-								<div class="row">
-									<div class="text-center col-12">
-										<button type="button" id="search-purchaseorders" class="btn btn-primary btn-search">
-											<i class="fas fa-search"></i>
-											@T("Admin.Common.Search")
-										</button>
-									</div>
-								</div>
+                                <div class="row">
+                                    <div class="text-center col-12">
+                                        <button type="button" id="search-purchaseorders" class="btn btn-primary btn-search">
+                                            <i class="fas fa-search"></i>
+                                            @T("Admin.Common.Search")
+                                        </button>
+                                    </div>
+                                </div>
 
-							</div>
-						</div>
-					</div>
+                            </div>
+                        </div>
+                    </div>
 
-					<div class="card card-default">
-						<div class="card-body">
-							@{
-								var gridModel = new DataTablesModel
-			{
-				Name = "purchaseorder-grid",
-				UrlRead = new DataUrl("List", "PurchaseOrder", null),
-				SearchButtonId = "search-purchaseorders",
-				Length = Model.PageSize,
-				LengthMenu = Model.AvailablePageSizes,
-				Filters = new List<FilterParameter>
-							{
-							new FilterParameter(nameof(Model.StartDate)),
-							new FilterParameter(nameof(Model.EndDate)),
-							new FilterParameter(nameof(Model.SupplierId)),
-							new FilterParameter(nameof(Model.ProductName))
-							}
-			};
-								gridModel.ColumnCollection = new List<ColumnProperty>
-							{
-							new ColumnProperty(nameof(PurchaseOrderModel.Id))
-							{
-							IsMasterCheckBox = true,
-							Render = new RenderCheckBox("checkbox_purchaseOrders"),
-							ClassName = NopColumnClassDefaults.CenterAll,
-							Width = "50"
-							},
-							new ColumnProperty(nameof(PurchaseOrderModel.Id))
-							{
-							Title = @T("Plugins.Misc.PurchaseOrder.Fields.OrderId").Text,
-							Width = "80",
-							ClassName = NopColumnClassDefaults.CenterAll
-							}
-							};
+                    <div class="card card-default">
+                        <div class="card-body">
+                            @{
+                                var gridModel = new DataTablesModel
+                                {
+                                    Name = "purchaseorder-grid",
+                                    UrlRead = new DataUrl("List", "PurchaseOrder", null),
+                                    SearchButtonId = "search-purchaseorders",
+                                    Length = Model.PageSize,
+                                    LengthMenu = Model.AvailablePageSizes,
+                                    Filters = new List<FilterParameter>
+                                    {
+                                        new FilterParameter(nameof(Model.StartDate)),
+                                        new FilterParameter(nameof(Model.EndDate)),
+                                        new FilterParameter(nameof(Model.SupplierId)),
+                                        new FilterParameter(nameof(Model.ProductName))
+                                    }
+                                };
+                                gridModel.ColumnCollection = new List<ColumnProperty>
+                                {
+                                    new ColumnProperty(nameof(PurchaseOrderModel.Id))
+                                    {
+                                        IsMasterCheckBox = true,
+                                        Render = new RenderCheckBox("checkbox_purchaseOrders"),
+                                        ClassName = NopColumnClassDefaults.CenterAll,
+                                        Width = "50"
+                                    },
+                                    new ColumnProperty(nameof(PurchaseOrderModel.Id))
+                                    {
+                                        Title = @T("Plugins.Misc.PurchaseOrder.Fields.OrderId").Text,
+                                        Width = "80",
+                                        ClassName = NopColumnClassDefaults.CenterAll
+                                    }
+                                };
 
-								gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PurchaseOrderModel.SupplierName))
-			{
-				Title = @T("Plugins.Misc.PurchaseOrder.Fields.SupplierName").Text,
-				Width = "200",
-				ClassName = NopColumnClassDefaults.CenterAll
-			});
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PurchaseOrderModel.SupplierName))
+                                {
+                                    Title = @T("Plugins.Misc.PurchaseOrder.Fields.SupplierName").Text,
+                                    Width = "200",
+                                    ClassName = NopColumnClassDefaults.CenterAll
+                                });
 
-								gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PurchaseOrderModel.OrderDate))
-			{
-				Title = @T("Plugins.Misc.PurchaseOrder.Fields.OrderDate").Text,
-				Width = "150",
-				ClassName = NopColumnClassDefaults.CenterAll,
-				Render = new RenderDate()
-			});
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PurchaseOrderModel.OrderDate))
+                                {
+                                    Title = @T("Plugins.Misc.PurchaseOrder.Fields.OrderDate").Text,
+                                    Width = "150",
+                                    ClassName = NopColumnClassDefaults.CenterAll,
+                                    Render = new RenderDate()
+                                });
 
-								gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PurchaseOrderModel.TotalPrice))
-			{
-				Title = @T("Plugins.Misc.PurchaseOrder.Fields.TotalAmount").Text,
-				Width = "100",
-				ClassName = NopColumnClassDefaults.CenterAll,
-			});
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PurchaseOrderModel.TotalPrice))
+                                {
+                                    Title = @T("Plugins.Misc.PurchaseOrder.Fields.TotalAmount").Text,
+                                    Width = "100",
+                                    ClassName = NopColumnClassDefaults.CenterAll,
+                                });
 
-								gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PurchaseOrderModel.Id))
-			{
-				Title = @T("Plugins.Misc.PurchaseOrder.Fields.View").Text,
-				Width = "50",
-				ClassName = $"{NopColumnClassDefaults.CenterAll} {NopColumnClassDefaults.Button}",
-				Render = new RenderButtonView(new DataUrl("_ProductPopup"))
-			});
-							}
-							@await Html.PartialAsync("Table", gridModel)
-						</div>
-					</div>
+                                gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PurchaseOrderModel.Id))
+                                {
+                                    Title = @T("Plugins.Misc.PurchaseOrder.Fields.View").Text,
+                                    Width = "50",
+                                    ClassName = $"{NopColumnClassDefaults.CenterAll} {NopColumnClassDefaults.Button}",
+                                    Render = new RenderButtonView(new DataUrl("_ProductPopup"))
+                                });
+                            }
+                            @await Html.PartialAsync("Table", gridModel)
+                        </div>
+                    </div>
 
-				</div>
-			</div>
-		</div>
-	</section>
+                </div>
+            </div>
+        </div>
+    </section>
 </form>
