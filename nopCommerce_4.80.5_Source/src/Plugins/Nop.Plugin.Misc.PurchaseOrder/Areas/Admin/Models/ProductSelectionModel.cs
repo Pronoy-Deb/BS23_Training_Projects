@@ -9,6 +9,7 @@ public class ProductSelectionModel
     public int CurrentStock { get; set; }
     public int QuantityToOrder { get; set; }
     public decimal UnitCost { get; set; }
+    public decimal TotalCost => UnitCost * QuantityToOrder;
     public bool Selected { get; set; }
 }
 

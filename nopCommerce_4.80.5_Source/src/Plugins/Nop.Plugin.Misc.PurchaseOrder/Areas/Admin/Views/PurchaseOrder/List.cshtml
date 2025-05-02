@@ -200,7 +200,7 @@
                                     Title = @T("Plugins.Misc.PurchaseOrder.Fields.View").Text,
                                     Width = "50",
                                     ClassName = $"{NopColumnClassDefaults.CenterAll} {NopColumnClassDefaults.Button}",
-                                    Render = new RenderButtonView(new DataUrl("_ProductPopup"))
+				                    Render = new RenderButtonView(new DataUrl("ViewSnapshot", "PurchaseOrder"))
                                 });
                             }
                             @await Html.PartialAsync("Table", gridModel)

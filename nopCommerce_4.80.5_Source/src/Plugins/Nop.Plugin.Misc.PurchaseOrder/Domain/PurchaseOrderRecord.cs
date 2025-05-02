@@ -8,7 +8,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Domain
     {
         public DateTime OrderDate { get; set; } // Changed to non-nullable
         public int SupplierId { get; set; }
-        public string SupplierName { get; set; }
+        public string? SupplierName { get; set; }
         public decimal TotalAmount { get; set; } // Renamed from Price
 
         public virtual SuppliersRecord Supplier { get; set; }

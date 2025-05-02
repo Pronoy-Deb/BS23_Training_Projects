@@ -17,7 +17,10 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Data.Mapping
                 .WithColumn(nameof(PurchaseOrderProductRecord.ProductId)).AsInt32().NotNullable()
                 .ForeignKey("FK_PurchaseOrderProduct_Product", "Product", "Id")
                 .WithColumn(nameof(PurchaseOrderProductRecord.Quantity)).AsInt32().NotNullable()
-                .WithColumn(nameof(PurchaseOrderProductRecord.UnitPrice)).AsDecimal(18, 4).NotNullable();
+                .WithColumn(nameof(PurchaseOrderProductRecord.UnitPrice)).AsDecimal(18, 4).NotNullable()
+                .WithColumn(nameof(PurchaseOrderProductRecord.ProductName)).AsString(400).NotNullable()
+                .WithColumn(nameof(PurchaseOrderProductRecord.ProductSku)).AsString(400).NotNullable()
+                .WithColumn(nameof(PurchaseOrderProductRecord.PictureThumbnailUrl)).AsString(int.MaxValue).Nullable();
         }
     }
 }

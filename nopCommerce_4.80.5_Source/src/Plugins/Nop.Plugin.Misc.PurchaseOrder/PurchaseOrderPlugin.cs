@@ -48,11 +48,13 @@ public class PurchaseOrderPlugin : BasePlugin
         ["Admin.Common.YesDelete"] = "Yes, Delete",
         ["Admin.PurchaseOrders.SelectProductsWarning"] = "No Products Selected!",
         ["admin.orders.products.grandtotal"] = "Grand Total",
-        ["Admin.Common.NoDataAvailableInTable"] = "No data available in table"
+        ["Admin.Common.NoDataAvailableInTable"] = "No data available in table",
+        ["plugins.misc.purchaseorder.ordersnapshot"] = "Order Details ",
+        ["Admin.Common.BackToList"] = "Back to list"
     };
 
     public bool HideInWidgetList => false;
-
+     
     public override async Task InstallAsync()
     {
         await _localizationService.AddOrUpdateLocaleResourceAsync(new Dictionary<string, string>(_resourceString));

@@ -14,7 +14,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Data.Mapping
                 .WithColumn(nameof(PurchaseOrderRecord.OrderDate)).AsDateTime().NotNullable()
                 .WithColumn(nameof(PurchaseOrderRecord.SupplierId)).AsInt32().NotNullable()
                 .ForeignKey("FK_PurchaseOrder_Supplier", nameof(SuppliersRecord), "Id")
-                //.ForeignKey("FK_PurchaseOrder_Supplier", "SuppliersRecord", "Id")
+                .WithColumn(nameof(PurchaseOrderRecord.SupplierName)).AsString(400).Nullable()
                 .WithColumn(nameof(PurchaseOrderRecord.TotalAmount)).AsDecimal(18, 4).NotNullable();
         }
     }

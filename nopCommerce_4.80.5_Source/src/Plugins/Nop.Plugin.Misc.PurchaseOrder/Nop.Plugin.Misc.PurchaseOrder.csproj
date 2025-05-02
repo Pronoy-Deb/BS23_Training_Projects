@@ -23,6 +23,10 @@
     <ProjectReference Include="..\Nop.Plugin.Misc.Suppliers\Nop.Plugin.Misc.Suppliers.csproj" />
     
     <ClearPluginAssemblies Include="$(SolutionDir)\Build\ClearPluginAssemblies.proj" />
+    
+    <Content Include="Areas\Admin\Views\PurchaseOrder\ViewSnapshot.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Areas\Admin\Views\PurchaseOrder\ProductAddPopup.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -43,8 +47,6 @@
     <Content Include="plugin.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="plugin.json">
@@ -67,7 +69,7 @@
     <Compile Update="Areas\Admin\Models\ProductSelectionModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Areas\Admin\Models\ProductViewModel.cs">
+    <Compile Update="Areas\Admin\Models\PurchaseOrderSnapshotModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Areas\Admin\Models\AddProductToPurchaseOrderSearchModel.cs">
