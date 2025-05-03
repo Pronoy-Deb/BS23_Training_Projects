@@ -6,7 +6,7 @@ public class ProductSelectionModel
     public string PictureThumbnailUrl { get; set; }
     public string ProductName { get; set; }
     public string ProductSku { get; set; }
-    public int CurrentStock { get; set; }
+    public int StockQuantity { get; set; }
     public int QuantityToOrder { get; set; }
     public decimal UnitCost { get; set; }
     public decimal TotalCost => UnitCost * QuantityToOrder;
@@ -15,7 +15,7 @@ public class ProductSelectionModel
 
 public class OrderProductItem
 {
-    public int ProductId { get; set; }
+    public int ProductId { get; set; } 
     public int Quantity { get; set; }
     public decimal UnitPrice { get; set; }
 }

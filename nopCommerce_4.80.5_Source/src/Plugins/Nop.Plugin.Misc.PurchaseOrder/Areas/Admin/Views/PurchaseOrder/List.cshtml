@@ -20,7 +20,7 @@
             <div class="btn-group">
                 <a asp-action="Create" class="btn btn-primary">
                     <i class="fas fa-plus-square"></i>
-                    @T("Admin.Common.AddNew")
+                    @T("Admin.Common.CreateNew")
                 </a>
             </div>
             <div class="btn-group">
@@ -193,6 +193,7 @@
                                     Title = @T("Plugins.Misc.PurchaseOrder.Fields.TotalAmount").Text,
                                     Width = "100",
                                     ClassName = NopColumnClassDefaults.CenterAll,
+                                    Render = new RenderCustom("function(data) { return parseFloat(data).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }")
                                 });
 
                                 gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PurchaseOrderModel.Id))

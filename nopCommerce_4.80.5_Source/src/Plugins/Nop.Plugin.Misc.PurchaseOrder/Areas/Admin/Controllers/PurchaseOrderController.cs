@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Nop.Core;
 using Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Models;
 using Nop.Plugin.Misc.PurchaseOrder.Domain;
 using Nop.Web.Framework.Controllers;
 using Nop.Plugin.Misc.PurchaseOrder.Services;
-using Nop.Plugin.Misc.PurchaseOrder.ExportImport;
 using Nop.Plugin.Misc.Suppliers.Services;
-using Nop.Services.Security;
 using Nop.Data;
 using Nop.Services.Catalog;
 using Nop.Services.Media;
@@ -14,6 +11,8 @@ using Nop.Web.Areas.Admin.Infrastructure.Mapper.Extensions;
 using Nop.Web.Framework.Mvc.Filters;
 using Nop.Web.Areas.Admin.Models.Catalog;
 using Nop.Web.Framework.Models.Extensions;
+using Nop.Core.Domain.Media;
+using Microsoft.Extensions.FileProviders;
 
 namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
 {
@@ -22,43 +21,33 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
     public class PurchaseOrderController : BasePluginController
     {
         private readonly IPurchaseOrderModelFactory _purchaseOrderModelFactory;
-        private readonly IPurchaseOrderService _purchaseOrderService;
-        private readonly IPurchaseOrderExportManager _exportManager;
         private readonly IProductSupplierService _productSupplierService;
-        private readonly IPermissionService _permissionService;
         private readonly ISuppliersService _suppliersService;
         private readonly IRepository<PurchaseOrderRecord> _purchaseOrderRepository;
         private readonly IProductService _productService;
         private readonly IPurchaseOrderSupplierService _purchaseOrderSupplierService;
         private readonly IPictureService _pictureService;
         private readonly IRepository<PurchaseOrderProductRecord> _purchaseOrderProductRepository;
-        private readonly IPriceFormatter _priceFormatter;
-
+        private readonly MediaSettings _mediaSettings;
         public PurchaseOrderController(IPurchaseOrderModelFactory purchaseOrderModelFactory,
-            IPurchaseOrderService purchaseOrderService,
-            IPurchaseOrderExportManager exportManager,
             IProductSupplierService productSupplierService,
-            IPermissionService permissionService,
             ISuppliersService suppliersService,
             IRepository<PurchaseOrderRecord> purchaseOrderRepository,
             IProductService productService,
             IPurchaseOrderSupplierService purchaseOrderSupplierService,
             IPictureService pictureService,
             IRepository<PurchaseOrderProductRecord> purchaseOrderProductRepository,
-            IPriceFormatter priceFormatter)
+            MediaSettings mediaSettings)
         {
             _purchaseOrderModelFactory = purchaseOrderModelFactory;
-            _purchaseOrderService = purchaseOrderService;
-            _exportManager = exportManager;
             _productSupplierService = productSupplierService;
-            _permissionService = permissionService;
             _suppliersService = suppliersService;
             _purchaseOrderRepository = purchaseOrderRepository;
             _productService = productService;
             _purchaseOrderSupplierService = purchaseOrderSupplierService;
             _pictureService = pictureService;
             _purchaseOrderProductRepository = purchaseOrderProductRepository;
-            _priceFormatter = priceFormatter;
+            _mediaSettings = mediaSettings;
         }
 
         public async Task<IActionResult> List()
@@ -92,20 +81,17 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
 
             try
             {
-                // Get supplier details
                 var supplier = await _suppliersService.GetByIdAsync(model.SelectedSupplierId);
                 if (supplier == null)
                 {
                     return Json(new { success = false, message = "Selected supplier not found" });
                 }
 
-                // Calculate total amount
                 var totalAmount = model.SelectedProducts?.Sum(p => p.QuantityToOrder * p.UnitCost) ?? 0;
 
-                // Create and save the purchase order
                 var order = new PurchaseOrderRecord
                 {
-                    OrderDate = DateTime.UtcNow,
+                    OrderDate = DateTime.Now,
                     SupplierId = model.SelectedSupplierId,
                     SupplierName = supplier.Name,
                     TotalAmount = totalAmount,
@@ -113,7 +99,6 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
 
                 await _purchaseOrderRepository.InsertAsync(order);
 
-                // Save each product if they exist
                 if (model.SelectedProducts != null)
                 {
                     foreach (var productModel in model.SelectedProducts)
@@ -121,9 +106,16 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
                         var product = await _productService.GetProductByIdAsync(productModel.ProductId);
                         if (product == null)
                             continue;
+                        if (productModel.QuantityToOrder > product.StockQuantity)
+                        {
+                            return Json(new
+                            {
+                                success = false,
+                                message = $"Quantity for {product.Name} exceeds available stock ({product.StockQuantity})"
+                            });
+                        }
 
-                        // Get product picture
-                        var picture = (await _productService.GetProductPicturesByProductIdAsync(productModel.ProductId)).FirstOrDefault();
+                    var picture = (await _productService.GetProductPicturesByProductIdAsync(productModel.ProductId)).FirstOrDefault();
                         var pictureUrl = await _pictureService.GetPictureUrlAsync(picture?.PictureId ?? 0);
 
                         var orderProduct = new PurchaseOrderProductRecord
@@ -175,24 +167,42 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
         public async Task<IActionResult> ProductAddPopup(AddProductToPurchaseOrderModel model)
         {
             if (model.SelectedProductIds?.Any() != true)
-            {
                 return Json(new { success = false, message = "No products selected" });
-            }
 
             var products = await _productService.GetProductsByIdsAsync(model.SelectedProductIds.ToArray());
-            var selectedProducts = new List<object>();
+            var selectedProducts = new List<ProductSelectionModel>();
 
             foreach (var product in products)
             {
-                var pictureId = (await _productService.GetProductPicturesByProductIdAsync(product.Id)).FirstOrDefault()?.PictureId ?? 0;
-                selectedProducts.Add(new
+                var productPictures = await _productService.GetProductPicturesByProductIdAsync(product.Id);
+                var productPicture = productPictures.FirstOrDefault();
+
+                Picture picture = null;
+                if (productPicture != null)
+                    picture = await _pictureService.GetPictureByIdAsync(productPicture.PictureId);
+
+                string thumbnailUrl;
+                if (picture != null)
+                {
+                    thumbnailUrl = (await _pictureService.GetPictureUrlAsync(
+                        picture,
+                        storeLocation: $"{Request.Scheme}://{Request.Host}"
+                    )).Url;
+                }
+                else
+                {
+                    thumbnailUrl = $"{Request.Scheme}://{Request.Host}/images/default-image.png";
+                }
+
+                selectedProducts.Add(new ProductSelectionModel
                 {
                     ProductId = product.Id,
                     ProductName = product.Name,
                     ProductSku = product.Sku,
-                    PictureThumbnailUrl = await _pictureService.GetPictureUrlAsync(pictureId),
-                    UnitCost = product.Price,
+                    PictureThumbnailUrl = thumbnailUrl,
                     QuantityToOrder = 1,
+                    UnitCost = product.Price,
+                    StockQuantity = product.StockQuantity,
                     Selected = true
                 });
             }
@@ -229,54 +239,18 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
             return Json(model);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> GetSelectedProductDetails(List<int> selectedIds)
-        {
-            var products = new List<ProductSelectionModel>();
-
-            foreach (var id in selectedIds)
-            {
-                var product = await _productService.GetProductByIdAsync(id);
-                if (product != null)
-                {
-                    // Get product pictures
-                    var productPictures = await _productService.GetProductPicturesByProductIdAsync(product.Id);
-                    var firstPicture = productPictures.FirstOrDefault();
-                    var pictureUrl = firstPicture != null
-                        ? await _pictureService.GetPictureUrlAsync(firstPicture.PictureId, 75)
-                        : string.Empty;
-
-                    products.Add(new ProductSelectionModel
-                    {
-                        ProductId = product.Id,
-                        ProductName = product.Name,
-                        ProductSku = product.Sku,
-                        PictureThumbnailUrl = pictureUrl,
-                        QuantityToOrder = 1, // Default quantity
-                        UnitCost = product.Price, // Default to product price
-                        Selected = true
-                    });
-                }
-            }
-
-            return Json(new { success = true, products = products });
-        }
-
         public async Task<IActionResult> ViewSnapshot(int id)
         {
-            // 1. First get the basic order info
             var order = await _purchaseOrderRepository.Table
                 .FirstOrDefaultAsync(o => o.Id == id);
 
             if (order == null)
                 return NotFound();
 
-            // 2. Get all products for this order
             var orderProducts = await _purchaseOrderProductRepository.Table
                 .Where(p => p.PurchaseOrderId == id)
                 .ToListAsync();
 
-            // 3. Get supplier name (from either snapshot or current supplier table)
             var supplierName = order.SupplierName;
             if (string.IsNullOrEmpty(supplierName))
             {
@@ -284,14 +258,13 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
                 supplierName = supplier?.Name ?? "Supplier Not Found";
             }
 
-            // 4. Create the view model
             var model = new PurchaseOrderSnapshotModel
             {
                 Id = order.Id,
                 OrderDate = order.OrderDate,
                 SupplierName = supplierName,
                 TotalAmount = order.TotalAmount,
-                CreatedBy = "Admin", // Default value
+                CreatedBy = "Admin",
                 Products = orderProducts.Select(p => new PurchaseOrderSnapshotModel.OrderProductSnapshot
                 {
                     ProductName = p.ProductName ?? "Unknown Product",
@@ -301,18 +274,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
                     UnitPrice = p.UnitPrice
                 }).ToList()
             };
-
             return View(model);
-        }
-
-        [HttpPost]
-        public virtual async Task<IActionResult> ExportCsv(PurchaseOrderSearchModel searchModel)
-        {
-            var pagedOrders = await _purchaseOrderService.GetAllPurchaseOrdersAsync(searchModel);
-
-            var bytes = _exportManager.ExportPurchaseOrdersToCsv(pagedOrders.ToList());
-
-            return File(bytes, MimeTypes.TextCsv, "purchaseorders.csv");
         }
     }
 }

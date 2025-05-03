@@ -22,8 +22,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
         private readonly IManufacturerService _manufacturerService;
         private readonly IStoreService _storeService;
         private readonly IVendorService _vendorService;
-
-
+        private readonly IProductService _productService;
         public PurchaseOrderModelFactory(
             IPurchaseOrderService purchaseOrderService,
             ISuppliersService supplierService,
@@ -31,7 +30,8 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
             ICategoryService categoryService,
             IManufacturerService manufacturerService,
             IStoreService storeService,
-            IVendorService vendorService)
+            IVendorService vendorService,
+            IProductService productService)
         {
             _purchaseOrderService = purchaseOrderService;
             _supplierService = supplierService;
@@ -40,6 +40,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
             _manufacturerService = manufacturerService;
             _storeService = storeService;
             _vendorService = vendorService;
+            _productService = productService;
         }
 
         public async Task<PurchaseOrderListModel> PreparePurchaseOrderListModelAsync(PurchaseOrderSearchModel searchModel)
@@ -60,7 +61,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
             {
                 model ??= new PurchaseOrderCreateModel
                 {
-                    OrderDate = DateTime.UtcNow,
+                    OrderDate = DateTime.Now,
                     SelectedSupplierId = order.SupplierId,
                     OrderTotal = order.TotalAmount,
                 };
@@ -90,7 +91,6 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
 
             // Prepare available categories
             var categories = await _categoryService.GetAllCategoriesAsync(showHidden: true);
-            //searchModel.AvailableCategories.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All")});
             searchModel.AvailableCategories.Add(new SelectListItem
             {
                 Text = await _localizationService.GetResourceAsync("Admin.Common.All"),
@@ -106,18 +106,15 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
                 Text = await _localizationService.GetResourceAsync("Admin.Common.All"),
                 Value = "0"
             });
-            //searchModel.AvailableManufacturers.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
             foreach (var manufacturer in manufacturers)
                 searchModel.AvailableManufacturers.Add(new SelectListItem { Text = manufacturer.Name, Value = manufacturer.Id.ToString() });
 
-            // Prepare available stores
             var stores = await _storeService.GetAllStoresAsync();
             searchModel.AvailableStores.Add(new SelectListItem
             {
                 Text = await _localizationService.GetResourceAsync("Admin.Common.All"),
                 Value = "0"
             });
-            //searchModel.AvailableStores.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
             foreach (var store in stores)
                 searchModel.AvailableStores.Add(new SelectListItem { Text = store.Name, Value = store.Id.ToString() });
 

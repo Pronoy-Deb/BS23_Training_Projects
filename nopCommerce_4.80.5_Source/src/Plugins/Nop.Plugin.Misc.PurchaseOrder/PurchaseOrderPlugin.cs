@@ -18,6 +18,7 @@ public class PurchaseOrderPlugin : BasePlugin
     private Dictionary<string, string> _resourceString = new Dictionary<string, string>
     {
         ["Admin.PurchaseOrder"] = "PurchaseOrder",
+        ["Admin.Common.CreateNew"] = "Create New",
         ["plugins.misc.purchaseorder.purchaseorders"] = "Purchase Orders",
         ["Plugins.Misc.PurchaseOrder.PurchaseOrderList.SearchByStartDate"] = "Start Date",
         ["Plugins.Misc.PurchaseOrder.PurchaseOrderList.SearchByStartDate.Hint"] = "Search by Start Date",
@@ -42,17 +43,16 @@ public class PurchaseOrderPlugin : BasePlugin
         ["admin.purchaseorders.fields.quantity"] = "Quantity",
         ["admin.purchaseorders.fields.total"] = "Total",
 
-        ["Admin.PurchaseOrders.SelectSupplierWarning"] = "Please Select a Supplier First!",
+        ["Admin.PurchaseOrders.SelectSupplierWarning"] = "Please select a supplier first!",
         ["Admin.Common.YesDelete"] = "Yes, Delete",
-        ["Admin.PurchaseOrders.SelectProductsWarning"] = "No Products Selected!",
+        ["Admin.PurchaseOrders.SelectProductsWarning"] = "No products selected!",
         ["admin.orders.products.grandtotal"] = "Grand Total",
         ["Admin.Common.NoDataAvailableInTable"] = "No data available in table",
         ["plugins.misc.purchaseorder.ordersnapshot"] = "Order Details ",
         ["Admin.Common.BackToList"] = "Back to list",
 
         ["Admin.PurchaseOrder.Fields.SelectedSupplierId"] = "Supplier",
-        ["Admin.PurchaseOrder.Fields.SelectedSupplierId.Hind"] = "Select Supplier",
-
+        ["Admin.PurchaseOrder.Fields.SelectedSupplierId.Hint"] = "Select a Supplier"
     };
 
     public override async Task InstallAsync()

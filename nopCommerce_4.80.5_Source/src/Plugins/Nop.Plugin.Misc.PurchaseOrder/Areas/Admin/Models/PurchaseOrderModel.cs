@@ -8,8 +8,6 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Models
     {
         public DateTime OrderDate { get; set; }
         public int SupplierId { get; set; }
-
-        [DisplayFormat(DataFormatString = "{0:N2}")]
         public decimal TotalPrice { get; set; }
         public string CreatedBy { get; set; }
         public string ProductName { get; set; }
