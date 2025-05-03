@@ -1,6 +1,5 @@
 ﻿using Nop.Web.Framework.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Nop.Plugin.Misc.Suppliers.Areas.Admin.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Models

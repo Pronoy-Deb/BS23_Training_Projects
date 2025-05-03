@@ -10,15 +10,8 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Data.Migrations
     {
         public override void Up()
         {
-            //IfDatabase("sqlserver").Delete.Column("OrderNumber").FromTable("PurchaseOrderRecord");
-
             Create.TableFor<PurchaseOrderRecord>();
-            // Create new tables
             Create.TableFor<PurchaseOrderProductRecord>();
-
-            // Add OrderNumber column
-            //Alter.Table("PurchaseOrderRecord")
-            //    .AddColumn("OrderNumber").AsString(50).NotNullable().WithDefaultValue("");
         }
     }
 }

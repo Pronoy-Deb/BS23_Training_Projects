@@ -20,7 +20,6 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Models
         public int SearchStoreId { get; set; }
         public int SearchVendorId { get; set; }
         public int SearchProductTypeId { get; set; }
-        public int SearchPublishedId { get; set; }
         public IList<SelectListItem> AvailableCategories { get; set; }
         public IList<SelectListItem> AvailableManufacturers { get; set; }
         public IList<SelectListItem> AvailableStores { get; set; }

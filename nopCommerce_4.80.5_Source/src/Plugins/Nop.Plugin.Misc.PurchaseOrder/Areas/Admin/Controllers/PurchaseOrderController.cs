@@ -14,8 +14,6 @@ using Nop.Web.Areas.Admin.Infrastructure.Mapper.Extensions;
 using Nop.Web.Framework.Mvc.Filters;
 using Nop.Web.Areas.Admin.Models.Catalog;
 using Nop.Web.Framework.Models.Extensions;
-using Microsoft.EntityFrameworkCore;
-using LinqToDB;
 
 namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
 {
@@ -34,6 +32,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
         private readonly IPurchaseOrderSupplierService _purchaseOrderSupplierService;
         private readonly IPictureService _pictureService;
         private readonly IRepository<PurchaseOrderProductRecord> _purchaseOrderProductRepository;
+        private readonly IPriceFormatter _priceFormatter;
 
         public PurchaseOrderController(IPurchaseOrderModelFactory purchaseOrderModelFactory,
             IPurchaseOrderService purchaseOrderService,
@@ -45,7 +44,8 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
             IProductService productService,
             IPurchaseOrderSupplierService purchaseOrderSupplierService,
             IPictureService pictureService,
-            IRepository<PurchaseOrderProductRecord> purchaseOrderProductRepository)
+            IRepository<PurchaseOrderProductRecord> purchaseOrderProductRepository,
+            IPriceFormatter priceFormatter)
         {
             _purchaseOrderModelFactory = purchaseOrderModelFactory;
             _purchaseOrderService = purchaseOrderService;
@@ -58,6 +58,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
             _purchaseOrderSupplierService = purchaseOrderSupplierService;
             _pictureService = pictureService;
             _purchaseOrderProductRepository = purchaseOrderProductRepository;
+            _priceFormatter = priceFormatter;
         }
 
         public async Task<IActionResult> List()
@@ -81,104 +82,69 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(PurchaseOrderCreateModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([FromBody] PurchaseOrderCreateModel model)
         {
             if (!ModelState.IsValid)
             {
-                model.AvailableSuppliers = await _suppliersService.GetAllSuppliersForDropdownAsync();
-                return View(model);
-            }
-
-            // Get supplier details
-            //var supplier = await _suppliersService.GetSupplierByIdAsync(model.SelectedSupplierId);
-            //if (supplier == null)
-            //{
-            //    ModelState.AddModelError("", "Selected supplier not found");
-            //    model.AvailableSuppliers = await _suppliersService.GetAllSuppliersForDropdownAsync();
-            //    return View(model);
-            //}
-
-            // Process selected products
-            var selectedProducts = new List<ProductSelectionModel>();
-            foreach (var key in Request.Form.Keys.Where(k => k.StartsWith("SelectedProducts[")))
-            {
-                if (key.Contains("].Selected") && Request.Form[key] == "true")
-                {
-                    var productIdStr = key.Split('[')[1].Split(']')[0];
-                    if (int.TryParse(productIdStr, out var productId))
-                    {
-                        // Get product from database instead of form
-                        var product = await _productService.GetProductByIdAsync(productId);
-                        if (product == null)
-                        {
-                            continue; // or handle error as needed
-                        }
-
-                        // Get picture URL
-                        var picture = (await _productService.GetProductPicturesByProductIdAsync(productId)).FirstOrDefault();
-                        var pictureUrl = await _pictureService.GetPictureUrlAsync(picture?.PictureId ?? 0);
-
-                        // Safely parse quantity and unit cost
-                        var quantityValid = int.TryParse(Request.Form[$"SelectedProducts[{productId}].QuantityToOrder"], out var quantity);
-                        var unitCostValid = decimal.TryParse(Request.Form[$"SelectedProducts[{productId}].UnitCost"], out var unitCost);
-
-                        if (quantityValid && unitCostValid)
-                        {
-                            selectedProducts.Add(new ProductSelectionModel
-                            {
-                                ProductId = productId,
-                                ProductName = product.Name,
-                                ProductSku = product.Sku,
-                                PictureThumbnailUrl = pictureUrl,
-                                QuantityToOrder = quantity,
-                                UnitCost = unitCost,
-                                Selected = true
-                            });
-                        }
-                    }
-                }
-            }
-
-            if (!selectedProducts.Any())
-            {
-                ModelState.AddModelError("", "Please select at least one product");
-                model.AvailableSuppliers = await _suppliersService.GetAllSuppliersForDropdownAsync();
-                return View(model);
+                return Json(new { success = false, message = "Invalid data" });
             }
 
             try
             {
-                // Create and save order
+                // Get supplier details
+                var supplier = await _suppliersService.GetByIdAsync(model.SelectedSupplierId);
+                if (supplier == null)
+                {
+                    return Json(new { success = false, message = "Selected supplier not found" });
+                }
+
+                // Calculate total amount
+                var totalAmount = model.SelectedProducts?.Sum(p => p.QuantityToOrder * p.UnitCost) ?? 0;
+
+                // Create and save the purchase order
                 var order = new PurchaseOrderRecord
                 {
                     OrderDate = DateTime.UtcNow,
                     SupplierId = model.SelectedSupplierId,
-                    SupplierName = model.SelectedSupplierName,
-                    TotalAmount = selectedProducts.Sum(p => p.TotalCost),
+                    SupplierName = supplier.Name,
+                    TotalAmount = totalAmount,
                 };
 
                 await _purchaseOrderRepository.InsertAsync(order);
 
-                // Save products
-                foreach (var product in selectedProducts)
+                // Save each product if they exist
+                if (model.SelectedProducts != null)
                 {
-                    await _purchaseOrderProductRepository.InsertAsync(new PurchaseOrderProductRecord
+                    foreach (var productModel in model.SelectedProducts)
                     {
-                        PurchaseOrderId = order.Id,
-                        ProductId = product.ProductId,
-                        Quantity = product.QuantityToOrder,
-                        UnitPrice = product.UnitCost,
-                        ProductName = product.ProductName,
-                        ProductSku = product.ProductSku,
-                        PictureThumbnailUrl = product.PictureThumbnailUrl
-                    });
+                        var product = await _productService.GetProductByIdAsync(productModel.ProductId);
+                        if (product == null)
+                            continue;
+
+                        // Get product picture
+                        var picture = (await _productService.GetProductPicturesByProductIdAsync(productModel.ProductId)).FirstOrDefault();
+                        var pictureUrl = await _pictureService.GetPictureUrlAsync(picture?.PictureId ?? 0);
+
+                        var orderProduct = new PurchaseOrderProductRecord
+                        {
+                            PurchaseOrderId = order.Id,
+                            ProductId = productModel.ProductId,
+                            Quantity = productModel.QuantityToOrder,
+                            UnitPrice = productModel.UnitCost,
+                            ProductName = productModel.ProductName ?? product.Name,
+                            ProductSku = productModel.ProductSku ?? product.Sku,
+                            PictureThumbnailUrl = pictureUrl,
+                        };
+
+                        await _purchaseOrderProductRepository.InsertAsync(orderProduct);
+                    }
                 }
 
                 return Json(new
                 {
                     success = true,
-                    redirect = Url.Action("List"),
-                    orderId = order.Id
+                    redirect = Url.Action("List")
                 });
             }
             catch (Exception ex)
@@ -190,112 +156,6 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
                 });
             }
         }
-
-
-        //[HttpPost]
-        //public async Task<IActionResult> Create(PurchaseOrderCreateModel model)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        model.AvailableSuppliers = await _suppliersService.GetAllSuppliersForDropdownAsync();
-        //        return View(model);
-        //    }
-
-        //    // Get selected products from form data
-        //    var selectedProducts = new List<OrderProductItem>();
-        //    foreach (var key in Request.Form.Keys.Where(k => k.StartsWith("SelectedProducts[")))
-        //    {
-        //        if (key.Contains("].Selected") && Request.Form[key] == "true")
-        //        {
-        //            var productIdStr = key.Split('[')[1].Split(']')[0];
-        //            if (int.TryParse(productIdStr, out var productId))
-        //            {
-        //                var quantityKey = $"SelectedProducts[{productId}].QuantityToOrder";
-        //                var unitCostKey = $"SelectedProducts[{productId}].UnitCost";
-
-        //                if (int.TryParse(Request.Form[quantityKey], out var quantity) &&
-        //                    decimal.TryParse(Request.Form[unitCostKey], out var unitCost))
-        //                {
-        //                    selectedProducts.Add(new OrderProductItem
-        //                    {
-        //                        ProductId = productId,
-        //                        Quantity = quantity,
-        //                        UnitPrice = unitCost
-        //                    });
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    if (!selectedProducts.Any())
-        //    {
-        //        ModelState.AddModelError("", "Please select at least one product");
-        //        model.AvailableSuppliers = await _suppliersService.GetAllSuppliersForDropdownAsync();
-        //        return View(model);
-        //    }
-
-        //    try
-        //    {
-        //        // Create the purchase order
-        //        var order = new PurchaseOrderRecord
-        //        {
-        //            OrderDate = DateTime.UtcNow,
-        //            SupplierId = model.SelectedSupplierId,
-        //            SupplierName = model.SelectedSupplierName,
-        //            TotalAmount = selectedProducts.Sum(p => p.Quantity * p.UnitPrice)
-        //        };
-
-        //        // Insert the order
-        //        await _purchaseOrderRepository.InsertAsync(order);
-
-        //        // Add order products
-        //        foreach (var product in selectedProducts)
-        //        {
-        //            await _purchaseOrderProductRepository.InsertAsync(new PurchaseOrderProductRecord
-        //            {
-        //                PurchaseOrderId = order.Id,
-        //                ProductId = product.ProductId,
-        //                Quantity = product.Quantity,
-        //                UnitPrice = product.UnitPrice
-        //            });
-        //        }
-
-        //        return Json(new { success = true, redirect = Url.Action("List") });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json(new { success = false, message = ex.Message });
-        //    }
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> GetProductsForSupplier(int supplierId)
-        //{
-        //    try
-        //    {
-        //        var products = await _purchaseOrderService.GetProductsBySupplierIdAsync(supplierId);
-
-        //        return Json(new
-        //        {
-        //            draw = Request.Form["draw"].FirstOrDefault(),
-        //            recordsTotal = products.Count,
-        //            recordsFiltered = products.Count,
-        //            data = products.Select(p => new ProductSelectionModel
-        //            {
-        //                ProductId = p.Id,
-        //                ProductName = p.Name,
-        //                ProductSku = p.Sku,
-        //                CurrentStock = p.StockQuantity,
-        //                UnitCost = p.Price,
-        //                QuantityToOrder = 1
-        //            })
-        //        });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json(new { error = ex.Message });
-        //    }
-        //}
 
         public async Task<IActionResult> ProductAddPopup(int purchaseOrderId, string btnId, string formId)
         {
@@ -369,6 +229,39 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
             return Json(model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> GetSelectedProductDetails(List<int> selectedIds)
+        {
+            var products = new List<ProductSelectionModel>();
+
+            foreach (var id in selectedIds)
+            {
+                var product = await _productService.GetProductByIdAsync(id);
+                if (product != null)
+                {
+                    // Get product pictures
+                    var productPictures = await _productService.GetProductPicturesByProductIdAsync(product.Id);
+                    var firstPicture = productPictures.FirstOrDefault();
+                    var pictureUrl = firstPicture != null
+                        ? await _pictureService.GetPictureUrlAsync(firstPicture.PictureId, 75)
+                        : string.Empty;
+
+                    products.Add(new ProductSelectionModel
+                    {
+                        ProductId = product.Id,
+                        ProductName = product.Name,
+                        ProductSku = product.Sku,
+                        PictureThumbnailUrl = pictureUrl,
+                        QuantityToOrder = 1, // Default quantity
+                        UnitCost = product.Price, // Default to product price
+                        Selected = true
+                    });
+                }
+            }
+
+            return Json(new { success = true, products = products });
+        }
+
         public async Task<IActionResult> ViewSnapshot(int id)
         {
             // 1. First get the basic order info
@@ -385,11 +278,11 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
 
             // 3. Get supplier name (from either snapshot or current supplier table)
             var supplierName = order.SupplierName;
-            //if (string.IsNullOrEmpty(supplierName))
-            //{
-            //    var supplier = await _suppliersService.GetSupplierByIdAsync(order.SupplierId);
-            //    supplierName = supplier?.Name ?? "Supplier Not Found";
-            //}
+            if (string.IsNullOrEmpty(supplierName))
+            {
+                var supplier = await _suppliersService.GetByIdAsync(order.SupplierId);
+                supplierName = supplier?.Name ?? "Supplier Not Found";
+            }
 
             // 4. Create the view model
             var model = new PurchaseOrderSnapshotModel
@@ -411,34 +304,6 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
 
             return View(model);
         }
-
-        //public async Task<IActionResult> ViewSnapshot(int id)
-        //{
-        //var order = await LinqToDB.AsyncExtensions.FirstOrDefaultAsync(
-        //    _purchaseOrderRepository.Table.Where(o => o.Id == id)
-        //);
-
-        //    if (order == null)
-        //        return NotFound();
-
-        //    var model = new PurchaseOrderSnapshotModel
-        //    {
-        //        Id = order.Id,
-        //        OrderDate = order.OrderDate,
-        //        SupplierName = order.SupplierName,
-        //        TotalAmount = order.TotalAmount,
-        //        Products = order.Products.Select(p => new PurchaseOrderSnapshotModel.OrderProductSnapshot
-        //        {
-        //            ProductName = p.ProductName,
-        //            ProductSku = p.ProductSku,
-        //            PictureThumbnailUrl = p.PictureThumbnailUrl,
-        //            Quantity = p.Quantity,
-        //            UnitPrice = p.UnitPrice
-        //        }).ToList()
-        //    };
-
-        //    return View(model);
-        //}
 
         [HttpPost]
         public virtual async Task<IActionResult> ExportCsv(PurchaseOrderSearchModel searchModel)

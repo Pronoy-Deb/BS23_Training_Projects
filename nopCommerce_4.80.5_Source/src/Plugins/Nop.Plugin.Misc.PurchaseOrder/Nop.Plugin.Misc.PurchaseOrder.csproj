@@ -75,9 +75,6 @@
     <Compile Update="Areas\Admin\Models\AddProductToPurchaseOrderSearchModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Areas\Admin\Models\SupplierProductModel.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
     <Compile Update="Areas\Admin\Models\PurchaseOrderCreateModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>

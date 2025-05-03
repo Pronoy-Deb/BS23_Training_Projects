@@ -19,7 +19,6 @@ public class POViewLocationExpander : IViewLocationExpander
             viewLocations = new string[]
             {
                 $"/Plugins/Misc.PurchaseOrder/Areas/Admin/Views/{{0}}.cshtml",
-                $"/Plugins/Misc.PurchaseOrder/Areas/Admin/Views/PurchaseOrder/{{0}}.cshtml",
                 $"/Plugins/Misc.PurchaseOrder/Areas/Admin/Views/{{1}}/{{0}}.cshtml",
             }.Concat(viewLocations);
         }

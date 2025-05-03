@@ -104,10 +104,9 @@ else
 								@await Html.PartialAsync("Table", new DataTablesModel
   {
 	  Name = "products-grid",
-      UrlRead = new DataUrl("ProductAddPopupList", "PurchaseOrder", new RouteValueDictionary {
-          { "supplierId", Context.Request.Query["supplierId"] }
-      }),
-	  // UrlRead = new DataUrl("ProductAddPopupList", "PurchaseOrder", null),
+	  UrlRead = new DataUrl("ProductAddPopupList", "PurchaseOrder", new RouteValueDictionary {
+							{ "supplierId", Context.Request.Query["supplierId"] }
+							}),
 	  SearchButtonId = "search-products",
 	  Length = Model.PageSize,
 	  LengthMenu = Model.AvailablePageSizes,
@@ -159,7 +158,6 @@ else
 
 <script>
 	$(document).ready(function() {
-		// Attach click handler to save button
 		$('button[name="save"]').click(function(e) {
 			e.preventDefault();
 
@@ -175,15 +173,14 @@ else
 					ProductId: rowData.Id,
 					ProductName: rowData.Name,
 					ProductSku: rowData.Sku,
-					PictureThumbnailUrl: rowData.PictureThumbnailUrl, // Make sure this is included
-					QuantityToOrder: 1, // Default quantity
-					UnitCost: rowData.Price, // Default to product price
+					PictureThumbnailUrl: rowData.PictureThumbnailUrl, 
+					QuantityToOrder: 1,
+					UnitCost: rowData.Price,
 					Selected: true
 				});
 			});
 
 			if (selectedProducts.length > 0) {
-				// Pass data back to the parent window
 				window.opener.updateSelectedProducts(selectedProducts);
 				window.close();
 			} else {

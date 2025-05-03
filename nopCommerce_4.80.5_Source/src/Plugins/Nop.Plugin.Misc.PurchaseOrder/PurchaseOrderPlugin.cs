@@ -8,12 +8,10 @@ using Nop.Web.Framework.Menu;
 namespace Nop.Plugin.Misc.PurchaseOrder;
 public class PurchaseOrderPlugin : BasePlugin
 {
-    private readonly IPermissionService _permissionService;
     private readonly ILocalizationService _localizationService;
 
-    public PurchaseOrderPlugin(IPermissionService permissionService, ILocalizationService localizationService)
+    public PurchaseOrderPlugin(ILocalizationService localizationService)
     {
-        _permissionService = permissionService;
         _localizationService = localizationService;
     }
 
@@ -50,11 +48,13 @@ public class PurchaseOrderPlugin : BasePlugin
         ["admin.orders.products.grandtotal"] = "Grand Total",
         ["Admin.Common.NoDataAvailableInTable"] = "No data available in table",
         ["plugins.misc.purchaseorder.ordersnapshot"] = "Order Details ",
-        ["Admin.Common.BackToList"] = "Back to list"
+        ["Admin.Common.BackToList"] = "Back to list",
+
+        ["Admin.PurchaseOrder.Fields.SelectedSupplierId"] = "Supplier",
+        ["Admin.PurchaseOrder.Fields.SelectedSupplierId.Hind"] = "Select Supplier",
+
     };
 
-    public bool HideInWidgetList => false;
-     
     public override async Task InstallAsync()
     {
         await _localizationService.AddOrUpdateLocaleResourceAsync(new Dictionary<string, string>(_resourceString));

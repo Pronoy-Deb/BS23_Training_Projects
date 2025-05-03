@@ -16,6 +16,6 @@ public record PurchaseOrderSnapshotModel
         public string PictureThumbnailUrl { get; set; }
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
-        public decimal TotalPrice => Quantity * UnitPrice; // Add this calculated property
+        public decimal TotalPrice => Quantity * UnitPrice;
     }
 }
