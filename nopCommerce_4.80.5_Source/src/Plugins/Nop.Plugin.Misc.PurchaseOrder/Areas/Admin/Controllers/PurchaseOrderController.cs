@@ -12,7 +12,8 @@ using Nop.Web.Framework.Mvc.Filters;
 using Nop.Web.Areas.Admin.Models.Catalog;
 using Nop.Web.Framework.Models.Extensions;
 using Nop.Core.Domain.Media;
-using Microsoft.Extensions.FileProviders;
+using Nop.Core.Domain.Catalog;
+using Nop.Core;
 
 namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
 {
@@ -29,6 +30,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
         private readonly IPictureService _pictureService;
         private readonly IRepository<PurchaseOrderProductRecord> _purchaseOrderProductRepository;
         private readonly MediaSettings _mediaSettings;
+        private readonly IPurchaseOrderService _purchaseOrderService;
         public PurchaseOrderController(IPurchaseOrderModelFactory purchaseOrderModelFactory,
             IProductSupplierService productSupplierService,
             ISuppliersService suppliersService,
@@ -37,7 +39,8 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
             IPurchaseOrderSupplierService purchaseOrderSupplierService,
             IPictureService pictureService,
             IRepository<PurchaseOrderProductRecord> purchaseOrderProductRepository,
-            MediaSettings mediaSettings)
+            MediaSettings mediaSettings,
+            IPurchaseOrderService purchaseOrderService)
         {
             _purchaseOrderModelFactory = purchaseOrderModelFactory;
             _productSupplierService = productSupplierService;
@@ -48,6 +51,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
             _pictureService = pictureService;
             _purchaseOrderProductRepository = purchaseOrderProductRepository;
             _mediaSettings = mediaSettings;
+            _purchaseOrderService = purchaseOrderService;
         }
 
         public async Task<IActionResult> List()
@@ -160,10 +164,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> ProductAddPopup(AddProductToPurchaseOrderSearchModel searchModel, int supplierId)
         {
-            // Get product IDs assigned to the supplier
             var filteredProducts = await _productSupplierService.GetProductsBySupplierIdAsync(supplierId);
-
-            // Now filter the products based on those IDs and other search filters
             var products = await _purchaseOrderSupplierService.SearchProductsBySupplierAsync(
                 supplierId: supplierId,
                 products: filteredProducts,
@@ -172,19 +173,31 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
                 pageSize: searchModel.PageSize
             );
 
-            // Map to model
-            var model = new ProductListModel().PrepareToGrid(searchModel, products, () =>
-            {
-                return products.Select(p =>
-                {
-                    var productModel = p.ToModel<ProductModel>();
-                    // Perform any additional custom mapping if needed
-                    productModel.StockQuantity = p.StockQuantity;
-                    return productModel;
-                });
-            });
+            // Prepare the model with explicit type parameters
+            var model = await ModelExtensions.PrepareToGridAsync<ProductListModel, ProductModel, Product>(
+                new ProductListModel(),
+                searchModel,
+                products,
+                () => TransformProductsAsync(products));
 
             return Json(model);
+        }
+
+        private async IAsyncEnumerable<ProductModel> TransformProductsAsync(IPagedList<Product> products)
+        {
+            foreach (var p in products)
+            {
+                var productModel = p.ToModel<ProductModel>();
+                productModel.StockQuantity = p.StockQuantity;
+
+                // Get product picture
+                var picture = (await _productService.GetProductPicturesByProductIdAsync(p.Id)).FirstOrDefault();
+                productModel.PictureThumbnailUrl = await _pictureService.GetPictureUrlAsync(
+                    picture?.PictureId ?? 0,
+                    _mediaSettings.ProductThumbPictureSize);
+
+                yield return productModel;
+            }
         }
 
         public async Task<IActionResult> ViewSnapshot(int id)

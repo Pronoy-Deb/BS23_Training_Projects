@@ -6,7 +6,6 @@ using Nop.Core.Infrastructure;
 using Nop.Plugin.Misc.Suppliers.Services;
 using Nop.Plugin.Misc.PurchaseOrder.Services;
 using Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories;
-using Nop.Plugin.Misc.PurchaseOrder.ExportImport;
 
 namespace Nop.Plugin.Misc.PurchaseOrder.Infrastructure
 {
@@ -18,8 +17,6 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Infrastructure
             services.AddScoped<IPurchaseOrderSupplierService, PurchaseOrderSupplierService>();
             services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
             services.AddScoped<IPurchaseOrderModelFactory, PurchaseOrderModelFactory>();
-            services.AddScoped<IPurchaseOrderExportManager, PurchaseOrderExportManager>();
-
             services.Configure<RazorViewEngineOptions>(options =>
             {
                 options.ViewLocationExpanders.Add(new POViewLocationExpander());

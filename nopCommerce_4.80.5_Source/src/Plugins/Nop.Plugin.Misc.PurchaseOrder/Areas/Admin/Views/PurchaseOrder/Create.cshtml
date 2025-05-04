@@ -11,12 +11,16 @@
 	<div class="content-header clearfix">
 		<h1 class="float-left">
 			@T("Admin.PurchaseOrders.SelectProducts")
+			<small>
+				<i class="fas fa-arrow-circle-left"></i>
+				<a asp-action="List">@T("Admin.Orders.BackToList")</a>
+			</small>
 		</h1>
 		<div class="float-right">
-            <button type="submit" class="btn bg-success" id="place-order-button">
-                <i class="fas fa-check"></i>
-                @T("Admin.Catalog.PurchaseOrder.PlaceOrder")
-            </button>
+			<button type="submit" class="btn bg-success" id="place-order-button">
+				<i class="fas fa-check"></i>
+				@T("Admin.Catalog.PurchaseOrder.PlaceOrder")
+			</button>
 		</div>
 	</div>
 
@@ -49,8 +53,8 @@
 									<thead>
 										<tr>
 											<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Picture")</th>
-                                            <th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.ProductName")</th>
-                                            <th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Catalog.Products.Fields.StockQuantity")</th>
+											<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.ProductName")</th>
+											<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Catalog.Products.Fields.StockQuantity")</th>
 											<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Price")</th>
 											<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Quantity")</th>
 											<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Total")</th>
@@ -63,29 +67,29 @@
 											foreach (var item in Model.SelectedProducts.Where(p => p.Selected))
 											{
 												<tr data-product-id="@item.ProductId">
-                                                    <td class="text-center">
-                                                        <img src="@item.PictureThumbnailUrl" alt="" width="50" />
-                                                    </td>
-                                                    <td>
-                                                        <input type="hidden" name="SelectedProducts[@item.ProductId].ProductId" value="@item.ProductId" />
-                                                        <input type="hidden" name="SelectedProducts[@item.ProductId].Selected" value="true" />
-                                                        <input type="hidden" name="SelectedProducts[@item.ProductId].ProductName" value="@item.ProductName" />
-                                                        <input type="hidden" name="SelectedProducts[@item.ProductId].ProductSku" value="@item.ProductSku" />
-                                                        <input type="hidden" name="SelectedProducts[@item.ProductId].PictureThumbnailUrl" value="@item.PictureThumbnailUrl" />
-                                                        <input type="hidden" name="SelectedProducts[@item.ProductId].StockQuantity" value="@item.StockQuantity" />
-                                                        <input type="hidden" id="SelectedProductsJson" name="SelectedProductsJson" />
-                                                        <em>@item.ProductName</em>
-                                                        @if (!string.IsNullOrEmpty(item.ProductSku))
-                                                        {
-                                                            <p>
-                                                                <strong>@T("Admin.Orders.Products.SKU")</strong>: @item.ProductSku
-                                                            </p>
-                                                        }
-                                                    </td>
-                                                    <td class="text-center">
-                                                        <span class="stock-quantity-value">@(item.StockQuantity + item.QuantityToOrder)</span>
-                                                        <input type="hidden" class="stock-quantity-input" value="@item.StockQuantity" />
-                                                    </td>
+													<td class="text-center">
+														<img src="@item.PictureThumbnailUrl" alt="" width="50" />
+													</td>
+													<td>
+														<input type="hidden" name="SelectedProducts[@item.ProductId].ProductId" value="@item.ProductId" />
+														<input type="hidden" name="SelectedProducts[@item.ProductId].Selected" value="true" />
+														<input type="hidden" name="SelectedProducts[@item.ProductId].ProductName" value="@item.ProductName" />
+														<input type="hidden" name="SelectedProducts[@item.ProductId].ProductSku" value="@item.ProductSku" />
+														<input type="hidden" name="SelectedProducts[@item.ProductId].PictureThumbnailUrl" value="@item.PictureThumbnailUrl" />
+														<input type="hidden" name="SelectedProducts[@item.ProductId].StockQuantity" value="@item.StockQuantity" />
+														<input type="hidden" id="SelectedProductsJson" name="SelectedProductsJson" />
+														<em>@item.ProductName</em>
+														@if (!string.IsNullOrEmpty(item.ProductSku))
+														{
+															<p>
+																<strong>@T("Admin.Orders.Products.SKU")</strong>: @item.ProductSku
+															</p>
+														}
+													</td>
+													<td class="text-center">
+														<span class="stock-quantity-value">@(item.StockQuantity + item.QuantityToOrder)</span>
+														<input type="hidden" class="stock-quantity-input" value="@item.StockQuantity" />
+													</td>
 													<td class="text-center">
 														<div id="pnlEditUnitCost@(item.ProductId)" style="display:none">
 															<input name="SelectedProducts[@item.ProductId].UnitCost"
@@ -372,7 +376,6 @@
 			return grandTotal;
 		}
 
-
 	// Called from popup
 	function addProductsToCreateTable(products) {
 		products.forEach(function (product) {
@@ -398,6 +401,9 @@
 
 		products.forEach(function(product) {
 			var imageUrl = product.PictureThumbnailUrl || '/images/default-image.png';
+			if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+			imageUrl = '/' + imageUrl;
+		}
 			var rowHtml = `
 				<tr data-product-id="${product.ProductId}">
 					<td class="text-center">
@@ -440,7 +446,7 @@
 								   value="${product.QuantityToOrder}"
 								   id="quantity${product.ProductId}"
 								   min="1"
-								   max="${product.StockQuantity || 1000}"
+								   max="${product.StockQuantity}"
 								   class="form-control input-sm"/>
 						</div>
 						<div id="displayQuantity${product.ProductId}">
