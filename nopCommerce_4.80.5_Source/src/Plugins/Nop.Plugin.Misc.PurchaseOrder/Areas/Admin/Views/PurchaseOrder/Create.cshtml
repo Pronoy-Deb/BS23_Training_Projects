@@ -45,7 +45,7 @@
 					<div class="card card-default">
 						<div class="card-body">
 							<div class="table-responsive">
-								<table id="purchaseorder-products-grid" class="table table-bordered table-hover dataTable">
+								<table id="purchaseorder-products-grid" class="table table-bordered table-hover dataTable dtr-inline table-striped">
 									<thead>
 										<tr>
 											<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Picture")</th>
@@ -83,7 +83,8 @@
                                                         }
                                                     </td>
                                                     <td class="text-center">
-                                                        @item.StockQuantity
+                                                        <span class="stock-quantity-value">@(item.StockQuantity + item.QuantityToOrder)</span>
+                                                        <input type="hidden" class="stock-quantity-input" value="@item.StockQuantity" />
                                                     </td>
 													<td class="text-center">
 														<div id="pnlEditUnitCost@(item.ProductId)" style="display:none">
@@ -180,7 +181,8 @@
 			scrollY: false,
 			scrollCollapse: true,
 			destroy: true,
-			retrieve: true
+			retrieve: true,
+			stripeClasses: ['odd', 'even']
 		});
 
 		// Initialize popup window for adding products
@@ -209,24 +211,32 @@
 			$('#displayQuantity' + productId).text(quantity);
 			$('#displayUnitCost' + productId).text(unitCost.toFixed(2));
 
+			$('input[name="SelectedProducts[' + productId + '].QuantityToOrder"]').val(quantity);
+			$('input[name="SelectedProducts[' + productId + '].UnitCost"]').val(unitCost);
+
 			// Update row total (5th column)
 			var rowTotal = (quantity * unitCost).toFixed(2);
-			$(this).closest('tr').find('td').eq(4).text(rowTotal);
+			$(this).closest('tr').find('td').eq(5).text(rowTotal);
 
 			updateGrandTotal();
 			toggleEditMode(productId, false);
 		});
 
 		// Handle cancel button click
-		$(document).on('click', '.cancel-edit-btn', function() {
-			var productId = $(this).data('product-id');
-			toggleEditMode(productId, false);
+			$(document).on('click', '.cancel-edit-btn', function() {
+		var productId = $(this).data('product-id');
+		var originalQuantity = $('#displayQuantity' + productId).text();
+		var originalUnitCost = $('#displayUnitCost' + productId).text();
 
-			var originalQuantity = $('#displayQuantity' + productId).text();
-			var originalUnitCost = $('#displayUnitCost' + productId).text();
-			$('#quantity' + productId).val(originalQuantity);
-			$('#unitCost' + productId).val(originalUnitCost);
-		});
+		// Reset the input fields
+		$('#quantity' + productId).val(originalQuantity);
+		$('#unitCost' + productId).val(originalUnitCost);
+
+		toggleEditMode(productId, false);
+
+		// Update the stock quantity display
+		updateGrandTotal();
+	});
 
 		// Handle delete button click
 		 $(document).on('click', '.delete-product-btn', function(e) {
@@ -329,6 +339,8 @@
 				$('.cancel-edit-btn[data-product-id="' + productId + '"]').show();
 				$('#quantity' + productId).prop("disabled", false);
 				$('#unitCost' + productId).prop("disabled", false);
+				$('#displayQuantity' + productId).hide();
+				$('#displayUnitCost' + productId).hide();
 				$('.edit-product-btn[data-product-id="' + productId + '"]').hide();
 				$('.delete-product-btn[data-product-id="' + productId + '"]').hide();
 			} else {
@@ -338,6 +350,8 @@
 				$('.cancel-edit-btn[data-product-id="' + productId + '"]').hide();
 				$('#quantity' + productId).prop("disabled", true);
 				$('#unitCost' + productId).prop("disabled", true);
+				$('#displayQuantity' + productId).show();
+				$('#displayUnitCost' + productId).show();
 				$('.edit-product-btn[data-product-id="' + productId + '"]').show();
 				$('.delete-product-btn[data-product-id="' + productId + '"]').show();
 			}
@@ -349,6 +363,9 @@
 				var quantity = parseFloat($(this).find('[id^="displayQuantity"]').text().trim()) || 0;
 				var unitCost = parseFloat($(this).find('[id^="displayUnitCost"]').text().trim()) || 0;
 				grandTotal += quantity * unitCost;
+
+				var originalStock = parseFloat($(this).find('.stock-quantity-input').val()) || 0;
+				$(this).find('.stock-quantity-value').text(originalStock + quantity);
 			});
 
 			$('#grand-total-amount').text(grandTotal.toFixed(2));
@@ -391,13 +408,16 @@
 						<input type="hidden" name="SelectedProducts[${product.ProductId}].Selected" value="true" />
 						<input type="hidden" name="SelectedProducts[${product.ProductId}].ProductName" value="${product.ProductName}" />
 						<input type="hidden" name="SelectedProducts[${product.ProductId}].ProductSku" value="${product.ProductSku}" />
-						<input type="hidden" name="SelectedProducts[${product.ProductId}].PictureThumbnailUrl" value="${product.PictureThumbnailUrl}" />
-						<input type="hidden" name="SelectedProducts[${product.ProductId}].StockQuantity" value="${product.StockQuantity}" />
+						<input type="hidden" name="SelectedProducts[${product.ProductId}].PictureThumbnailUrl" value="${product.PictureThumbnailUrl || '/images/default-image.png'}" />
+						<input type="hidden" name="SelectedProducts[${product.ProductId}].StockQuantity" value="${product.StockQuantity || 0}" />
+						<input type="hidden" name="SelectedProducts[${product.ProductId}].UnitCost" value="${product.UnitCost || 0}" />
+						<input type="hidden" name="SelectedProducts[${product.ProductId}].QuantityToOrder" value="${product.QuantityToOrder || 1}" />
 						<em>${product.ProductName}</em>
 						${product.ProductSku ? '<p><strong>@T("Admin.Orders.Products.SKU")</strong>: ' + product.ProductSku + '</p>' : ''}
 					</td>
-					<td class="text-center">
-					${product.StockQuantity || 0}
+					<td class="text-center stock-quantity-cell">
+						<span class="stock-quantity-value">${(product.StockQuantity || 0) + (product.QuantityToOrder || 1)}</span>
+						<input type="hidden" class="stock-quantity-input" value="${product.StockQuantity || 0}" />
 					</td>
 					<td class="text-center">
 						<div id="pnlEditUnitCost${product.ProductId}" style="display:none">
@@ -420,7 +440,7 @@
 								   value="${product.QuantityToOrder}"
 								   id="quantity${product.ProductId}"
 								   min="1"
-								   max="${product.StockQuantity || 1000}
+								   max="${product.StockQuantity || 1000}"
 								   class="form-control input-sm"/>
 						</div>
 						<div id="displayQuantity${product.ProductId}">
@@ -455,7 +475,6 @@
 				</tr>
 			`;
 			container.append(rowHtml);
-			table.row.add($(rowHtml)).draw();
 		});
 
 		updateGrandTotal();

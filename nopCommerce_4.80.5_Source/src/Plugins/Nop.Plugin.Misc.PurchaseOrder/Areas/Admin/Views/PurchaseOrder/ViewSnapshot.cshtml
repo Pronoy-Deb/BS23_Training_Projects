@@ -17,106 +17,106 @@
 </div>
 
 <div class="form-horizontal">
-    <div class="card card-default">
-        <div class="card-body">
-            <div class="form-group row">
-                <div class="col-md-6">
-                    <div class="form-group row">
-                        <div class="col-md-4">
-                            <nop-label asp-for="SupplierName" />
-                        </div>
-                        <div class="col-md-8">
-                            <div class="form-text-row">@Model.SupplierName</div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-4">
-                            <nop-label asp-for="OrderDate" />
-                        </div>
-                        <div class="col-md-8">
-                            <div class="form-text-row">@Model.OrderDate.ToString("g")</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group row">
-                        <div class="col-md-4">
-                            <nop-label asp-for="CreatedBy" />
-                        </div>
-                        <div class="col-md-8">
-                            <div class="form-text-row">@Model.CreatedBy</div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-4">
-                            <nop-label asp-for="TotalAmount" />
-                        </div>
-                        <div class="col-md-8">
-                            <div class="form-text-row">@Model.TotalAmount.ToString("N2")</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+	<div class="card card-default">
+		<div class="card-body">
+			<div class="form-group row">
+				<div class="col-md-6">
+					<div class="form-group row">
+						<div class="col-md-4">
+							<nop-label asp-for="SupplierName" />
+						</div>
+						<div class="col-md-8">
+							<div class="form-text-row">@Model.SupplierName</div>
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="col-md-4">
+							<nop-label asp-for="OrderDate" />
+						</div>
+						<div class="col-md-8">
+							<div class="form-text-row">@Model.OrderDate.ToString("g")</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group row">
+						<div class="col-md-4">
+							<nop-label asp-for="CreatedBy" />
+						</div>
+						<div class="col-md-8">
+							<div class="form-text-row">@Model.CreatedBy</div>
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="col-md-4">
+							<nop-label asp-for="TotalAmount" />
+						</div>
+						<div class="col-md-8">
+							<div class="form-text-row">@Model.TotalAmount.ToString("N2")</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
-            <div class="form-group row">
-                <div class="col-md-12">
-                    <table class="table table-hover table-bordered">
-                        <thead>
-                        <tr>
-							<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Picture")</th>
-							<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.ProductName")</th>
-							<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Price")</th>
-							<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Quantity")</th>
-							<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Total")</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @if (Model.Products.Any())
-                        {
-                            @foreach (var item in Model.Products)
-                            {
-                                <tr>
-                                    <td class="text-center">
-                                        <img src="@item.PictureThumbnailUrl" alt="" width="50" />
-                                    </td>
-                                    <td>
-                                        <em>@item.ProductName</em>
-                                        @if (!string.IsNullOrEmpty(item.ProductSku))
-                                        {
-                                            <p>
-                                                <strong>@T("Admin.Orders.Products.SKU")</strong><text>:</text>
-                                                @item.ProductSku
-                                            </p>
-                                        }
-                                    </td>
-                                    <td class="text-center">
-                                        @item.UnitPrice.ToString("N2")
-                                    </td>
-                                    <td class="text-center">
-                                        @item.Quantity
-                                    </td>
-                                    <td class="text-center">
-                                        @item.TotalPrice.ToString("N2")
-                                    </td>
-                                </tr>
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="5" class="text-center">@T("Admin.Common.NoDataAvailableInTable")</td>
-                            </tr>
-                        }
-                        </tbody>
-                        <tfoot>
-                        <tr>
-                            <td colspan="4" class="text-right"><strong>@T("Admin.Orders.Products.GrandTotal")</strong></td>
-                            <td class="text-center">@Model.TotalAmount.ToString("N2")</td>
-                        </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+			<div class="form-group row">
+				<div class="table-responsive">
+					<table class="table table-hover table-bordered text-center dataTable dtr-inline table-striped">
+						<thead>
+							<tr>
+								<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Picture")</th>
+								<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.ProductName")</th>
+								<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Price")</th>
+								<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Quantity")</th>
+								<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Total")</th>
+							</tr>
+						</thead>
+						<tbody>
+							@if (Model.Products.Any())
+							{
+								@foreach (var item in Model.Products)
+								{
+									<tr>
+										<td class="text-center">
+											<img src="@item.PictureThumbnailUrl" alt="" width="50" />
+										</td>
+										<td>
+											<em>@item.ProductName</em>
+											@if (!string.IsNullOrEmpty(item.ProductSku))
+											{
+												<p>
+													<strong>@T("Admin.Orders.Products.SKU")</strong><text>:</text>
+													@item.ProductSku
+												</p>
+											}
+										</td>
+										<td class="text-center">
+											@item.UnitPrice.ToString("N2")
+										</td>
+										<td class="text-center">
+											@item.Quantity
+										</td>
+										<td class="text-center">
+											@item.TotalPrice.ToString("N2")
+										</td>
+									</tr>
+								}
+							}
+							else
+							{
+								<tr>
+									<td colspan="5" class="text-center">@T("Admin.Common.NoDataAvailableInTable")</td>
+								</tr>
+							}
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="4" class="text-right"><strong>@T("Admin.Orders.Products.GrandTotal")</strong></td>
+								<td class="text-center">@Model.TotalAmount.ToString("N2")</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

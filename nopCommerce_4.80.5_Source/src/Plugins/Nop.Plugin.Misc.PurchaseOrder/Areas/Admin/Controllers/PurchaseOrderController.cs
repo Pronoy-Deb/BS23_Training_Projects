@@ -106,16 +106,11 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
                         var product = await _productService.GetProductByIdAsync(productModel.ProductId);
                         if (product == null)
                             continue;
-                        if (productModel.QuantityToOrder > product.StockQuantity)
-                        {
-                            return Json(new
-                            {
-                                success = false,
-                                message = $"Quantity for {product.Name} exceeds available stock ({product.StockQuantity})"
-                            });
-                        }
 
-                    var picture = (await _productService.GetProductPicturesByProductIdAsync(productModel.ProductId)).FirstOrDefault();
+                        product.StockQuantity += productModel.QuantityToOrder;
+                        await _productService.UpdateProductAsync(product);
+
+                        var picture = (await _productService.GetProductPicturesByProductIdAsync(productModel.ProductId)).FirstOrDefault();
                         var pictureUrl = await _pictureService.GetPictureUrlAsync(picture?.PictureId ?? 0);
 
                         var orderProduct = new PurchaseOrderProductRecord
@@ -163,55 +158,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [FormValueRequired("save")]
-        public async Task<IActionResult> ProductAddPopup(AddProductToPurchaseOrderModel model)
-        {
-            if (model.SelectedProductIds?.Any() != true)
-                return Json(new { success = false, message = "No products selected" });
-
-            var products = await _productService.GetProductsByIdsAsync(model.SelectedProductIds.ToArray());
-            var selectedProducts = new List<ProductSelectionModel>();
-
-            foreach (var product in products)
-            {
-                var productPictures = await _productService.GetProductPicturesByProductIdAsync(product.Id);
-                var productPicture = productPictures.FirstOrDefault();
-
-                Picture picture = null;
-                if (productPicture != null)
-                    picture = await _pictureService.GetPictureByIdAsync(productPicture.PictureId);
-
-                string thumbnailUrl;
-                if (picture != null)
-                {
-                    thumbnailUrl = (await _pictureService.GetPictureUrlAsync(
-                        picture,
-                        storeLocation: $"{Request.Scheme}://{Request.Host}"
-                    )).Url;
-                }
-                else
-                {
-                    thumbnailUrl = $"{Request.Scheme}://{Request.Host}/images/default-image.png";
-                }
-
-                selectedProducts.Add(new ProductSelectionModel
-                {
-                    ProductId = product.Id,
-                    ProductName = product.Name,
-                    ProductSku = product.Sku,
-                    PictureThumbnailUrl = thumbnailUrl,
-                    QuantityToOrder = 1,
-                    UnitCost = product.Price,
-                    StockQuantity = product.StockQuantity,
-                    Selected = true
-                });
-            }
-
-            return Json(new { success = true, products = selectedProducts });
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ProductAddPopupList(AddProductToPurchaseOrderSearchModel searchModel, int supplierId)
+        public async Task<IActionResult> ProductAddPopup(AddProductToPurchaseOrderSearchModel searchModel, int supplierId)
         {
             // Get product IDs assigned to the supplier
             var filteredProducts = await _productSupplierService.GetProductsBySupplierIdAsync(supplierId);
@@ -232,6 +179,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
                 {
                     var productModel = p.ToModel<ProductModel>();
                     // Perform any additional custom mapping if needed
+                    productModel.StockQuantity = p.StockQuantity;
                     return productModel;
                 });
             });
