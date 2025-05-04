@@ -43,18 +43,20 @@ public class PurchaseOrderPlugin : BasePlugin
         ["admin.purchaseorders.fields.quantity"] = "Quantity",
         ["admin.purchaseorders.fields.total"] = "Total",
 
-        ["Admin.PurchaseOrders.SelectSupplierWarning"] = "Please select a supplier first!",
-        ["Admin.Common.YesDelete"] = "Yes, Delete",
+        ["Admin.PurchaseOrders.SelectSupplierWarning"] = "Please select a supplier first",
+        ["Admin.Common.YesDelete"] = "Yes, delete",
         ["Admin.PurchaseOrders.SelectProductsWarning"] = "No products selected!",
         ["admin.orders.products.grandtotal"] = "Grand Total",
         ["Admin.Common.NoDataAvailableInTable"] = "No data available in table",
         ["plugins.misc.purchaseorder.ordersnapshot"] = "Order Details ",
-        ["Admin.Common.BackToList"] = "Back to list",
 
         ["Admin.PurchaseOrder.Fields.SelectedSupplierId"] = "Supplier",
-        ["Admin.PurchaseOrder.Fields.SelectedSupplierId.Hint"] = "Select a Supplier"
-    };
+        ["Admin.PurchaseOrder.Fields.SelectedSupplierId.Hint"] = "Select a Supplier",
 
+        ["Admin.PurchaseOrders.ChangeSupplierWarning"] = "Changing the supplier will clear the page. Want to continue?",
+        ["Admin.Common.YesContinue"] = "Yes, continue"
+    };
+        
     public override async Task InstallAsync()
     {
         await _localizationService.AddOrUpdateLocaleResourceAsync(new Dictionary<string, string>(_resourceString));

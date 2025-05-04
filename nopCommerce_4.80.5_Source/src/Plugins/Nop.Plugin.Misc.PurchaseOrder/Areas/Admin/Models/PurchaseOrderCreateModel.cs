@@ -7,7 +7,6 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Models
     public record PurchaseOrderCreateModel : BaseNopEntityModel
     {
         public DateTime OrderDate { get; set; }
-        public string OrderStatus { get; set; }
         public int PageSize { get; set; }
         public string AvailablePageSizes { get; set; }
         [NopResourceDisplayName("Admin.PurchaseOrder.Fields.SelectedSupplierId")]

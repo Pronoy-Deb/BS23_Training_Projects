@@ -1,5 +1,4 @@
-﻿@using Nop.Web.Areas.Admin.Components
-@model PurchaseOrderSearchModel
+﻿@model PurchaseOrderSearchModel
 
 @{
 	ViewBag.PageTitle = T("Plugins.Misc.PurchaseOrder.PurchaseOrders").Text;
@@ -201,7 +200,7 @@
                                     Title = @T("Plugins.Misc.PurchaseOrder.Fields.View").Text,
                                     Width = "50",
                                     ClassName = $"{NopColumnClassDefaults.CenterAll} {NopColumnClassDefaults.Button}",
-				                    Render = new RenderButtonView(new DataUrl("ViewSnapshot", "PurchaseOrder"))
+                                    Render = new RenderButtonView(new DataUrl("ViewSnapshot", "PurchaseOrder"))
                                 });
                             }
                             @await Html.PartialAsync("Table", gridModel)

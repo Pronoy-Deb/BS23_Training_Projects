@@ -199,6 +199,49 @@
 			OpenWindow('@(Url.Action("ProductAddPopup", "PurchaseOrder", new { btnId = "btnRefreshSelectedProducts", formId = "purchase-order-form" }))' + '&supplierId=' + supplierId, 800, 800, true);
 		});
 
+	var currentSupplierId = $('#@Html.IdFor(model => model.SelectedSupplierId)').val();
+	var pendingSupplierId = null;
+
+	// Handle supplier change
+	$('#@Html.IdFor(model => model.SelectedSupplierId)').on('change', function() {
+		var newSupplierId = $(this).val();
+		var hasProducts = hasProductsInTable();
+
+		if (currentSupplierId > 0 && newSupplierId != currentSupplierId && hasProducts) {
+			pendingSupplierId = newSupplierId;
+			$("#change-supplier-confirmation").modal('show');
+		} else {
+			currentSupplierId = newSupplierId;
+		}
+	});
+
+	// Handle confirmation to change supplier
+	$('#confirm-change-supplier-button').click(function() {
+		if (pendingSupplierId) {
+			$('#selected-products-container').empty();
+			$('#grand-total-amount').text('0.00');
+
+			$('#@Html.IdFor(model => model.SelectedSupplierId)').val(pendingSupplierId);
+			currentSupplierId = pendingSupplierId;
+
+			$("#change-supplier-confirmation").modal('hide');
+			pendingSupplierId = null;
+		}
+	});
+
+	// Reset if modal is closed without confirming
+	$('#change-supplier-confirmation').on('hidden.bs.modal', function() {
+		if (pendingSupplierId) {
+			// Revert to original selection
+			$('#@Html.IdFor(model => model.SelectedSupplierId)').val(currentSupplierId);
+			pendingSupplierId = null;
+		}
+	});
+
+	function hasProductsInTable() {
+		var rows = $('#selected-products-container tr[data-product-id]'); // Only count rows with product IDs
+		return rows.length > 0;
+	}
 		// Handle edit button click
 		$(document).on('click', '.edit-product-btn', function() {
 			var productId = $(this).data('product-id');
@@ -500,7 +543,25 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">@T("Admin.Common.NoCancel")</button>
-				<button type="button" id="delete-selected-product-confirmation-button" class="btn btn-primary">@T("Admin.Common.YesDelete")</button>
+				<button type="button" id="delete-selected-product-confirmation-button" class="btn btn-danger">@T("Admin.Common.YesDelete")</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="change-supplier-confirmation" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="change-supplier-confirmation-title">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="change-supplier-confirmation-title">@T("Admin.Common.AreYouSure")</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			</div>
+			<div class="modal-body">
+				@T("Admin.PurchaseOrders.ChangeSupplierWarning")
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">@T("Admin.Common.NoCancel")</button>
+				<button type="button" id="confirm-change-supplier-button" class="btn btn-danger">@T("Admin.Common.YesContinue")</button>
 			</div>
 		</div>
 	</div>

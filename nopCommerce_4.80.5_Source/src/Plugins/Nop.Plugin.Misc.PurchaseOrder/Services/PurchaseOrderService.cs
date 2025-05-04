@@ -26,7 +26,6 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Services
         {
             var purchaseOrderQuery = _purchaseOrderRepository.Table;
             var supplierQuery = _suppliersRepository.Table;
-            var productQuery = _productRepository.Table;
 
             var query = from po in purchaseOrderQuery
                 join supplier in supplierQuery on po.SupplierId equals supplier.Id
