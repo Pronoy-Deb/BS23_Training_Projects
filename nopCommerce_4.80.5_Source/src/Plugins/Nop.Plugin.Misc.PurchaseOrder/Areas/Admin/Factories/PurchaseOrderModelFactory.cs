@@ -22,7 +22,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
         private readonly IManufacturerService _manufacturerService;
         private readonly IStoreService _storeService;
         private readonly IVendorService _vendorService;
-        private readonly IProductService _productService;
+
         public PurchaseOrderModelFactory(
             IPurchaseOrderService purchaseOrderService,
             ISuppliersService supplierService,
@@ -30,8 +30,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
             ICategoryService categoryService,
             IManufacturerService manufacturerService,
             IStoreService storeService,
-            IVendorService vendorService,
-            IProductService productService)
+            IVendorService vendorService)
         {
             _purchaseOrderService = purchaseOrderService;
             _supplierService = supplierService;
@@ -40,7 +39,6 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
             _manufacturerService = manufacturerService;
             _storeService = storeService;
             _vendorService = vendorService;
-            _productService = productService;
         }
 
         public async Task<PurchaseOrderListModel> PreparePurchaseOrderListModelAsync(PurchaseOrderSearchModel searchModel)
@@ -89,7 +87,6 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
-            // Prepare available categories
             var categories = await _categoryService.GetAllCategoriesAsync(showHidden: true);
             searchModel.AvailableCategories.Add(new SelectListItem
             {
@@ -99,7 +96,6 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
             foreach (var category in categories)
                 searchModel.AvailableCategories.Add(new SelectListItem { Text = category.Name, Value = category.Id.ToString() });
 
-            // Prepare available manufacturers
             var manufacturers = await _manufacturerService.GetAllManufacturersAsync(showHidden: true);
             searchModel.AvailableManufacturers.Add(new SelectListItem
             {
@@ -118,13 +114,11 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
             foreach (var store in stores)
                 searchModel.AvailableStores.Add(new SelectListItem { Text = store.Name, Value = store.Id.ToString() });
 
-            // Prepare available vendors
             var vendors = await _vendorService.GetAllVendorsAsync(showHidden: true);
             searchModel.AvailableVendors.Add(new SelectListItem { Text = await _localizationService.GetResourceAsync("Admin.Common.All"), Value = "0" });
             foreach (var vendor in vendors)
                 searchModel.AvailableVendors.Add(new SelectListItem { Text = vendor.Name, Value = vendor.Id.ToString() });
 
-            // Prepare available product types
             searchModel.AvailableProductTypes.Add(new SelectListItem { Text = await _localizationService.GetResourceAsync("Admin.Common.All"), Value = "0" });
             foreach (var productType in Enum.GetValues(typeof(ProductType)).Cast<ProductType>())
             {
@@ -136,7 +130,6 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
                 });
             }
 
-            // Set grid page size
             searchModel.SetGridPageSize();
 
             return searchModel;

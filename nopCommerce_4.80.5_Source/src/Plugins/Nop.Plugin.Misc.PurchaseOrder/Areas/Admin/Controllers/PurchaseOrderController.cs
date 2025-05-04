@@ -14,6 +14,7 @@ using Nop.Web.Framework.Models.Extensions;
 using Nop.Core.Domain.Media;
 using Nop.Core.Domain.Catalog;
 using Nop.Core;
+using Nop.Services.Messages;
 
 namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
 {
@@ -30,7 +31,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
         private readonly IPictureService _pictureService;
         private readonly IRepository<PurchaseOrderProductRecord> _purchaseOrderProductRepository;
         private readonly MediaSettings _mediaSettings;
-        private readonly IPurchaseOrderService _purchaseOrderService;
+        private readonly INotificationService _notificationService;
         public PurchaseOrderController(IPurchaseOrderModelFactory purchaseOrderModelFactory,
             IProductSupplierService productSupplierService,
             ISuppliersService suppliersService,
@@ -40,7 +41,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
             IPictureService pictureService,
             IRepository<PurchaseOrderProductRecord> purchaseOrderProductRepository,
             MediaSettings mediaSettings,
-            IPurchaseOrderService purchaseOrderService)
+            INotificationService notificationService)
         {
             _purchaseOrderModelFactory = purchaseOrderModelFactory;
             _productSupplierService = productSupplierService;
@@ -51,7 +52,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
             _pictureService = pictureService;
             _purchaseOrderProductRepository = purchaseOrderProductRepository;
             _mediaSettings = mediaSettings;
-            _purchaseOrderService = purchaseOrderService;
+            _notificationService = notificationService;
         }
 
         public async Task<IActionResult> List()
@@ -131,6 +132,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
                         await _purchaseOrderProductRepository.InsertAsync(orderProduct);
                     }
                 }
+                _notificationService.SuccessNotification("The order is successfully placed");
 
                 return Json(new
                 {
@@ -165,6 +167,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
         public async Task<IActionResult> ProductAddPopup(AddProductToPurchaseOrderSearchModel searchModel, int supplierId)
         {
             var filteredProducts = await _productSupplierService.GetProductsBySupplierIdAsync(supplierId);
+
             var products = await _purchaseOrderSupplierService.SearchProductsBySupplierAsync(
                 supplierId: supplierId,
                 products: filteredProducts,
@@ -173,8 +176,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
                 pageSize: searchModel.PageSize
             );
 
-            // Prepare the model with explicit type parameters
-            var model = await ModelExtensions.PrepareToGridAsync<ProductListModel, ProductModel, Product>(
+            var model = await ModelExtensions.PrepareToGridAsync(
                 new ProductListModel(),
                 searchModel,
                 products,
@@ -190,7 +192,6 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
                 var productModel = p.ToModel<ProductModel>();
                 productModel.StockQuantity = p.StockQuantity;
 
-                // Get product picture
                 var picture = (await _productService.GetProductPicturesByProductIdAsync(p.Id)).FirstOrDefault();
                 productModel.PictureThumbnailUrl = await _pictureService.GetPictureUrlAsync(
                     picture?.PictureId ?? 0,

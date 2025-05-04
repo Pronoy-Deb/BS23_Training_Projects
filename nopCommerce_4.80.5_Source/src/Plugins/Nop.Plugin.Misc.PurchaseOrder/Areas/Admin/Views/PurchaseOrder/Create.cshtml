@@ -118,7 +118,7 @@
 														</div>
 													</td>
 													<td class="text-center">
-														@((item.QuantityToOrder * item.UnitCost).ToString("0.00"))
+														$@((item.QuantityToOrder * item.UnitCost).ToString("0.00"))
 													</td>
 													<td class="text-center">
 														<button type="button" class="btn btn-default edit-product-btn"
@@ -150,7 +150,7 @@
 										<tr>
 											<td colspan="5" class="text-right"><strong>@T("Admin.Orders.Products.GrandTotal")</strong></td>
 											<td class="text-center" id="grand-total-amount">
-												@(Model.SelectedProducts?.Where(p => p.Selected).Sum(p => p.QuantityToOrder * p.UnitCost).ToString("0.00") ?? "0.00")
+												$@(Model.SelectedProducts?.Where(p => p.Selected).Sum(p => p.QuantityToOrder * p.UnitCost).ToString("0.00") ?? "0.00")
 											</td>
 											<td></td>
 										</tr>
@@ -229,17 +229,15 @@
 		}
 	});
 
-	// Reset if modal is closed without confirming
 	$('#change-supplier-confirmation').on('hidden.bs.modal', function() {
 		if (pendingSupplierId) {
-			// Revert to original selection
 			$('#@Html.IdFor(model => model.SelectedSupplierId)').val(currentSupplierId);
 			pendingSupplierId = null;
 		}
 	});
 
 	function hasProductsInTable() {
-		var rows = $('#selected-products-container tr[data-product-id]'); // Only count rows with product IDs
+		var rows = $('#selected-products-container tr[data-product-id]');
 		return rows.length > 0;
 	}
 		// Handle edit button click
@@ -261,9 +259,8 @@
 			$('input[name="SelectedProducts[' + productId + '].QuantityToOrder"]').val(quantity);
 			$('input[name="SelectedProducts[' + productId + '].UnitCost"]').val(unitCost);
 
-			// Update row total (5th column)
 			var rowTotal = (quantity * unitCost).toFixed(2);
-			$(this).closest('tr').find('td').eq(5).text(rowTotal);
+			$(this).closest('tr').find('td').eq(5).html('$' + rowTotal);
 
 			updateGrandTotal();
 			toggleEditMode(productId, false);
@@ -275,7 +272,6 @@
 		var originalQuantity = $('#displayQuantity' + productId).text();
 		var originalUnitCost = $('#displayUnitCost' + productId).text();
 
-		// Reset the input fields
 		$('#quantity' + productId).val(originalQuantity);
 		$('#unitCost' + productId).val(originalUnitCost);
 
@@ -301,10 +297,6 @@
 
 		// Update grand total after deletion
 		updateGrandTotal();
-
-		if ($('#selected-products-container tr').length === 0) {
-			alert('@T("Admin.PurchaseOrders.SelectProductsWarning")');
-		}
 	});
 
 		// Form submission handler
@@ -404,20 +396,23 @@
 			}
 		}
 
-		function updateGrandTotal() {
-			var grandTotal = 0;
-			$('#selected-products-container tr').each(function() {
-				var quantity = parseFloat($(this).find('[id^="displayQuantity"]').text().trim()) || 0;
-				var unitCost = parseFloat($(this).find('[id^="displayUnitCost"]').text().trim()) || 0;
-				grandTotal += quantity * unitCost;
+			function updateGrandTotal() {
+		var grandTotal = 0;
+		$('#selected-products-container tr').each(function() {
+			var quantity = parseFloat($(this).find('[id^="displayQuantity"]').text().trim()) || 0;
+			var unitCost = parseFloat($(this).find('[id^="displayUnitCost"]').text().trim()) || 0;
+			grandTotal += quantity * unitCost;
 
-				var originalStock = parseFloat($(this).find('.stock-quantity-input').val()) || 0;
-				$(this).find('.stock-quantity-value').text(originalStock + quantity);
-			});
+			var originalStock = parseFloat($(this).find('.stock-quantity-input').val()) || 0;
+			$(this).find('.stock-quantity-value').text(originalStock + quantity);
 
-			$('#grand-total-amount').text(grandTotal.toFixed(2));
-			return grandTotal;
-		}
+			var rowTotal = (quantity * unitCost).toFixed(2);
+			$(this).find('td').eq(5).html(rowTotal);
+		});
+
+		$('#grand-total-amount').html(grandTotal.toFixed(2));
+		return grandTotal;
+	}
 
 	// Called from popup
 	function addProductsToCreateTable(products) {
@@ -461,8 +456,10 @@
 						<input type="hidden" name="SelectedProducts[${product.ProductId}].StockQuantity" value="${product.StockQuantity || 0}" />
 						<input type="hidden" name="SelectedProducts[${product.ProductId}].UnitCost" value="${product.UnitCost || 0}" />
 						<input type="hidden" name="SelectedProducts[${product.ProductId}].QuantityToOrder" value="${product.QuantityToOrder || 1}" />
-						<em>${product.ProductName}</em>
-						${product.ProductSku ? '<p><strong>@T("Admin.Orders.Products.SKU")</strong>: ' + product.ProductSku + '</p>' : ''}
+						<div class="text-center">
+							<em>${product.ProductName}</em>
+							${product.ProductSku ? '<p><strong>@T("Admin.Orders.Products.SKU")</strong>: ' + product.ProductSku + '</p>' : ''}
+						</div>
 					</td>
 					<td class="text-center stock-quantity-cell">
 						<span class="stock-quantity-value">${(product.StockQuantity || 0) + (product.QuantityToOrder || 1)}</span>

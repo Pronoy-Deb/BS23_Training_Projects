@@ -104,7 +104,7 @@ public class EventConsumer : IConsumer<AdminMenuCreatedEvent>
                 SystemName = "Misc.Suppliers",
                 Title = "Suppliers",
                 Url = eventMessage.GetMenuItemUrl("Suppliers", "List"),
-                IconClass = "far fa-dot-circle",
+                IconClass = "fas fa-truck",
                 Visible = true,
             });
     }

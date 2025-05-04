@@ -45,7 +45,7 @@ public class PurchaseOrderPlugin : BasePlugin
 
         ["Admin.PurchaseOrders.SelectSupplierWarning"] = "Please select a supplier first",
         ["Admin.Common.YesDelete"] = "Yes, delete",
-        ["Admin.PurchaseOrders.SelectProductsWarning"] = "No products selected!",
+        ["Admin.PurchaseOrders.SelectProductsWarning"] = "No products added",
         ["admin.orders.products.grandtotal"] = "Grand Total",
         ["Admin.Common.NoDataAvailableInTable"] = "No data available in table",
         ["plugins.misc.purchaseorder.ordersnapshot"] = "Order Details ",
@@ -54,7 +54,8 @@ public class PurchaseOrderPlugin : BasePlugin
         ["Admin.PurchaseOrder.Fields.SelectedSupplierId.Hint"] = "Select a Supplier",
 
         ["Admin.PurchaseOrders.ChangeSupplierWarning"] = "Changing the supplier will clear the page. Want to continue?",
-        ["Admin.Common.YesContinue"] = "Yes, continue"
+        ["Admin.Common.YesContinue"] = "Yes, continue",
+        ["admin.common.processing"] = "Processing"
     };
         
     public override async Task InstallAsync()
