@@ -55,7 +55,23 @@ public class PurchaseOrderPlugin : BasePlugin
 
         ["Admin.PurchaseOrders.ChangeSupplierWarning"] = "Table data will be cleared. Want to continue?",
         ["Admin.Common.YesContinue"] = "Yes, continue",
-        ["admin.common.processing"] = "Processing"
+        ["admin.common.processing"] = "Processing",
+
+        ["Plugins.Misc.PurchaseOrder.PurchaseOrderView.OrderDate"] = "Order Date",
+        ["Plugins.Misc.PurchaseOrder.PurchaseOrderView.SupplierName"] = "Supplier Name",
+        ["Plugins.Misc.PurchaseOrder.PurchaseOrderView.TotalAmount"] = "Total Amount",
+        ["Plugins.Misc.PurchaseOrder.PurchaseOrderView.CreatedBy"] = "Created By",
+
+        ["Plugins.Misc.PurchaseOrder.PurchaseOrderPopup.SearchCategoryId"] = "Category Id",
+        ["Plugins.Misc.PurchaseOrder.PurchaseOrderPopup.SearchCategoryId.Hint"] = "Search by Category Id",
+        ["Plugins.Misc.PurchaseOrder.PurchaseOrderPopup.SearchManufacturerId"] = "Manufacturer Id",
+        ["Plugins.Misc.PurchaseOrder.PurchaseOrderPopup.SearchManufacturerId.Hint"] = "Search by Manufacturer Id",
+        ["Plugins.Misc.PurchaseOrder.PurchaseOrderPopup.SearchStoreId"] = "Store Id",
+        ["Plugins.Misc.PurchaseOrder.PurchaseOrderPopup.SearchStoreId.Hint"] = "Search by Store Id",
+        ["Plugins.Misc.PurchaseOrder.PurchaseOrderPopup.SearchVendorId"] = "Vendor Id",
+        ["Plugins.Misc.PurchaseOrder.PurchaseOrderPopup.SearchVendorId.Hint"] = "Search by Vendor Id",
+        ["Plugins.Misc.PurchaseOrder.PurchaseOrderPopup.SearchProductTypeId"] = "Product Type Id",
+        ["Plugins.Misc.PurchaseOrder.PurchaseOrderPopup.SearchProductTypeId.Hint"] = "Search by Product Type Id"
     };
         
     public override async Task InstallAsync()
