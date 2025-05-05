@@ -132,7 +132,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
                         await _purchaseOrderProductRepository.InsertAsync(orderProduct);
                     }
                 }
-                _notificationService.SuccessNotification("The order is successfully placed");
+                _notificationService.SuccessNotification("The purchase order is placed successfully");
 
                 return Json(new
                 {

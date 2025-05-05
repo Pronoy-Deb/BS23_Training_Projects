@@ -28,20 +28,17 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Services
             if (supplierId == 0)
                 throw new ArgumentException("Supplier ID must be provided.", nameof(supplierId));
 
-            // Get product IDs assigned to the supplier
             var supplierProductIds = await _productSupplierRepository.Table
                 .Where(ps => ps.SupplierId == supplierId)
                 .Select(ps => ps.ProductId)
                 .ToListAsync();
 
-            // Filter by provided products if any
             if (products != null && products.Any())
             {
                 var inputProductIds = products.Select(p => p.Id).ToList();
                 supplierProductIds = supplierProductIds.Intersect(inputProductIds).ToList();
             }
 
-            // Build the base query
             var productsQuery = _productRepository.Table
                 .Where(p => supplierProductIds.Contains(p.Id) && !p.Deleted);
 

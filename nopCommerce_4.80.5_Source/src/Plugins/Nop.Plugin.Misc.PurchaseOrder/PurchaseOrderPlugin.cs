@@ -53,7 +53,7 @@ public class PurchaseOrderPlugin : BasePlugin
         ["Admin.PurchaseOrder.Fields.SelectedSupplierId"] = "Supplier",
         ["Admin.PurchaseOrder.Fields.SelectedSupplierId.Hint"] = "Select a Supplier",
 
-        ["Admin.PurchaseOrders.ChangeSupplierWarning"] = "Changing the supplier will clear the page. Want to continue?",
+        ["Admin.PurchaseOrders.ChangeSupplierWarning"] = "Table data will be cleared. Want to continue?",
         ["Admin.Common.YesContinue"] = "Yes, continue",
         ["admin.common.processing"] = "Processing"
     };

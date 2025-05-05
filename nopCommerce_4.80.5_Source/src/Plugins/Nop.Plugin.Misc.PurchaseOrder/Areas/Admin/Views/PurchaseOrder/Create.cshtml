@@ -1,6 +1,7 @@
 ﻿@model PurchaseOrderCreateModel
 
 @{
+	Layout = "_AdminLayout";
 	ViewBag.PageTitle = T("Admin.PurchaseOrders.SelectProducts").Text;
 	NopHtml.SetActiveMenuItemSystemName("Misc.PurchaseOrder");
 }
@@ -101,7 +102,7 @@
 																   class="form-control input-sm" />
 														</div>
 														<div id="displayUnitCost@(item.ProductId)">
-															@item.UnitCost.ToString("0.00")
+															$@item.UnitCost.ToString("0.00")
 														</div>
 													</td>
 													<td class="text-center">
@@ -173,98 +174,123 @@
 
 <script>
 	$(document).ready(function() {
-		var table = $('#purchaseorder-products-grid').DataTable({
-			paging: false,
-			searching: false,
-			info: false,
-			ordering: false,
-			columnDefs: [
-				{ orderable: false, targets: '_all' }
-			],
-			deferRender: true,
-			scrollY: false,
-			scrollCollapse: true,
-			destroy: true,
-			retrieve: true,
-			stripeClasses: ['odd', 'even']
-		});
 
-		// Initialize popup window for adding products
-		$('#btnAddProduct').click(function() {
-			var supplierId = $('#@Html.IdFor(model => model.SelectedSupplierId)').val();
-			if (!supplierId || supplierId == 0) {
-				alert('@T("Admin.PurchaseOrders.SelectSupplierWarning")');
-				return;
-			}
-			OpenWindow('@(Url.Action("ProductAddPopup", "PurchaseOrder", new { btnId = "btnRefreshSelectedProducts", formId = "purchase-order-form" }))' + '&supplierId=' + supplierId, 800, 800, true);
-		});
+	var table = $('#purchaseorder-products-grid').DataTable({
+		"paging": false,
+		"searching": false,
+		"info": false,
+		"ordering": false,
+		"autoWidth": false,
+		"responsive": false,
+		"columnDefs": [
+			{ "targets": [0], "width": "80px" },
+			{ "targets": [3, 5], "className": "text-center" }
+		]
+	});
 
-	var currentSupplierId = $('#@Html.IdFor(model => model.SelectedSupplierId)').val();
-	var pendingSupplierId = null;
+	var initialSupplierId = $('#@Html.IdFor(model => model.SelectedSupplierId)').val();
+	var currentSupplierId = initialSupplierId;
 
-	// Handle supplier change
+	// Check if table has products
+	function hasProducts() {
+		return $('#selected-products-container tr[data-product-id]').length > 0;
+	}
+
+	// Open product popup window
+	function openProductPopup(supplierId) {
+		OpenWindow(
+			'@(Url.Action("ProductAddPopup", "PurchaseOrder", new { btnId = "btnRefreshSelectedProducts", formId = "purchase-order-form" }))' +
+			'&supplierId=' + supplierId,
+			800, 800, true
+		);
+	}
+
+	// Main click handler for Add Product button
+	$('#btnAddProduct').off('click').on('click', function() {
+		var selectedSupplierId = $('#@Html.IdFor(model => model.SelectedSupplierId)').val();
+
+		if (!selectedSupplierId || selectedSupplierId == 0) {
+			alert('@T("Admin.PurchaseOrders.SelectSupplierWarning")');
+			return;
+		}
+
+		if (hasProducts()) {
+			$('#clear-table-confirmation').data({
+				'action': 'add-product',
+				'supplier-id': selectedSupplierId
+			}).modal('show');
+		}
+		else {
+			openProductPopup(selectedSupplierId);
+		}
+	});
+
+	// Handle supplier dropdown change
 	$('#@Html.IdFor(model => model.SelectedSupplierId)').on('change', function() {
 		var newSupplierId = $(this).val();
-		var hasProducts = hasProductsInTable();
 
-		if (currentSupplierId > 0 && newSupplierId != currentSupplierId && hasProducts) {
-			pendingSupplierId = newSupplierId;
-			$("#change-supplier-confirmation").modal('show');
+		if (hasProducts() && newSupplierId != currentSupplierId) {
+			$('#clear-table-confirmation').data({
+				'action': 'change-supplier',
+				'supplier-id': newSupplierId
+			}).modal('show');
 		} else {
 			currentSupplierId = newSupplierId;
 		}
 	});
 
-	// Handle confirmation to change supplier
-	$('#confirm-change-supplier-button').click(function() {
-		if (pendingSupplierId) {
-			$('#selected-products-container').empty();
-			$('#grand-total-amount').text('0.00');
+	// Handle confirmation from modal
+	$('#confirm-change-supplier-button').off('click').on('click', function() {
+		var action = $('#clear-table-confirmation').data('action');
+		var newSupplierId = $('#clear-table-confirmation').data('supplier-id');
 
-			$('#@Html.IdFor(model => model.SelectedSupplierId)').val(pendingSupplierId);
-			currentSupplierId = pendingSupplierId;
+		$('#selected-products-container').empty();
+		$('#grand-total-amount').text('$0.00');
 
-			$("#change-supplier-confirmation").modal('hide');
-			pendingSupplierId = null;
+		currentSupplierId = newSupplierId;
+		$('#@Html.IdFor(model => model.SelectedSupplierId)').val(newSupplierId);
+
+		$('#clear-table-confirmation').modal('hide');
+
+		if (action === 'add-product') {
+			openProductPopup(newSupplierId);
 		}
 	});
 
-	$('#change-supplier-confirmation').on('hidden.bs.modal', function() {
-		if (pendingSupplierId) {
-			$('#@Html.IdFor(model => model.SelectedSupplierId)').val(currentSupplierId);
-			pendingSupplierId = null;
-		}
+	// Reset modal data when closed
+	$('#clear-table-confirmation').on('hidden.bs.modal', function() {
+		$(this).removeData('action').removeData('supplier-id');
 	});
 
-	function hasProductsInTable() {
-		var rows = $('#selected-products-container tr[data-product-id]');
-		return rows.length > 0;
-	}
 		// Handle edit button click
 		$(document).on('click', '.edit-product-btn', function() {
 			var productId = $(this).data('product-id');
 			toggleEditMode(productId, true);
 		});
 
-		// Handle save button click
-		$(document).on('click', '.save-product-btn', function() {
-			var productId = $(this).data('product-id');
-			var quantity = parseFloat($('#quantity' + productId).val()) || 0;
-			var unitCost = parseFloat($('#unitCost' + productId).val()) || 0;
+			$(document).on('click', '.save-product-btn', function() {
+		var productId = $(this).data('product-id');
+		var $row = $(this).closest('tr');
+		var quantity = parseFloat($('#quantity' + productId).val()) || 0;
+		var unitCost = parseFloat($('#unitCost' + productId).val()) || 0;
 
-			// Update displays
-			$('#displayQuantity' + productId).text(quantity);
-			$('#displayUnitCost' + productId).text(unitCost.toFixed(2));
+		var originalStock = parseFloat($row.find('.stock-quantity-input').val()) || 0;
 
-			$('input[name="SelectedProducts[' + productId + '].QuantityToOrder"]').val(quantity);
-			$('input[name="SelectedProducts[' + productId + '].UnitCost"]').val(unitCost);
+		$('#displayQuantity' + productId).text(quantity);
+		$('#displayUnitCost' + productId).html('$' + unitCost.toFixed(2));
 
-			var rowTotal = (quantity * unitCost).toFixed(2);
-			$(this).closest('tr').find('td').eq(5).html('$' + rowTotal);
+		var newStockDisplay = originalStock + quantity;
+		$row.find('.stock-quantity-value').text(newStockDisplay);
 
-			updateGrandTotal();
-			toggleEditMode(productId, false);
-		});
+		var rowTotal = (quantity * unitCost).toFixed(2);
+		$row.find('td').eq(5).html('$' + rowTotal);
+
+		$row.find('input[name*="QuantityToOrder"]').val(quantity);
+		$row.find('input[name*="UnitCost"]').val(unitCost);
+
+		updateGrandTotal();
+		toggleEditMode(productId, false);
+	});
 
 		// Handle cancel button click
 			$(document).on('click', '.cancel-edit-btn', function() {
@@ -300,7 +326,7 @@
 	});
 
 		// Form submission handler
-	$('#purchase-order-form').on('submit', function(e) {
+		$('#purchase-order-form').on('submit', function(e) {
 		e.preventDefault();
 
 		// Validate supplier is selected
@@ -310,30 +336,31 @@
 		}
 
 		// Validate at least one product is selected
-		if ($('#selected-products-container tr').length === 0) {
+		if ($('#selected-products-container tr[data-product-id]').length === 0) {
 			alert('@T("Admin.PurchaseOrders.SelectProductsWarning")');
 			return false;
 		}
 
-		// Collect all product data
-		var products = [];
-		$('#selected-products-container tr').each(function() {
+		// Collect all product data in array format
+		var selectedProducts = [];
+		$('#selected-products-container tr[data-product-id]').each(function() {
 			var productId = $(this).data('product-id');
-			products.push({
+			selectedProducts.push({
 				ProductId: productId,
-				QuantityToOrder: parseFloat($('#displayQuantity' + productId).text()),
-				UnitCost: parseFloat($('#displayUnitCost' + productId).text()),
+				Selected: true,
 				ProductName: $(this).find('input[name*="ProductName"]').val(),
 				ProductSku: $(this).find('input[name*="ProductSku"]').val(),
 				PictureThumbnailUrl: $(this).find('input[name*="PictureThumbnailUrl"]').val(),
-				Selected: true
+				StockQuantity: parseFloat($(this).find('.stock-quantity-input').val()) || 0,
+				UnitCost: parseFloat($(this).find('input[name*="UnitCost"]').val()) || 0,
+				QuantityToOrder: parseFloat($(this).find('input[name*="QuantityToOrder"]').val()) || 0
 			});
 		});
 
-		// Prepare the data to send
-		var data = {
-			SelectedSupplierId: $('#@Html.IdFor(model => model.SelectedSupplierId)').val(),
-			SelectedProducts: products
+		// Prepare the form data
+		var formData = {
+			SelectedSupplierId: parseInt($('#@Html.IdFor(model => model.SelectedSupplierId)').val()),
+			SelectedProducts: selectedProducts
 		};
 
 		// Show loading indicator
@@ -344,7 +371,7 @@
 		$.ajax({
 			url: $(this).attr('action'),
 			type: 'POST',
-			data: JSON.stringify(data),
+			data: JSON.stringify(formData),
 			contentType: 'application/json',
 			headers: {
 				'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
@@ -396,22 +423,22 @@
 			}
 		}
 
-			function updateGrandTotal() {
+			function parseCurrency(value) {
+		return parseFloat(value.toString().replace(/[^\d.-]/g, '')) || 0;
+	}
+
+		function updateGrandTotal() {
 		var grandTotal = 0;
 		$('#selected-products-container tr').each(function() {
-			var quantity = parseFloat($(this).find('[id^="displayQuantity"]').text().trim()) || 0;
-			var unitCost = parseFloat($(this).find('[id^="displayUnitCost"]').text().trim()) || 0;
-			grandTotal += quantity * unitCost;
+			var quantity = parseFloat($(this).find('[id^="displayQuantity"]').text()) || 0;
+			var unitCost = parseCurrency($(this).find('[id^="displayUnitCost"]').text());
+			var rowTotal = quantity * unitCost;
 
-			var originalStock = parseFloat($(this).find('.stock-quantity-input').val()) || 0;
-			$(this).find('.stock-quantity-value').text(originalStock + quantity);
-
-			var rowTotal = (quantity * unitCost).toFixed(2);
-			$(this).find('td').eq(5).html(rowTotal);
+			$(this).find('td').eq(5).html('$' + rowTotal.toFixed(2));
+			grandTotal += rowTotal;
 		});
 
-		$('#grand-total-amount').html(grandTotal.toFixed(2));
-		return grandTotal;
+		$('#grand-total-amount').html('$' + grandTotal.toFixed(2));
 	}
 
 	// Called from popup
@@ -476,7 +503,7 @@
 								   class="form-control input-sm"/>
 						</div>
 						<div id="displayUnitCost${product.ProductId}">
-							${product.UnitCost.toFixed(2)}
+							$${product.UnitCost.toFixed(2)}
 						</div>
 					</td>
 					<td class="text-center">
@@ -494,7 +521,7 @@
 						</div>
 					</td>
 					<td class="text-center">
-						${(product.QuantityToOrder * product.UnitCost).toFixed(2)}
+						$${(product.QuantityToOrder * product.UnitCost).toFixed(2)}
 					</td>
 					<td class="text-center">
 						<button type="button" class="btn btn-default edit-product-btn"
@@ -546,11 +573,11 @@
 	</div>
 </div>
 
-<div id="change-supplier-confirmation" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="change-supplier-confirmation-title">
+<div id="clear-table-confirmation" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="clear-table-confirmation-title">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title" id="change-supplier-confirmation-title">@T("Admin.Common.AreYouSure")</h4>
+				<h4 class="modal-title" id="clear-table-confirmation-title">@T("Admin.Common.AreYouSure")</h4>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			</div>
 			<div class="modal-body">
