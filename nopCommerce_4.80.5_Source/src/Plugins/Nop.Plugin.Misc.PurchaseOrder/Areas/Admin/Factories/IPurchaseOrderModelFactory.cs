@@ -10,5 +10,5 @@ public interface IPurchaseOrderModelFactory
         AddProductToPurchaseOrderSearchModel searchModel);
 
     Task<PurchaseOrderCreateModel> PreparePurchaseOrderCreateModelAsync(PurchaseOrderCreateModel model,
-        PurchaseOrderRecord order);
+        PurchaseOrder order);
 }

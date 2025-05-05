@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Models;
-using Nop.Plugin.Misc.PurchaseOrder.Domain;
 using Nop.Plugin.Misc.PurchaseOrder.Services;
 using Nop.Plugin.Misc.Suppliers.Services;
 using Nop.Services.Localization;
@@ -53,7 +52,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Factories
             return model;
         }
 
-        public async Task<PurchaseOrderCreateModel> PreparePurchaseOrderCreateModelAsync(PurchaseOrderCreateModel model, PurchaseOrderRecord order)
+        public async Task<PurchaseOrderCreateModel> PreparePurchaseOrderCreateModelAsync(PurchaseOrderCreateModel model, Domain.PurchaseOrder order)
         {
             if (order != null)
             {

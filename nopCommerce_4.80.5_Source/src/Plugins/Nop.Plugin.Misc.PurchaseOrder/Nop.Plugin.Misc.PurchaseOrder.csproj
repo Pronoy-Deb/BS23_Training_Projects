@@ -82,19 +82,19 @@
     <Compile Update="Areas\Admin\Models\PurchaseOrderModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Data\Mapping\PurchaseOrderProductRecordBuilder.cs">
+    <Compile Update="Data\Mapping\PurchaseOrderProductBuilder.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Data\Mapping\PurchaseOrderRecordBuilder.cs">
+    <Compile Update="Data\Mapping\PurchaseOrderBuilder.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Data\Migrations\SchemaMigration.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Domain\PurchaseOrderProductRecord.cs">
+    <Compile Update="Domain\PurchaseOrderProduct.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Domain\PurchaseOrderRecord.cs">
+    <Compile Update="Domain\PurchaseOrder.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Infrastructure\NopStartup.cs">

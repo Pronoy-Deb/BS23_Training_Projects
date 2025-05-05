@@ -71,7 +71,8 @@ public class PurchaseOrderPlugin : BasePlugin
         ["Plugins.Misc.PurchaseOrder.PurchaseOrderPopup.SearchVendorId"] = "Vendor Id",
         ["Plugins.Misc.PurchaseOrder.PurchaseOrderPopup.SearchVendorId.Hint"] = "Search by Vendor Id",
         ["Plugins.Misc.PurchaseOrder.PurchaseOrderPopup.SearchProductTypeId"] = "Product Type Id",
-        ["Plugins.Misc.PurchaseOrder.PurchaseOrderPopup.SearchProductTypeId.Hint"] = "Search by Product Type Id"
+        ["Plugins.Misc.PurchaseOrder.PurchaseOrderPopup.SearchProductTypeId.Hint"] = "Search by Product Type Id",
+        ["admin.common.searchorselectsupplier"] = "All"
     };
         
     public override async Task InstallAsync()

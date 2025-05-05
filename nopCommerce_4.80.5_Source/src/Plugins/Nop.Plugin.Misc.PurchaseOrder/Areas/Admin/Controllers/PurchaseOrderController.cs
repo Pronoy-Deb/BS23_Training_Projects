@@ -25,21 +25,21 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
         private readonly IPurchaseOrderModelFactory _purchaseOrderModelFactory;
         private readonly IProductSupplierService _productSupplierService;
         private readonly ISuppliersService _suppliersService;
-        private readonly IRepository<PurchaseOrderRecord> _purchaseOrderRepository;
+        private readonly IRepository<Domain.PurchaseOrder> _purchaseOrderRepository;
         private readonly IProductService _productService;
         private readonly IPurchaseOrderSupplierService _purchaseOrderSupplierService;
         private readonly IPictureService _pictureService;
-        private readonly IRepository<PurchaseOrderProductRecord> _purchaseOrderProductRepository;
+        private readonly IRepository<PurchaseOrderProduct> _purchaseOrderProductRepository;
         private readonly MediaSettings _mediaSettings;
         private readonly INotificationService _notificationService;
         public PurchaseOrderController(IPurchaseOrderModelFactory purchaseOrderModelFactory,
             IProductSupplierService productSupplierService,
             ISuppliersService suppliersService,
-            IRepository<PurchaseOrderRecord> purchaseOrderRepository,
+            IRepository<Domain.PurchaseOrder> purchaseOrderRepository,
             IProductService productService,
             IPurchaseOrderSupplierService purchaseOrderSupplierService,
             IPictureService pictureService,
-            IRepository<PurchaseOrderProductRecord> purchaseOrderProductRepository,
+            IRepository<PurchaseOrderProduct> purchaseOrderProductRepository,
             MediaSettings mediaSettings,
             INotificationService notificationService)
         {
@@ -94,7 +94,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
 
                 var totalAmount = model.SelectedProducts?.Sum(p => p.QuantityToOrder * p.UnitCost) ?? 0;
 
-                var order = new PurchaseOrderRecord
+                var order = new Domain.PurchaseOrder
                 {
                     OrderDate = DateTime.Now,
                     SupplierId = model.SelectedSupplierId,
@@ -118,7 +118,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
                         var picture = (await _productService.GetProductPicturesByProductIdAsync(productModel.ProductId)).FirstOrDefault();
                         var pictureUrl = await _pictureService.GetPictureUrlAsync(picture?.PictureId ?? 0);
 
-                        var orderProduct = new PurchaseOrderProductRecord
+                        var orderProduct = new PurchaseOrderProduct
                         {
                             PurchaseOrderId = order.Id,
                             ProductId = productModel.ProductId,
@@ -132,7 +132,7 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
                         await _purchaseOrderProductRepository.InsertAsync(orderProduct);
                     }
                 }
-                _notificationService.SuccessNotification("The purchase order is placed successfully");
+                _notificationService.SuccessNotification("The purchase order has been placed successfully.");
 
                 return Json(new
                 {
@@ -148,6 +148,30 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
                     message = "An error occurred while creating the order. Please try again."
                 });
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetSuppliers(string searchTerm = "", int page = 1)
+        {
+            const int pageSize = 10;
+
+            var suppliers = await _suppliersService.GetPagedSuppliersAsync(
+                searchTerm: searchTerm,
+                pageIndex: page - 1,
+                pageSize: pageSize
+            );
+
+            var results = suppliers.Select(s => new
+            {
+                id = s.Id,
+                text = s.Name
+            }).ToList();
+
+            return Json(new
+            {
+                items = results,
+                totalCount = suppliers.TotalCount
+            });
         }
 
         public async Task<IActionResult> ProductAddPopup(int purchaseOrderId, string btnId, string formId)

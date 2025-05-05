@@ -9,15 +9,15 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Services
 {
     public class PurchaseOrderService : IPurchaseOrderService
     {
-        private readonly IRepository<PurchaseOrderRecord> _purchaseOrderRepository;
+        private readonly IRepository<Domain.PurchaseOrder> _purchaseOrderRepository;
         private readonly IRepository<SuppliersRecord> _suppliersRepository;
         private readonly IRepository<Product> _productRepository;
-        private readonly IRepository<PurchaseOrderProductRecord> _purchaseOrderProductRepository;
+        private readonly IRepository<PurchaseOrderProduct> _purchaseOrderProductRepository;
 
-        public PurchaseOrderService(IRepository<PurchaseOrderRecord> purchaseOrderRepository,
+        public PurchaseOrderService(IRepository<Domain.PurchaseOrder> purchaseOrderRepository,
             IRepository<SuppliersRecord> suppliersRepository,
             IRepository<Product> productRepository,
-            IRepository<PurchaseOrderProductRecord> purchaseOrderProductRepository)
+            IRepository<PurchaseOrderProduct> purchaseOrderProductRepository)
         {
             _purchaseOrderRepository = purchaseOrderRepository;
             _suppliersRepository = suppliersRepository;

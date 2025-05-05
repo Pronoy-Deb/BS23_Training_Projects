@@ -38,7 +38,11 @@
 											<nop-label asp-for="SelectedSupplierId" />
 										</div>
 										<div class="col-md-8">
-											<nop-select asp-for="SelectedSupplierId" asp-items="Model.AvailableSuppliers" class="form-control-sm" />
+											<select asp-for="SelectedSupplierId"
+													asp-items="Model.AvailableSuppliers"
+													class="form-control-sm select2-ajax-suppliers"
+													data-ajax-url="@Url.Action("GetSuppliers", "PurchaseOrder")">
+											</select>
 											<span asp-validation-for="SelectedSupplierId"></span>
 										</div>
 									</div>
@@ -191,12 +195,10 @@
 	var initialSupplierId = $('#@Html.IdFor(model => model.SelectedSupplierId)').val();
 	var currentSupplierId = initialSupplierId;
 
-	// Check if table has products
 	function hasProducts() {
 		return $('#selected-products-container tr[data-product-id]').length > 0;
 	}
 
-	// Open product popup window
 	function openProductPopup(supplierId) {
 		OpenWindow(
 			'@(Url.Action("ProductAddPopup", "PurchaseOrder", new { btnId = "btnRefreshSelectedProducts", formId = "purchase-order-form" }))' +
@@ -205,7 +207,6 @@
 		);
 	}
 
-	// Main click handler for Add Product button
 	$('#btnAddProduct').off('click').on('click', function() {
 		var selectedSupplierId = $('#@Html.IdFor(model => model.SelectedSupplierId)').val();
 
@@ -225,8 +226,33 @@
 		}
 	});
 
-	// Handle supplier dropdown change
-	$('#@Html.IdFor(model => model.SelectedSupplierId)').on('change', function() {
+			$('.select2-ajax-suppliers').select2({
+		placeholder: '@T("Admin.Common.SearchOrSelectSupplier")',
+		allowClear: true,
+		width: '100%',
+		ajax: {
+			url: $('.select2-ajax-suppliers').data('ajax-url'),
+			dataType: 'json',
+			delay: 250,
+			data: function(params) {
+				return {
+					searchTerm: params.term,
+					page: params.page || 1
+				};
+			},
+			processResults: function(data, params) {
+				params.page = params.page || 1;
+				return {
+					results: data.items,
+					pagination: {
+						more: (params.page * 10) < data.totalCount
+					}
+				};
+			},
+			cache: true
+		},
+		minimumInputLength: 0
+	}).on('change', function() {
 		var newSupplierId = $(this).val();
 
 		if (hasProducts() && newSupplierId != currentSupplierId) {
@@ -239,7 +265,23 @@
 		}
 	});
 
-	// Handle confirmation from modal
+	$('.select2-selection__rendered').css({
+		'font-size': '16px',
+		'font-weight': '500'
+	});
+
+	@if (Model.SelectedSupplierId > 0)
+	{
+		<text>
+				var initialSupplier = {
+					id: '@Model.SelectedSupplierId',
+					text: '@Html.Raw(JavaScriptEncoder.Default.Encode(Model.AvailableSuppliers.FirstOrDefault(x => x.Value == Model.SelectedSupplierId.ToString())?.Text))'
+				};
+				$('.select2-ajax-suppliers').append(new Option(initialSupplier.text, initialSupplier.id, true, true)).trigger('change');
+				currentSupplierId = initialSupplier.id;
+		</text>
+	}
+
 	$('#confirm-change-supplier-button').off('click').on('click', function() {
 		var action = $('#clear-table-confirmation').data('action');
 		var newSupplierId = $('#clear-table-confirmation').data('supplier-id');
@@ -257,12 +299,10 @@
 		}
 	});
 
-	// Reset modal data when closed
 	$('#clear-table-confirmation').on('hidden.bs.modal', function() {
 		$(this).removeData('action').removeData('supplier-id');
 	});
 
-		// Handle edit button click
 		$(document).on('click', '.edit-product-btn', function() {
 			var productId = $(this).data('product-id');
 			toggleEditMode(productId, true);
@@ -292,22 +332,19 @@
 		toggleEditMode(productId, false);
 	});
 
-		// Handle cancel button click
-			$(document).on('click', '.cancel-edit-btn', function() {
-		var productId = $(this).data('product-id');
-		var originalQuantity = $('#displayQuantity' + productId).text();
-		var originalUnitCost = $('#displayUnitCost' + productId).text();
+		$(document).on('click', '.cancel-edit-btn', function() {
+			var productId = $(this).data('product-id');
+			var originalQuantity = $('#displayQuantity' + productId).text();
+			var originalUnitCost = $('#displayUnitCost' + productId).text();
 
-		$('#quantity' + productId).val(originalQuantity);
-		$('#unitCost' + productId).val(originalUnitCost);
+			$('#quantity' + productId).val(originalQuantity);
+			$('#unitCost' + productId).val(originalUnitCost);
 
-		toggleEditMode(productId, false);
+			toggleEditMode(productId, false);
 
-		// Update the stock quantity display
-		updateGrandTotal();
-	});
+			updateGrandTotal();
+		});
 
-		// Handle delete button click
 		 $(document).on('click', '.delete-product-btn', function(e) {
 			e.preventDefault();
 			var productId = $(this).data('product-id');
@@ -315,33 +352,27 @@
 			$("#delete-selected-product-confirmation").modal('show');
 		});
 
-		// Handle confirmed delete - FINAL WORKING VERSION
-			$('#delete-selected-product-confirmation-button').click(function() {
-		var productId = $('#delete-selected-product-confirmation').attr('data-productid');
-		$('tr[data-product-id="' + productId + '"]').remove();
-		$("#delete-selected-product-confirmation").modal('hide');
+		$('#delete-selected-product-confirmation-button').click(function() {
+			var productId = $('#delete-selected-product-confirmation').attr('data-productid');
+			$('tr[data-product-id="' + productId + '"]').remove();
+			$("#delete-selected-product-confirmation").modal('hide');
 
-		// Update grand total after deletion
-		updateGrandTotal();
-	});
+			updateGrandTotal();
+		});
 
-		// Form submission handler
 		$('#purchase-order-form').on('submit', function(e) {
 		e.preventDefault();
 
-		// Validate supplier is selected
 		if (!$('#@Html.IdFor(model => model.SelectedSupplierId)').val()) {
 			alert('@T("Admin.PurchaseOrders.SelectSupplierWarning")');
 			return false;
 		}
 
-		// Validate at least one product is selected
 		if ($('#selected-products-container tr[data-product-id]').length === 0) {
 			alert('@T("Admin.PurchaseOrders.SelectProductsWarning")');
 			return false;
 		}
 
-		// Collect all product data in array format
 		var selectedProducts = [];
 		$('#selected-products-container tr[data-product-id]').each(function() {
 			var productId = $(this).data('product-id');
@@ -357,17 +388,14 @@
 			});
 		});
 
-		// Prepare the form data
 		var formData = {
 			SelectedSupplierId: parseInt($('#@Html.IdFor(model => model.SelectedSupplierId)').val()),
 			SelectedProducts: selectedProducts
 		};
 
-		// Show loading indicator
 		var $submitButton = $('#place-order-button');
 		$submitButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> @T("Admin.Common.Processing")');
 
-		// Submit the data
 		$.ajax({
 			url: $(this).attr('action'),
 			type: 'POST',
@@ -441,14 +469,12 @@
 		$('#grand-total-amount').html('$' + grandTotal.toFixed(2));
 	}
 
-	// Called from popup
 	function addProductsToCreateTable(products) {
 		products.forEach(function (product) {
 			table.row.add(product).draw();
 		});
 	}
 
-	// On final form submit: serialize table data into hidden field
 	function beforeSubmit() {
 		const data = table.rows().data().toArray();
 		$('#SelectedProductsJson').val(JSON.stringify(data));

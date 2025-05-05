@@ -10,11 +10,14 @@ namespace Nop.Plugin.Misc.Suppliers.Services
     {
         private readonly IRepository<SuppliersRecord> _repository;
         private readonly IStaticCacheManager _staticCacheManager;
-
-        public SuppliersService(IRepository<SuppliersRecord> repository, IStaticCacheManager staticCacheManager)
+        private readonly IRepository<SuppliersRecord> _suppliersRepository;
+        public SuppliersService(IRepository<SuppliersRecord> repository,
+            IStaticCacheManager staticCacheManager,
+            IRepository<SuppliersRecord> suppliersRepository)
         {
             _repository = repository;
             _staticCacheManager = staticCacheManager;
+            _suppliersRepository = suppliersRepository;
         }
 
         public async Task InsertAsync(SuppliersRecord supplier)
@@ -62,16 +65,6 @@ namespace Nop.Plugin.Misc.Suppliers.Services
             });
         }
 
-        public async Task<IList<SuppliersRecord>> GetSuppliersByIdsAsync(IList<int> ids)
-        {
-            if (ids == null || !ids.Any())
-                return new List<SuppliersRecord>();
-
-            return await _repository.Table
-                .Where(s => ids.Contains(s.Id))
-                .ToListAsync();
-        }
-
         public virtual async Task<IList<SuppliersRecord>> GetAllAsync()
         {
             return await _repository.GetAllAsync(query => query.OrderBy(s => s.Name));
@@ -89,6 +82,18 @@ namespace Nop.Plugin.Misc.Suppliers.Services
             items.Insert(0, new SelectListItem { Text = "Select a supplier", Value = "0" });
 
             return items;
+        }
+
+        public async Task<IPagedList<SuppliersRecord>> GetPagedSuppliersAsync(string searchTerm = "", int pageIndex = 0, int pageSize = 10)
+        {
+            var query = _suppliersRepository.Table;
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(s => s.Name.Contains(searchTerm));
+            }
+
+            return await query.ToPagedListAsync(pageIndex, pageSize);
         }
 
     }

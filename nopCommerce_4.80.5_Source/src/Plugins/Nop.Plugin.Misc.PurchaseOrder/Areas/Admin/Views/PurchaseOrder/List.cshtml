@@ -142,13 +142,13 @@
 						<div class="card-body">
 							@{
 								var gridModel = new DataTablesModel
-			{
-				Name = "purchaseorder-grid",
-				UrlRead = new DataUrl("List", "PurchaseOrder", null),
-				SearchButtonId = "search-purchaseorders",
-				Length = Model.PageSize,
-				LengthMenu = Model.AvailablePageSizes,
-				Filters = new List<FilterParameter>
+			            {
+				            Name = "purchaseorder-grid",
+				            UrlRead = new DataUrl("List", "PurchaseOrder", null),
+				            SearchButtonId = "search-purchaseorders",
+				            Length = Model.PageSize,
+				            LengthMenu = Model.AvailablePageSizes,
+				            Filters = new List<FilterParameter>
 							{
 							new FilterParameter(nameof(Model.StartDate)),
 							new FilterParameter(nameof(Model.EndDate)),
@@ -174,35 +174,35 @@
 							};
 
 								gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PurchaseOrderModel.SupplierName))
-			{
-				Title = @T("Plugins.Misc.PurchaseOrder.Fields.SupplierName").Text,
-				Width = "200",
-				ClassName = NopColumnClassDefaults.CenterAll
-			});
+								{
+									Title = @T("Plugins.Misc.PurchaseOrder.Fields.SupplierName").Text,
+									Width = "200",
+									ClassName = NopColumnClassDefaults.CenterAll
+								});
 
 								gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PurchaseOrderModel.OrderDate))
-			{
-				Title = @T("Plugins.Misc.PurchaseOrder.Fields.OrderDate").Text,
-				Width = "150",
-				ClassName = NopColumnClassDefaults.CenterAll,
-				Render = new RenderDate()
-			});
+			                    {
+				                    Title = @T("Plugins.Misc.PurchaseOrder.Fields.OrderDate").Text,
+				                    Width = "150",
+				                    ClassName = NopColumnClassDefaults.CenterAll,
+				                    Render = new RenderDate()
+			                    });
 
 								gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PurchaseOrderModel.TotalPrice))
-			{
-				Title = @T("Plugins.Misc.PurchaseOrder.Fields.TotalAmount").Text,
-				Width = "100",
-				ClassName = NopColumnClassDefaults.CenterAll,
-				Render = new RenderCustom("renderCurrency")
-			});
+			                    {
+				                    Title = @T("Plugins.Misc.PurchaseOrder.Fields.TotalAmount").Text,
+				                    Width = "100",
+				                    ClassName = NopColumnClassDefaults.CenterAll,
+				                    Render = new RenderCustom("renderCurrency")
+			                    });
 
 								gridModel.ColumnCollection.Add(new ColumnProperty(nameof(PurchaseOrderModel.Id))
-			{
-				Title = @T("Plugins.Misc.PurchaseOrder.Fields.View").Text,
-				Width = "50",
-				ClassName = $"{NopColumnClassDefaults.CenterAll} {NopColumnClassDefaults.Button}",
-				Render = new RenderButtonView(new DataUrl("ViewSnapshot", "PurchaseOrder"))
-			});
+			                    {
+				                    Title = @T("Plugins.Misc.PurchaseOrder.Fields.View").Text,
+				                    Width = "50",
+				                    ClassName = $"{NopColumnClassDefaults.CenterAll} {NopColumnClassDefaults.Button}",
+				                    Render = new RenderButtonView(new DataUrl("ViewSnapshot", "PurchaseOrder"))
+			                    });
 							}
 							@await Html.PartialAsync("Table", gridModel)
 						</div>
