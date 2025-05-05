@@ -12,23 +12,44 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Services
         private readonly IRepository<PurchaseOrderRecord> _purchaseOrderRepository;
         private readonly IRepository<SuppliersRecord> _suppliersRepository;
         private readonly IRepository<Product> _productRepository;
+        private readonly IRepository<PurchaseOrderProductRecord> _purchaseOrderProductRepository;
 
         public PurchaseOrderService(IRepository<PurchaseOrderRecord> purchaseOrderRepository,
             IRepository<SuppliersRecord> suppliersRepository,
-            IRepository<Product> productRepository)
+            IRepository<Product> productRepository,
+            IRepository<PurchaseOrderProductRecord> purchaseOrderProductRepository)
         {
             _purchaseOrderRepository = purchaseOrderRepository;
             _suppliersRepository = suppliersRepository;
             _productRepository = productRepository;
+            _purchaseOrderProductRepository = purchaseOrderProductRepository;
         }
 
         public async Task<IPagedList<PurchaseOrderModel>> GetAllPurchaseOrdersAsync(PurchaseOrderSearchModel searchModel)
         {
-            var purchaseOrderQuery = _purchaseOrderRepository.Table;
-            var supplierQuery = _suppliersRepository.Table;
+            var baseQuery = _purchaseOrderRepository.Table;
 
-            var query = from po in purchaseOrderQuery
-                join supplier in supplierQuery on po.SupplierId equals supplier.Id
+            if (!string.IsNullOrEmpty(searchModel.ProductName))
+            {
+                var orderIdsWithProduct = _purchaseOrderProductRepository.Table
+                    .Where(p => p.ProductName.Contains(searchModel.ProductName))
+                    .Select(p => p.PurchaseOrderId)
+                    .Distinct();
+
+                baseQuery = baseQuery.Where(po => orderIdsWithProduct.Contains(po.Id));
+            }
+
+            if (searchModel.StartDate.HasValue)
+                baseQuery = baseQuery.Where(x => x.OrderDate >= searchModel.StartDate.Value);
+
+            if (searchModel.EndDate.HasValue)
+                baseQuery = baseQuery.Where(x => x.OrderDate <= searchModel.EndDate.Value);
+
+            if (searchModel.SupplierId.HasValue && searchModel.SupplierId.Value > 0)
+                baseQuery = baseQuery.Where(x => x.SupplierId == searchModel.SupplierId.Value);
+
+            var query = from po in baseQuery
+                join supplier in _suppliersRepository.Table on po.SupplierId equals supplier.Id
                 select new PurchaseOrderModel
                 {
                     Id = po.Id,
@@ -36,23 +57,9 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Services
                     SupplierId = po.SupplierId,
                     TotalPrice = po.TotalAmount,
                     CreatedBy = "Admin",
-                    SupplierName = supplier.Name,
+                    SupplierName = supplier.Name
                 };
 
-            if (searchModel != null)
-            {
-                if (searchModel.StartDate.HasValue)
-                    query = query.Where(x => x.OrderDate >= searchModel.StartDate.Value);
-
-                if (searchModel.EndDate.HasValue)
-                    query = query.Where(x => x.OrderDate <= searchModel.EndDate.Value);
-
-                if (searchModel.SupplierId.HasValue && searchModel.SupplierId.Value > 0)
-                    query = query.Where(x => x.SupplierId == searchModel.SupplierId.Value);
-
-                if (!string.IsNullOrEmpty(searchModel.ProductName))
-                    query = query.Where(x => x.ProductName.Contains(searchModel.ProductName));
-            }
             query = query.OrderByDescending(po => po.OrderDate);
 
             return await query.ToPagedListAsync(searchModel.Page - 1, searchModel.PageSize);

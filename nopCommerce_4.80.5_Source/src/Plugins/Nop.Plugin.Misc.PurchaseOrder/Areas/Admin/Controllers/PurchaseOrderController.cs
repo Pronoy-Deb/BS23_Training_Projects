@@ -168,6 +168,13 @@ namespace Nop.Plugin.Misc.PurchaseOrder.Areas.Admin.Controllers
         {
             var filteredProducts = await _productSupplierService.GetProductsBySupplierIdAsync(supplierId);
 
+            if (!string.IsNullOrEmpty(searchModel.SearchProductName))
+            {
+                filteredProducts = filteredProducts
+                    .Where(p => p.Name.Contains(searchModel.SearchProductName, StringComparison.InvariantCultureIgnoreCase))
+                    .ToList();
+            }
+
             var products = await _purchaseOrderSupplierService.SearchProductsBySupplierAsync(
                 supplierId: supplierId,
                 products: filteredProducts,
