@@ -1,6 +1,6 @@
 ﻿namespace Nop.Plugin.Widgets.OlarkChat.Models
 {
-    public record PublicInfoModel
+    public record OlarkChatPublicInfoModel
     {
         public string SiteId { get; set; }
         public string CustomerName { get; set; }

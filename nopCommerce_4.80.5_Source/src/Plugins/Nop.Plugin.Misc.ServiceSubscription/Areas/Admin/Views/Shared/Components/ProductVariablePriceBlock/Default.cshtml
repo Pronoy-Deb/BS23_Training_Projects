@@ -1,0 +1,144 @@
+﻿@model Nop.Plugin.Misc.ServiceSubscription.Areas.Admin.Models.ProductVariablePriceBlockModel
+@using Nop.Web.Areas.Admin.Models.Catalog
+
+<nop-card asp-name="product-variable-price"
+		  asp-icon="fas fa-tags"
+		  asp-title="@T("Admin.Catalog.Products.VariablePrice")"
+		  asp-hide-block-attribute-name="@Model.HideBlockAttributeName"
+		  asp-hide="@Model.HideBlock"
+		  asp-advanced="false">
+	<div class="card-body">
+		<div class="form-group row">
+			<div class="col-md-3">
+				<nop-label asp-for="SelectedCustomerId" />
+			</div>
+			<div class="col-md-9">q
+				<nop-select asp-for="SelectedCustomerId" asp-items="Model.AvailableCustomers" />
+				<span asp-validation-for="SelectedCustomerId"></span>
+			</div>
+		</div>
+		<div class="form-group row">
+			<div class="col-md-3">
+				<nop-label asp-for="VariablePrice" />
+			</div>
+			<div class="col-md-9">
+				<nop-editor asp-for="VariablePrice" asp-postfix="@Model.ProductModel.PrimaryStoreCurrencyCode" />
+				<span asp-validation-for="VariablePrice"></span>
+			</div>
+		</div>
+
+		<!-- Add button to save the variable price -->
+		<div class="form-group row">
+			<div class="col-md-9 offset-md-3">
+				<button type="button" id="addVariablePrice" class="btn btn-primary">
+					@T("Admin.Common.AddNew")
+				</button>
+			</div>
+		</div>
+
+		<!-- Grid to display existing variable prices -->
+		@if (Model.ProductModel.Id > 0)
+		{
+			<div class="table-responsive">
+				<table class="table table-bordered table-striped table-hover" id="variablePrices-grid">
+					<thead>
+						<tr>
+							<th>@T("Admin.Catalog.Products.VariablePrice.Fields.Customer")</th>
+							<th>@T("Admin.Catalog.Products.VariablePrice.Fields.Price")</th>
+							<th>@T("Admin.Common.Actions")</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+
+			<script>
+				$(document).ready(function() {
+					$("#variablePrices-grid").DataTable({
+						ajax: {
+							url: "@Url.Action("VariablePriceList", "VariablePrice", new { area = "Admin", productId = Model.ProductModel.Id })",
+							type: "POST",
+							dataType: "json"
+						},
+						columns: [
+							{
+								data: "CustomerEmail",
+								render: function(data, type, row) {
+									return data || 'N/A';
+								}
+							},
+							{
+								data: "Price",
+								render: function(data, type, row) {
+									return data ? formatCurrency(data) : 'N/A';
+								}
+							},
+							{
+								data: "Id",
+								render: function(data) {
+									return '<button class="btn btn-danger delete-variable-price" data-id="' + data + '">@T("Admin.Common.Delete")</button>';
+								}
+							}
+						]
+					});
+
+					// Add variable price
+					$("#addVariablePrice").click(function() {
+						var customerId = $("#SelectedCustomerId").val();
+						var price = $("#VariablePrice").val();
+
+						if (!customerId || !price) {
+							alert('@T("Admin.Validation.FieldsRequired")');
+							return;
+						}
+
+						$.ajax({
+							cache: false,
+							type: "POST",
+							url: "@Url.Action("AddVariablePrice", "VariablePrice", new { area = "Admin" })",
+							data: {
+								productId: @Model.ProductModel.Id,
+								customerId: customerId,
+								price: price
+							},
+							success: function(data) {
+								if (data.success) {
+									$('#variablePrices-grid').DataTable().ajax.reload();
+									$("#VariablePrice").val('');
+								} else {
+									alert(data.message || '@T("Admin.Common.Error")');
+								}
+							},
+							error: function(xhr) {
+								alert('@T("Admin.Common.Error")');
+							}
+						});
+					});
+
+					// Delete variable price
+					$(document).on('click', '.delete-variable-price', function() {
+						if (confirm('@T("Admin.Common.DeleteConfirmation")')) {
+							var id = $(this).data('id');
+							$.post("@Url.Action("DeleteVariablePrice", "VariablePrice", new { area = "Admin" })",
+							{ id: id },
+							function(data) {
+								if (data.success) {
+									$('#variablePrices-grid').DataTable().ajax.reload();
+								} else {
+									alert(data.message || '@T("Admin.Common.Error")');
+								}
+							});
+						}
+					});
+
+					function formatCurrency(amount) {
+						return new Intl.NumberFormat('@CultureInfo.CurrentCulture.Name', {
+							style: 'currency',
+							currency: '@Model.ProductModel.PrimaryStoreCurrencyCode'
+						}).format(amount);
+					}
+				});
+			</script>
+		}
+	</div>
+</nop-card>

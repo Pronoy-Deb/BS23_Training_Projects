@@ -28,7 +28,7 @@ namespace Nop.Plugin.Widgets.OlarkChat.Components
             var customer = await _workContext.GetCurrentCustomerAsync();
             var customerName = await _customerService.GetCustomerFullNameAsync(customer);
 
-            var model = new PublicInfoModel
+            var model = new OlarkChatPublicInfoModel
             {
                 SiteId = settings.SiteId,
                 CustomerName = customerName,

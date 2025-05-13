@@ -33,7 +33,7 @@ namespace Nop.Plugin.Widgets.OlarkChat.Controllers
         {
             var settings = await _settingService.LoadSettingAsync<OlarkChatSettings>();
 
-            var model = new ConfigurationModel
+            var model = new OlarkChatConfigurationModel
             {
                 SiteId = settings.SiteId,
                 WidgetPosition = settings.WidgetPosition,
@@ -48,7 +48,7 @@ namespace Nop.Plugin.Widgets.OlarkChat.Controllers
         [HttpPost]
         [AuthorizeAdmin]
         [Area(AreaNames.ADMIN)]
-        public async Task<IActionResult> Configure(ConfigurationModel model)
+        public async Task<IActionResult> Configure(OlarkChatConfigurationModel model)
         {
             if (!ModelState.IsValid)
             {

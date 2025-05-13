@@ -4,6 +4,7 @@
   "SystemName": "Widgets.OlarkChat",
   "Version": "2.0",
   "SupportedVersions": [ "4.80" ],
+  "LogoFile": "logo.png",
   "Author": "BS23",
   "DisplayOrder": 1,
   "FileName": "Nop.Plugin.Widgets.OlarkChat.dll",

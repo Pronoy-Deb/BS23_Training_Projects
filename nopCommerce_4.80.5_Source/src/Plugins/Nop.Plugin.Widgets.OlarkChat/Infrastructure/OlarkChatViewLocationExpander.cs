@@ -4,7 +4,7 @@ using Nop.Web.Framework.Themes;
 
 namespace Nop.Plugin.Widgets.OlarkChat.Infrastructure;
 
-public class ViewLocationExpander : IViewLocationExpander
+public class OlarkChatViewLocationExpander : IViewLocationExpander
 {
     protected const string THEME_KEY = "nop.themename";
     public void PopulateValues(ViewLocationExpanderContext context)

@@ -1,0 +1,618 @@
+﻿@* @model PurchaseOrderCreateModel *@
+
+@* @{ *@
+@* 	Layout = "_AdminLayout"; *@
+@* 	ViewBag.PageTitle = T("Admin.PurchaseOrders.SelectProducts").Text; *@
+@* 	NopHtml.SetActiveMenuItemSystemName("Misc.PurchaseOrder"); *@
+@* } *@
+
+@* <nop-antiforgery-token /> *@
+
+@* <form asp-controller="PurchaseOrder" asp-action="Create" method="post" id="purchase-order-form" onsubmit="return beforeSubmit();"> *@
+@* 	<div class="content-header clearfix"> *@
+@* 		<h1 class="float-left"> *@
+@* 			@T("Admin.PurchaseOrders.SelectProducts") *@
+@* 			<small> *@
+@* 				<i class="fas fa-arrow-circle-left"></i> *@
+@* 				<a asp-action="List">@T("Admin.Orders.BackToList")</a> *@
+@* 			</small> *@
+@* 		</h1> *@
+@* 		<div class="float-right"> *@
+@* 			<button type="submit" class="btn bg-success" id="place-order-button"> *@
+@* 				<i class="fas fa-check"></i> *@
+@* 				@T("Admin.Catalog.PurchaseOrder.PlaceOrder") *@
+@* 			</button> *@
+@* 		</div> *@
+@* 	</div> *@
+
+@* 	<section class="content"> *@
+@* 		<div class="container-fluid"> *@
+@* 			<div class="form-horizontal"> *@
+@* 				<div class="cards-group"> *@
+@* 					<div class="card card-default"> *@
+@* 						<div class="card-body"> *@
+@* 							<div class="form-group row"> *@
+@* 								<div class="col-md-4 offset-md-4"> *@
+@* 									<div class="form-group row"> *@
+@* 										<div class="col-md-4"> *@
+@* 											<nop-label asp-for="SelectedSupplierId" /> *@
+@* 										</div> *@
+@* 										<div class="col-md-8"> *@
+@* 											<select asp-for="SelectedSupplierId" *@
+@* 													asp-items="Model.AvailableSuppliers" *@
+@* 													class="form-control-sm select2-ajax-suppliers" *@
+@* 													data-ajax-url="@Url.Action("GetSuppliers", "PurchaseOrder")"> *@
+@* 											</select> *@
+@* 											<span asp-validation-for="SelectedSupplierId"></span> *@
+@* 										</div> *@
+@* 									</div> *@
+@* 								</div> *@
+@* 							</div> *@
+@* 						</div> *@
+@* 					</div> *@
+
+@* 					<div class="card card-default"> *@
+@* 						<div class="card-body"> *@
+@* 							<div class="table-responsive"> *@
+@* 								<table id="purchaseorder-products-grid" class="table table-bordered table-hover dataTable dtr-inline table-striped"> *@
+@* 									<thead> *@
+@* 										<tr> *@
+@* 											<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Picture")</th> *@
+@* 											<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.ProductName")</th> *@
+@* 											<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Catalog.Products.Fields.StockQuantity")</th> *@
+@* 											<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Price")</th> *@
+@* 											<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Quantity")</th> *@
+@* 											<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Orders.Products.Total")</th> *@
+@* 											<th class="@NopColumnClassDefaults.CenterAll">@T("Admin.Common.Edit")</th> *@
+@* 										</tr> *@
+@* 									</thead> *@
+@* 									<tbody id="selected-products-container"> *@
+@* 										@if (Model.SelectedProducts != null && Model.SelectedProducts.Any(p => p.Selected)) *@
+@* 										{ *@
+@* 											foreach (var item in Model.SelectedProducts.Where(p => p.Selected)) *@
+@* 											{ *@
+@* 												<tr data-product-id="@item.ProductId"> *@
+@* 													<td class="text-center"> *@
+@* 														<img src="@item.PictureThumbnailUrl" alt="" width="50" /> *@
+@* 													</td> *@
+@* 													<td> *@
+@* 														<input type="hidden" name="SelectedProducts[@item.ProductId].ProductId" value="@item.ProductId" /> *@
+@* 														<input type="hidden" name="SelectedProducts[@item.ProductId].Selected" value="true" /> *@
+@* 														<input type="hidden" name="SelectedProducts[@item.ProductId].ProductName" value="@item.ProductName" /> *@
+@* 														<input type="hidden" name="SelectedProducts[@item.ProductId].ProductSku" value="@item.ProductSku" /> *@
+@* 														<input type="hidden" name="SelectedProducts[@item.ProductId].PictureThumbnailUrl" value="@item.PictureThumbnailUrl" /> *@
+@* 														<input type="hidden" name="SelectedProducts[@item.ProductId].StockQuantity" value="@item.StockQuantity" /> *@
+@* 														<input type="hidden" id="SelectedProductsJson" name="SelectedProductsJson" /> *@
+@* 														<em>@item.ProductName</em> *@
+@* 														@if (!string.IsNullOrEmpty(item.ProductSku)) *@
+@* 														{ *@
+@* 															<p> *@
+@* 																<strong>@T("Admin.Orders.Products.SKU")</strong>: @item.ProductSku *@
+@* 															</p> *@
+@* 														} *@
+@* 													</td> *@
+@* 													<td class="text-center"> *@
+@* 														<span class="stock-quantity-value">@(item.StockQuantity + item.QuantityToOrder)</span> *@
+@* 														<input type="hidden" class="stock-quantity-input" value="@item.StockQuantity" /> *@
+@* 													</td> *@
+@* 													<td class="text-center"> *@
+@* 														<div id="pnlEditUnitCost@(item.ProductId)" style="display:none"> *@
+@* 															<input name="SelectedProducts[@item.ProductId].UnitCost" *@
+@* 																   type="number" *@
+@* 																   value="@item.UnitCost.ToString("0.00")" *@
+@* 																   id="unitCost@(item.ProductId)" *@
+@* 																   step="0.01" *@
+@* 																   min="0" *@
+@* 																   class="form-control input-sm" /> *@
+@* 														</div> *@
+@* 														<div id="displayUnitCost@(item.ProductId)"> *@
+@* 															$@item.UnitCost.ToString("0.00") *@
+@* 														</div> *@
+@* 													</td> *@
+@* 													<td class="text-center"> *@
+@* 														<div id="pnlEditQuantity@(item.ProductId)" style="display:none"> *@
+@* 															<input name="SelectedProducts[@item.ProductId].QuantityToOrder" *@
+@* 																   type="number" *@
+@* 																   value="@item.QuantityToOrder" *@
+@* 																   id="quantity@(item.ProductId)" *@
+@* 																   min="1" *@
+@* 																   class="form-control input-sm" /> *@
+@* 														</div> *@
+@* 														<div id="displayQuantity@(item.ProductId)"> *@
+@* 															@item.QuantityToOrder *@
+@* 														</div> *@
+@* 													</td> *@
+@* 													<td class="text-center"> *@
+@* 														$@((item.QuantityToOrder * item.UnitCost).ToString("0.00")) *@
+@* 													</td> *@
+@* 													<td class="text-center"> *@
+@* 														<button type="button" class="btn btn-default edit-product-btn" *@
+@* 																data-product-id="@item.ProductId"> *@
+@* 															<i class="fas fa-pencil"></i> *@
+@* 															@T("Admin.Common.Edit") *@
+@* 														</button> *@
+@* 														<button type="button" class="btn btn-default delete-product-btn" *@
+@* 																data-product-id="@item.ProductId"> *@
+@* 															<i class="far fa-trash-can"></i> *@
+@* 															@T("Admin.Common.Delete") *@
+@* 														</button> *@
+@* 														<button type="button" class="btn btn-default save-product-btn" *@
+@* 																data-product-id="@item.ProductId" style="display:none"> *@
+@* 															<i class="far fa-floppy-disk"></i> *@
+@* 															@T("Admin.Common.Save") *@
+@* 														</button> *@
+@* 														<button type="button" class="btn btn-default cancel-edit-btn" *@
+@* 																data-product-id="@item.ProductId" style="display:none"> *@
+@* 															<i class="fas fa-times"></i> *@
+@* 															@T("Admin.Common.Cancel") *@
+@* 														</button> *@
+@* 													</td> *@
+@* 												</tr> *@
+@* 											} *@
+@* 										} *@
+@* 									</tbody> *@
+@* 									<tfoot> *@
+@* 										<tr> *@
+@* 											<td colspan="5" class="text-right"><strong>@T("Admin.Orders.Products.GrandTotal")</strong></td> *@
+@* 											<td class="text-center" id="grand-total-amount"> *@
+@* 												$@(Model.SelectedProducts?.Where(p => p.Selected).Sum(p => p.QuantityToOrder * p.UnitCost).ToString("0.00") ?? "0.00") *@
+@* 											</td> *@
+@* 											<td></td> *@
+@* 										</tr> *@
+@* 									</tfoot> *@
+@* 								</table> *@
+@* 							</div> *@
+@* 						</div> *@
+@* 						<div class="card-footer"> *@
+@* 							<button type="button" id="btnAddProduct" class="btn btn-primary"> *@
+@* 								<i class="fas fa-plus-square"></i> *@
+@* 								@T("Admin.PurchaseOrders.AddProduct") *@
+@* 							</button> *@
+@* 						</div> *@
+@* 					</div> *@
+@* 				</div> *@
+@* 			</div> *@
+@* 		</div> *@
+@* 	</section> *@
+@* </form> *@
+
+@* <script> *@
+@* 	$(document).ready(function() { *@
+
+@* 	var table = $('#purchaseorder-products-grid').DataTable({ *@
+@* 		"paging": false, *@
+@* 		"searching": false, *@
+@* 		"info": false, *@
+@* 		"ordering": false, *@
+@* 		"autoWidth": false, *@
+@* 		"responsive": false, *@
+@* 		"columnDefs": [ *@
+@* 			{ "targets": [0], "width": "80px" }, *@
+@* 			{ "targets": [3, 5], "className": "text-center" } *@
+@* 		] *@
+@* 	}); *@
+
+@* 	var initialSupplierId = $('#@Html.IdFor(model => model.SelectedSupplierId)').val(); *@
+@* 	var currentSupplierId = initialSupplierId; *@
+
+@* 	function hasProducts() { *@
+@* 		return $('#selected-products-container tr[data-product-id]').length > 0; *@
+@* 	} *@
+
+@* 	function openProductPopup(supplierId) { *@
+@* 		OpenWindow( *@
+@* 			'@(Url.Action("ProductAddPopup", "PurchaseOrder", new { btnId = "btnRefreshSelectedProducts", formId = "purchase-order-form" }))' + *@
+@* 			'&supplierId=' + supplierId, *@
+@* 			800, 800, true *@
+@* 		); *@
+@* 	} *@
+
+@* 	$('#btnAddProduct').off('click').on('click', function() { *@
+@* 		var selectedSupplierId = $('#@Html.IdFor(model => model.SelectedSupplierId)').val(); *@
+
+@* 		if (!selectedSupplierId || selectedSupplierId == 0) { *@
+@* 			alert('@T("Admin.PurchaseOrders.SelectSupplierWarning")'); *@
+@* 			return; *@
+@* 		} *@
+
+@* 		if (hasProducts()) { *@
+@* 			$('#clear-table-confirmation').data({ *@
+@* 				'action': 'add-product', *@
+@* 				'supplier-id': selectedSupplierId *@
+@* 			}).modal('show'); *@
+@* 		} *@
+@* 		else { *@
+@* 			openProductPopup(selectedSupplierId); *@
+@* 		} *@
+@* 	}); *@
+
+@* 	$('.select2-ajax-suppliers').select2({ *@
+@* 		placeholder: '@T("Admin.Common.SearchOrSelectSupplier")', *@
+@* 		allowClear: true, *@
+@* 		width: '100%', *@
+@* 		ajax: { *@
+@* 			url: $('.select2-ajax-suppliers').data('ajax-url'), *@
+@* 			dataType: 'json', *@
+@* 			delay: 250, *@
+@* 			data: function(params) { *@
+@* 				return { *@
+@* 					searchTerm: params.term, *@
+@* 					page: params.page || 1 *@
+@* 				}; *@
+@* 			}, *@
+@* 			processResults: function(data, params) { *@
+@* 				params.page = params.page || 1; *@
+@* 				return { *@
+@* 					results: data.items, *@
+@* 					pagination: { *@
+@* 						more: (params.page * 10) < data.totalCount *@
+@* 					} *@
+@* 				}; *@
+@* 			}, *@
+@* 			cache: true *@
+@* 		}, *@
+@* 		minimumInputLength: 0 *@
+@* 	}).on('change', function() { *@
+@* 		var newSupplierId = $(this).val(); *@
+
+@* 		if (hasProducts() && newSupplierId != currentSupplierId) { *@
+@* 			$('#clear-table-confirmation').data({ *@
+@* 				'action': 'change-supplier', *@
+@* 				'supplier-id': newSupplierId *@
+@* 			}).modal('show'); *@
+@* 		} else { *@
+@* 			currentSupplierId = newSupplierId; *@
+@* 		} *@
+@* 	}); *@
+
+@* 	$('.select2-selection__rendered').css({ *@
+@* 		'font-size': '16px', *@
+@* 		'font-weight': '500' *@
+@* 	}); *@
+
+@* 	@if (Model.SelectedSupplierId > 0) *@
+@* 	{ *@
+@* 		<text> *@
+@* 				var initialSupplier = { *@
+@* 					id: '@Model.SelectedSupplierId', *@
+@* 					text: '@Html.Raw(JavaScriptEncoder.Default.Encode(Model.AvailableSuppliers.FirstOrDefault(x => x.Value == Model.SelectedSupplierId.ToString())?.Text))' *@
+@* 				}; *@
+@* 				$('.select2-ajax-suppliers').append(new Option(initialSupplier.text, initialSupplier.id, true, true)).trigger('change'); *@
+@* 				currentSupplierId = initialSupplier.id; *@
+@* 		</text> *@
+@* 	} *@
+
+@* 	$('#confirm-change-supplier-button').off('click').on('click', function() { *@
+@* 		var action = $('#clear-table-confirmation').data('action'); *@
+@* 		var newSupplierId = $('#clear-table-confirmation').data('supplier-id'); *@
+
+@* 		$('#selected-products-container').empty(); *@
+@* 		$('#grand-total-amount').text('$0.00'); *@
+
+@* 		currentSupplierId = newSupplierId; *@
+@* 		$('#@Html.IdFor(model => model.SelectedSupplierId)').val(newSupplierId); *@
+
+@* 		$('#clear-table-confirmation').modal('hide'); *@
+
+@* 		if (action === 'add-product') { *@
+@* 			openProductPopup(newSupplierId); *@
+@* 		} *@
+@* 	}); *@
+
+@* 	$('#clear-table-confirmation').on('hidden.bs.modal', function() { *@
+@* 		$(this).removeData('action').removeData('supplier-id'); *@
+@* 	}); *@
+
+@* 		$(document).on('click', '.edit-product-btn', function() { *@
+@* 			var productId = $(this).data('product-id'); *@
+@* 			toggleEditMode(productId, true); *@
+@* 		}); *@
+
+@* 			$(document).on('click', '.save-product-btn', function() { *@
+@* 		var productId = $(this).data('product-id'); *@
+@* 		var $row = $(this).closest('tr'); *@
+@* 		var quantity = parseFloat($('#quantity' + productId).val()) || 0; *@
+@* 		var unitCost = parseFloat($('#unitCost' + productId).val()) || 0; *@
+
+@* 		var originalStock = parseFloat($row.find('.stock-quantity-input').val()) || 0; *@
+
+@* 		$('#displayQuantity' + productId).text(quantity); *@
+@* 		$('#displayUnitCost' + productId).html('$' + unitCost.toFixed(2)); *@
+
+@* 		var newStockDisplay = originalStock + quantity; *@
+@* 		$row.find('.stock-quantity-value').text(newStockDisplay); *@
+
+@* 		var rowTotal = (quantity * unitCost).toFixed(2); *@
+@* 		$row.find('td').eq(5).html('$' + rowTotal); *@
+
+@* 		$row.find('input[name*="QuantityToOrder"]').val(quantity); *@
+@* 		$row.find('input[name*="UnitCost"]').val(unitCost); *@
+
+@* 		updateGrandTotal(); *@
+@* 		toggleEditMode(productId, false); *@
+@* 	}); *@
+
+@* 		$(document).on('click', '.cancel-edit-btn', function() { *@
+@* 			var productId = $(this).data('product-id'); *@
+@* 			var originalQuantity = $('#displayQuantity' + productId).text(); *@
+@* 			var originalUnitCost = $('#displayUnitCost' + productId).text(); *@
+
+@* 			$('#quantity' + productId).val(originalQuantity); *@
+@* 			$('#unitCost' + productId).val(originalUnitCost); *@
+
+@* 			toggleEditMode(productId, false); *@
+
+@* 			updateGrandTotal(); *@
+@* 		}); *@
+
+@* 		 $(document).on('click', '.delete-product-btn', function(e) { *@
+@* 			e.preventDefault(); *@
+@* 			var productId = $(this).data('product-id'); *@
+@* 			$('#delete-selected-product-confirmation').attr('data-productid', productId); *@
+@* 			$("#delete-selected-product-confirmation").modal('show'); *@
+@* 		}); *@
+
+@* 		$('#delete-selected-product-confirmation-button').click(function() { *@
+@* 			var productId = $('#delete-selected-product-confirmation').attr('data-productid'); *@
+@* 			$('tr[data-product-id="' + productId + '"]').remove(); *@
+@* 			$("#delete-selected-product-confirmation").modal('hide'); *@
+
+@* 			updateGrandTotal(); *@
+@* 		}); *@
+
+@* 		$('#purchase-order-form').on('submit', function(e) { *@
+@* 		e.preventDefault(); *@
+
+@* 		if (!$('#@Html.IdFor(model => model.SelectedSupplierId)').val()) { *@
+@* 			alert('@T("Admin.PurchaseOrders.SelectSupplierWarning")'); *@
+@* 			return false; *@
+@* 		} *@
+
+@* 		if ($('#selected-products-container tr[data-product-id]').length === 0) { *@
+@* 			alert('@T("Admin.PurchaseOrders.SelectProductsWarning")'); *@
+@* 			return false; *@
+@* 		} *@
+
+@* 		var selectedProducts = []; *@
+@* 		$('#selected-products-container tr[data-product-id]').each(function() { *@
+@* 			var productId = $(this).data('product-id'); *@
+@* 			selectedProducts.push({ *@
+@* 				ProductId: productId, *@
+@* 				Selected: true, *@
+@* 				ProductName: $(this).find('input[name*="ProductName"]').val(), *@
+@* 				ProductSku: $(this).find('input[name*="ProductSku"]').val(), *@
+@* 				PictureThumbnailUrl: $(this).find('input[name*="PictureThumbnailUrl"]').val(), *@
+@* 				StockQuantity: parseFloat($(this).find('.stock-quantity-input').val()) || 0, *@
+@* 				UnitCost: parseFloat($(this).find('input[name*="UnitCost"]').val()) || 0, *@
+@* 				QuantityToOrder: parseFloat($(this).find('input[name*="QuantityToOrder"]').val()) || 0 *@
+@* 			}); *@
+@* 		}); *@
+
+@* 		var formData = { *@
+@* 			SelectedSupplierId: parseInt($('#@Html.IdFor(model => model.SelectedSupplierId)').val()), *@
+@* 			SelectedProducts: selectedProducts *@
+@* 		}; *@
+
+@* 		var $submitButton = $('#place-order-button'); *@
+@* 		$submitButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> @T("Admin.Common.Processing")'); *@
+
+@* 		$.ajax({ *@
+@* 			url: $(this).attr('action'), *@
+@* 			type: 'POST', *@
+@* 			data: JSON.stringify(formData), *@
+@* 			contentType: 'application/json', *@
+@* 			headers: { *@
+@* 				'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() *@
+@* 			}, *@
+@* 			success: function(response) { *@
+@* 				if (response.success) { *@
+@* 					if (response.redirect) { *@
+@* 						window.location.href = response.redirect; *@
+@* 					} *@
+@* 				} else { *@
+@* 					alert(response.message || '@T("Admin.Common.UnknownError")'); *@
+@* 				} *@
+@* 			}, *@
+@* 			error: function(xhr, status, error) { *@
+@* 				var errorMessage = xhr.responseJSON && xhr.responseJSON.message *@
+@* 					? xhr.responseJSON.message *@
+@* 					: '@T("Admin.Common.ErrorOccurred")' + ': ' + error; *@
+@* 				alert(errorMessage); *@
+@* 			}, *@
+@* 			complete: function() { *@
+@* 				$submitButton.prop('disabled', false).html('<i class="fas fa-check"></i> @T("Admin.Catalog.PurchaseOrder.PlaceOrder")'); *@
+@* 			} *@
+@* 		}); *@
+@* 	}); *@
+
+@* 		function toggleEditMode(productId, editMode) { *@
+@* 			if (editMode) { *@
+@* 				$('#pnlEditQuantity' + productId).show(); *@
+@* 				$('#pnlEditUnitCost' + productId).show(); *@
+@* 				$('.save-product-btn[data-product-id="' + productId + '"]').show(); *@
+@* 				$('.cancel-edit-btn[data-product-id="' + productId + '"]').show(); *@
+@* 				$('#quantity' + productId).prop("disabled", false); *@
+@* 				$('#unitCost' + productId).prop("disabled", false); *@
+@* 				$('#displayQuantity' + productId).hide(); *@
+@* 				$('#displayUnitCost' + productId).hide(); *@
+@* 				$('.edit-product-btn[data-product-id="' + productId + '"]').hide(); *@
+@* 				$('.delete-product-btn[data-product-id="' + productId + '"]').hide(); *@
+@* 			} else { *@
+@* 				$('#pnlEditQuantity' + productId).hide(); *@
+@* 				$('#pnlEditUnitCost' + productId).hide(); *@
+@* 				$('.save-product-btn[data-product-id="' + productId + '"]').hide(); *@
+@* 				$('.cancel-edit-btn[data-product-id="' + productId + '"]').hide(); *@
+@* 				$('#quantity' + productId).prop("disabled", true); *@
+@* 				$('#unitCost' + productId).prop("disabled", true); *@
+@* 				$('#displayQuantity' + productId).show(); *@
+@* 				$('#displayUnitCost' + productId).show(); *@
+@* 				$('.edit-product-btn[data-product-id="' + productId + '"]').show(); *@
+@* 				$('.delete-product-btn[data-product-id="' + productId + '"]').show(); *@
+@* 			} *@
+@* 		} *@
+
+@* 			function parseCurrency(value) { *@
+@* 		return parseFloat(value.toString().replace(/[^\d.-]/g, '')) || 0; *@
+@* 	} *@
+
+@* 		function updateGrandTotal() { *@
+@* 		var grandTotal = 0; *@
+@* 		$('#selected-products-container tr').each(function() { *@
+@* 			var quantity = parseFloat($(this).find('[id^="displayQuantity"]').text()) || 0; *@
+@* 			var unitCost = parseCurrency($(this).find('[id^="displayUnitCost"]').text()); *@
+@* 			var rowTotal = quantity * unitCost; *@
+
+@* 			$(this).find('td').eq(5).html('$' + rowTotal.toFixed(2)); *@
+@* 			grandTotal += rowTotal; *@
+@* 		}); *@
+
+@* 		$('#grand-total-amount').html('$' + grandTotal.toFixed(2)); *@
+@* 	} *@
+
+@* 	function addProductsToCreateTable(products) { *@
+@* 		products.forEach(function (product) { *@
+@* 			table.row.add(product).draw(); *@
+@* 		}); *@
+@* 	} *@
+
+@* 	function beforeSubmit() { *@
+@* 		const data = table.rows().data().toArray(); *@
+@* 		$('#SelectedProductsJson').val(JSON.stringify(data)); *@
+@* 		return true; *@
+@* 	} *@
+
+@* 	window.updateSelectedProducts = function(products) { *@
+@* 		var container = $('#selected-products-container'); *@
+@* 		container.empty(); *@
+
+@* 		if (products.length === 0) { *@
+@* 			container.append('<tr><td colspan="7" class="text-center">@T("Admin.Common.NoDataAvailableInTable")</td></tr>'); *@
+@* 			return; *@
+@* 		} *@
+
+@* 		products.forEach(function(product) { *@
+@* 			var imageUrl = product.PictureThumbnailUrl || '/images/default-image.png'; *@
+@* 			if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) { *@
+@* 			imageUrl = '/' + imageUrl; *@
+@* 		} *@
+@* 			var rowHtml = ` *@
+@* 				<tr data-product-id="${product.ProductId}"> *@
+@* 					<td class="text-center"> *@
+@* 						 <img src="${imageUrl}" alt="" width="50" onerror="this.src='/images/default-image.png'" style="max-height:50px;object-fit:contain" /> *@
+@* 					</td> *@
+@* 					<td> *@
+@* 						<input type="hidden" name="SelectedProducts[${product.ProductId}].ProductId" value="${product.ProductId}" /> *@
+@* 						<input type="hidden" name="SelectedProducts[${product.ProductId}].Selected" value="true" /> *@
+@* 						<input type="hidden" name="SelectedProducts[${product.ProductId}].ProductName" value="${product.ProductName}" /> *@
+@* 						<input type="hidden" name="SelectedProducts[${product.ProductId}].ProductSku" value="${product.ProductSku}" /> *@
+@* 						<input type="hidden" name="SelectedProducts[${product.ProductId}].PictureThumbnailUrl" value="${product.PictureThumbnailUrl || '/images/default-image.png'}" /> *@
+@* 						<input type="hidden" name="SelectedProducts[${product.ProductId}].StockQuantity" value="${product.StockQuantity || 0}" /> *@
+@* 						<input type="hidden" name="SelectedProducts[${product.ProductId}].UnitCost" value="${product.UnitCost || 0}" /> *@
+@* 						<input type="hidden" name="SelectedProducts[${product.ProductId}].QuantityToOrder" value="${product.QuantityToOrder || 1}" /> *@
+@* 						<div class="text-center"> *@
+@* 							<em>${product.ProductName}</em> *@
+@* 							${product.ProductSku ? '<p><strong>@T("Admin.Orders.Products.SKU")</strong>: ' + product.ProductSku + '</p>' : ''} *@
+@* 						</div> *@
+@* 					</td> *@
+@* 					<td class="text-center stock-quantity-cell"> *@
+@* 						<span class="stock-quantity-value">${(product.StockQuantity || 0) + (product.QuantityToOrder || 1)}</span> *@
+@* 						<input type="hidden" class="stock-quantity-input" value="${product.StockQuantity || 0}" /> *@
+@* 					</td> *@
+@* 					<td class="text-center"> *@
+@* 						<div id="pnlEditUnitCost${product.ProductId}" style="display:none"> *@
+@* 							<input name="SelectedProducts[${product.ProductId}].UnitCost" *@
+@* 								   type="number" *@
+@* 								   value="${product.UnitCost.toFixed(2)}" *@
+@* 								   id="unitCost${product.ProductId}" *@
+@* 								   step="0.01" *@
+@* 								   min="0" *@
+@* 								   class="form-control input-sm"/> *@
+@* 						</div> *@
+@* 						<div id="displayUnitCost${product.ProductId}"> *@
+@* 							$${product.UnitCost.toFixed(2)} *@
+@* 						</div> *@
+@* 					</td> *@
+@* 					<td class="text-center"> *@
+@* 						<div id="pnlEditQuantity${product.ProductId}" style="display:none"> *@
+@* 							<input name="SelectedProducts[${product.ProductId}].QuantityToOrder" *@
+@* 								   type="number" *@
+@* 								   value="${product.QuantityToOrder}" *@
+@* 								   id="quantity${product.ProductId}" *@
+@* 								   min="1" *@
+@* 								   max="${product.StockQuantity}" *@
+@* 								   class="form-control input-sm"/> *@
+@* 						</div> *@
+@* 						<div id="displayQuantity${product.ProductId}"> *@
+@* 							${product.QuantityToOrder} *@
+@* 						</div> *@
+@* 					</td> *@
+@* 					<td class="text-center"> *@
+@* 						$${(product.QuantityToOrder * product.UnitCost).toFixed(2)} *@
+@* 					</td> *@
+@* 					<td class="text-center"> *@
+@* 						<button type="button" class="btn btn-default edit-product-btn" *@
+@* 								data-product-id="${product.ProductId}"> *@
+@* 							<i class="fas fa-pencil"></i> *@
+@* 	@T("Admin.Common.Edit") *@
+@* 						</button> *@
+@* 						<button type="button" class="btn btn-default delete-product-btn" *@
+@* 								data-product-id="${product.ProductId}"> *@
+@* 							<i class="far fa-trash-can"></i> *@
+@* 	@T("Admin.Common.Delete") *@
+@* 						</button> *@
+@* 						<button type="button" class="btn btn-default save-product-btn" *@
+@* 								data-product-id="${product.ProductId}" style="display:none"> *@
+@* 							<i class="far fa-floppy-disk"></i> *@
+@* 	@T("Admin.Common.Save") *@
+@* 						</button> *@
+@* 						<button type="button" class="btn btn-default cancel-edit-btn" *@
+@* 								data-product-id="${product.ProductId}" style="display:none"> *@
+@* 							<i class="fas fa-times"></i> *@
+@* 	@T("Admin.Common.Cancel") *@
+@* 						</button> *@
+@* 					</td> *@
+@* 				</tr> *@
+@* 			`; *@
+@* 			container.append(rowHtml); *@
+@* 		}); *@
+
+@* 		updateGrandTotal(); *@
+@* 	}; *@
+@* 	}); *@
+@* </script> *@
+
+@* <div id="delete-selected-product-confirmation" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="delete-selected-product-confirmation-title"> *@
+@* 	<div class="modal-dialog"> *@
+@* 		<div class="modal-content"> *@
+@* 			<div class="modal-header"> *@
+@* 				<h4 class="modal-title" id="delete-selected-product-confirmation-title">@T("Admin.Common.AreYouSure")</h4> *@
+@* 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> *@
+@* 			</div> *@
+@* 			<div class="modal-body"> *@
+@* 				@T("Admin.Common.DeleteConfirmation") *@
+@* 			</div> *@
+@* 			<div class="modal-footer"> *@
+@* 				<button type="button" class="btn btn-default" data-dismiss="modal">@T("Admin.Common.NoCancel")</button> *@
+@* 				<button type="button" id="delete-selected-product-confirmation-button" class="btn btn-danger">@T("Admin.Common.YesDelete")</button> *@
+@* 			</div> *@
+@* 		</div> *@
+@* 	</div> *@
+@* </div> *@
+
+@* <div id="clear-table-confirmation" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="clear-table-confirmation-title"> *@
+@* 	<div class="modal-dialog"> *@
+@* 		<div class="modal-content"> *@
+@* 			<div class="modal-header"> *@
+@* 				<h4 class="modal-title" id="clear-table-confirmation-title">@T("Admin.Common.AreYouSure")</h4> *@
+@* 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> *@
+@* 			</div> *@
+@* 			<div class="modal-body"> *@
+@* 				@T("Admin.PurchaseOrders.ChangeSupplierWarning") *@
+@* 			</div> *@
+@* 			<div class="modal-footer"> *@
+@* 				<button type="button" class="btn btn-default" data-dismiss="modal">@T("Admin.Common.NoCancel")</button> *@
+@* 				<button type="button" id="confirm-change-supplier-button" class="btn btn-danger">@T("Admin.Common.YesContinue")</button> *@
+@* 			</div> *@
+@* 		</div> *@
+@* 	</div> *@
+@* </div> *@

@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Misc",
+  "FriendlyName": "Service Subscription",
+  "SystemName": "Misc.ServiceSubscription",
+  "Version": "4.80.1",
+  "SupportedVersions": [ "4.80" ],
+  "Author": "BS23",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Misc.ServiceSubscription.dll",
+  "Description": "This is a simple plugin to manage service subscription from admin side."
+}

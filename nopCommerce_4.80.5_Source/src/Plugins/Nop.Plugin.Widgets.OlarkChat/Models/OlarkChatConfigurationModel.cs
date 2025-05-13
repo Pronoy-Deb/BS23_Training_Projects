@@ -3,7 +3,7 @@ using Nop.Web.Framework.Models;
 
 namespace Nop.Plugin.Widgets.OlarkChat.Models
 {
-    public record ConfigurationModel : BaseNopModel
+    public record OlarkChatConfigurationModel : BaseNopModel
     {
         [NopResourceDisplayName("Plugins.Widgets.OlarkChat.Fields.SiteId")]
         public string SiteId { get; set; }
