@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Widgets",
+  "FriendlyName": "Olark Chat",
+  "SystemName": "Widgets.OlarkChat",
+  "Version": "2.0",
+  "SupportedVersions": [ "4.80" ],
+  "Author": "BS23",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Widgets.OlarkChat.dll",
+  "Description": "This is a simple widget plugin to provide service of live chatting."
+}

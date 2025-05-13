@@ -1,0 +1,75 @@
+﻿@model ConfigurationModel
+@{
+	Layout = "_ConfigurePlugin";
+}
+
+<form asp-controller="OlarkChat" asp-action="Configure" method="post">
+	<div class="cards-group">
+		<div class="card card-default">
+			<div class="card-body">
+				<div class="form-group row">
+					<div class="col-md-3">
+						<nop-label asp-for="SiteId" />
+					</div>
+					<div class="col-md-9">
+						<nop-editor asp-for="SiteId" />
+						<span asp-validation-for="SiteId"></span>
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<div class="col-md-3">
+						<nop-label asp-for="WidgetPosition" />
+					</div>
+					<div class="col-md-9">
+						<nop-select asp-for="WidgetPosition" asp-items="Model.AvailableWidgetPositions.Select(x => new SelectListItem { Text = x, Value = x })" />
+						<span asp-validation-for="WidgetPosition"></span>
+					</div>
+				</div>
+
+				<div class="form-group row">
+					<div class="col-md-3">
+						<nop-label asp-for="EnableMobile" />
+					</div>
+					<div class="col-md-9">
+						<nop-editor asp-for="EnableMobile" />
+						<span asp-validation-for="EnableMobile"></span>
+					</div>
+				</div>
+                
+                <div class="form-group row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="UseDarkTheme" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="UseDarkTheme" />
+                        <span asp-validation-for="UseDarkTheme"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+					<div class="col-md-9 offset-md-3">
+						<button type="submit" name="save" class="btn btn-primary">@T("Admin.Common.Save")</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="card card-default">
+			<div class="card-header">
+				@T("Plugins.Widgets.OlarkChat.Instructions.Title")
+			</div>
+			<div class="card-body">
+				<ol>
+					<li>@Html.Raw(string.Format(T("Plugins.Widgets.OlarkChat.Instructions.Step1").Text, "<a href=\"https://www.olark.com\" target=\"_blank\">olark.com</a>"))</li>
+					<li>@T("Plugins.Widgets.OlarkChat.Instructions.Step2")</li>
+					<li>@T("Plugins.Widgets.OlarkChat.Instructions.Step3")</li>
+					<li>@T("Plugins.Widgets.OlarkChat.Instructions.Step4")</li>
+				</ol>
+				<div class="alert alert-info">
+					<strong>@T("Plugins.Widgets.OlarkChat.Instructions.Note")</strong>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>

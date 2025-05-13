@@ -1,0 +1,70 @@
+﻿@model PublicInfoModel
+
+@{
+	var enableMobile = Model.EnableMobile;
+}
+
+@if (!string.IsNullOrEmpty(Model.SiteId))
+{
+	<script type="text/javascript">
+		window.olark || (function (c) {
+			var f = window, d = document, l = f.location.protocol == "https:" ? "https:" : "http:", z = c.name,
+				r = "load";
+			var nt = function () {
+				f[z] = function () { (a.s = a.s || []).push(arguments) };
+				var a = f[z]._ = {}, q = c.methods.length;
+				while (q--) (function (n) {
+					f[z][n] = function () {
+						f[z]("call", n, arguments)
+					}
+				})(c.methods[q]);
+				a.l = c.loader;
+				a.i = nt;
+				a.p = { 0: +new Date };
+				a.P = function (u) { a.p[u] = new Date - a.p[0] };
+				function s() { a.P(r); f[z](r) }
+				f.addEventListener ? f.addEventListener(r, s, false) : f.attachEvent("on" + r, s);
+				var ld = function () {
+					function p(hd) { hd = "head"; return ["<", hd, "></", hd, "><body></body>"].join("") }
+					var b = d.createElement("div"); b.innerHTML = p(); return b.getElementsByTagName("head")[0] || d.documentElement
+				};
+				var h = d.createElement("script"), e = ld(); h.async = 1;
+				h.src = l + "//" + a.l; e.appendChild(h)
+			};
+			nt()
+		})({
+			loader: "static.olark.com/jsclient/loader0.js",
+			name: "olark",
+			methods: ["configure", "extend", "declare", "identify"]
+		});
+
+		@if (!string.IsNullOrEmpty(Model.CustomerEmail))
+		{
+			<text>
+						olark.configure('visitor', {
+							email: '@Model.CustomerEmail',
+							nickname: '@Model.CustomerName'
+						});
+			</text>
+		}
+
+		olark.configure('system', {
+			mobile: @enableMobile.ToString().ToLower()
+		});
+
+		olark.configure('system.hb_dark_theme', @(Model.UseDarkTheme ? "true" : "false"));
+
+		olark.configure('system.hb_position', '@Model.WidgetPosition');
+
+		olark.configure('CalloutBubble.bubble_width', 100 );
+		olark.configure('CalloutBubble.bubble_height', 25 );
+
+		if(window.location.href.indexOf("checkout") >= 0){
+
+			olark.configure('CalloutBubble.slide', true );
+
+		}
+
+		olark.identify("@Model.SiteId");
+	</script>
+}
