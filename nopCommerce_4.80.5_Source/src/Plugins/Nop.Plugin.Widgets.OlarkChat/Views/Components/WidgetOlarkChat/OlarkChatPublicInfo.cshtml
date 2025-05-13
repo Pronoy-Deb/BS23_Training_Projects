@@ -41,10 +41,10 @@
 		@if (!string.IsNullOrEmpty(Model.CustomerEmail))
 		{
 			<text>
-						olark.configure('visitor', {
-							email: '@Model.CustomerEmail',
-							nickname: '@Model.CustomerName'
-						});
+				olark.configure('visitor', {
+					email: '@Model.CustomerEmail',
+					nickname: '@Model.CustomerName'
+				});
 			</text>
 		}
 

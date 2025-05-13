@@ -38,7 +38,7 @@ namespace Nop.Plugin.Widgets.OlarkChat.Components
                 UseDarkTheme = settings.UseDarkTheme
             };
 
-            return View("PublicInfo", model);
+            return View("OlarkChatPublicInfo", model);
         }
     }
 }

@@ -89,7 +89,7 @@ namespace Nop.Plugin.Widgets.OlarkChat
 
         public override string GetConfigurationPageUrl()
         {
-            return _webHelper.GetStoreLocation() + "Admin/OlarkChat/Configure";
+            return _webHelper.GetStoreLocation() + "Admin/OlarkChat/OlarkChatConfigure";
         }
     }
 }

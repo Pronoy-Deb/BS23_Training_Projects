@@ -29,7 +29,7 @@ namespace Nop.Plugin.Widgets.OlarkChat.Controllers
 
         [AuthorizeAdmin]
         [Area(AreaNames.ADMIN)]
-        public async Task<IActionResult> Configure()
+        public async Task<IActionResult> OlarkChatConfigure()
         {
             var settings = await _settingService.LoadSettingAsync<OlarkChatSettings>();
 
@@ -48,7 +48,7 @@ namespace Nop.Plugin.Widgets.OlarkChat.Controllers
         [HttpPost]
         [AuthorizeAdmin]
         [Area(AreaNames.ADMIN)]
-        public async Task<IActionResult> Configure(OlarkChatConfigurationModel model)
+        public async Task<IActionResult> OlarkChatConfigure(OlarkChatConfigurationModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -70,7 +70,7 @@ namespace Nop.Plugin.Widgets.OlarkChat.Controllers
             _notificationService.SuccessNotification(
                 await _localizationService.GetResourceAsync("Admin.Plugins.Saved"));
 
-            return RedirectToAction("Configure");
+            return RedirectToAction("OlarkChatConfigure");
         }
     }
 }
