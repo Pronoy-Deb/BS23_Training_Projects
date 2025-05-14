@@ -4,41 +4,41 @@ using Nop.Plugin.Widgets.OlarkChat.Models;
 using Nop.Services.Configuration;
 using Nop.Services.Customers;
 
-namespace Nop.Plugin.Widgets.OlarkChat.Components
+namespace Nop.Plugin.Widgets.OlarkChat.Components;
+public class WidgetOlarkChatViewComponent : ViewComponent
 {
-    public class WidgetOlarkChatViewComponent : ViewComponent
+    private readonly ISettingService _settingService;
+    private readonly IWorkContext _workContext;
+    private readonly ICustomerService _customerService;
+
+    public WidgetOlarkChatViewComponent(
+        ISettingService settingService,
+        IWorkContext workContext,
+        ICustomerService customerService)
     {
-        private readonly ISettingService _settingService;
-        private readonly IWorkContext _workContext;
-        private readonly ICustomerService _customerService;
+        _settingService = settingService;
+        _workContext = workContext;
+        _customerService = customerService;
+    }
 
-        public WidgetOlarkChatViewComponent(
-            ISettingService settingService,
-            IWorkContext workContext,
-            ICustomerService customerService)
+    public async Task<IViewComponentResult> InvokeAsync(string widgetZone, object additionalData)
+    {
+        var settings = await _settingService.LoadSettingAsync<OlarkChatSettings>();
+        var customer = await _workContext.GetCurrentCustomerAsync();
+        var customerName = await _customerService.GetCustomerFullNameAsync(customer);
+
+        var model = new OlarkChatPublicInfoModel
         {
-            _settingService = settingService;
-            _workContext = workContext;
-            _customerService = customerService;
-        }
+            SiteId = settings.SiteId,
+            CustomerName = customerName,
+            CustomerEmail = customer?.Email ?? "",
+            WidgetPosition = settings.WidgetPosition,
+            EnableMobile = settings.EnableMobile,
+            UseDarkTheme = settings.UseDarkTheme,
+            ConfigurationMode = settings.ConfigurationMode,
+            CustomScript = settings.CustomScript
+        };
 
-        public async Task<IViewComponentResult> InvokeAsync(string widgetZone, object additionalData)
-        {
-            var settings = await _settingService.LoadSettingAsync<OlarkChatSettings>();
-            var customer = await _workContext.GetCurrentCustomerAsync();
-            var customerName = await _customerService.GetCustomerFullNameAsync(customer);
-
-            var model = new OlarkChatPublicInfoModel
-            {
-                SiteId = settings.SiteId,
-                CustomerName = customerName,
-                CustomerEmail = customer?.Email ?? "",
-                WidgetPosition = settings.WidgetPosition,
-                EnableMobile = settings.EnableMobile,
-                UseDarkTheme = settings.UseDarkTheme
-            };
-
-            return View("OlarkChatPublicInfo", model);
-        }
+        return View("OlarkChatPublicInfo", model);
     }
 }

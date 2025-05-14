@@ -1,76 +1,100 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Plugin.Widgets.OlarkChat.Models;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Messages;
+using Nop.Services.Security;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
 
-namespace Nop.Plugin.Widgets.OlarkChat.Controllers
+namespace Nop.Plugin.Widgets.OlarkChat.Controllers;
+public class OlarkChatController : BasePluginController
 {
-    public class OlarkChatController : BasePluginController
+    #region Fields
+
+    private readonly ISettingService _settingService;
+    private readonly ILocalizationService _localizationService;
+    private readonly INotificationService _notificationService;
+
+    #endregion
+
+    #region Ctor
+    public OlarkChatController(
+        ISettingService settingService,
+        ILocalizationService localizationService,
+        INotificationService notificationService)
     {
-        private readonly ISettingService _settingService;
-        private readonly ILocalizationService _localizationService;
-        private readonly INotificationService _notificationService;
+        _settingService = settingService;
+        _localizationService = localizationService;
+        _notificationService = notificationService;
+    }
 
-        public OlarkChatController(
-            ISettingService settingService,
-            ILocalizationService localizationService,
-            INotificationService notificationService)
+    #endregion
+
+    #region Methods
+
+    private static readonly List<string> _widgetPositions = new() { "right", "left" };
+    private static readonly List<SelectListItem> _configurationModes = new()
+    {
+        new SelectListItem { Text = "Select options", Value = "basic" },
+        new SelectListItem { Text = "Paste script", Value = "advanced" }
+    };
+
+    [AuthorizeAdmin]
+    [Area(AreaNames.ADMIN)]
+    [CheckPermission(StandardPermission.Configuration.MANAGE_SETTINGS)]
+    public async Task<IActionResult> OlarkChatConfigure()
+    {
+        var settings = await _settingService.LoadSettingAsync<OlarkChatSettings>();
+
+        var model = new OlarkChatConfigurationModel
         {
-            _settingService = settingService;
-            _localizationService = localizationService;
-            _notificationService = notificationService;
-        }
+            SiteId = settings.SiteId,
+            WidgetPosition = settings.WidgetPosition,
+            EnableMobile = settings.EnableMobile,
+            UseDarkTheme = settings.UseDarkTheme,
+            ConfigurationMode = settings.ConfigurationMode ?? "basic",
+            CustomScript = settings.CustomScript,
+            AvailableWidgetPositions = _widgetPositions,
+            AvailableConfigurationModes = _configurationModes
+        };
 
-        private static readonly List<string> _widgetPositions = new(){"right", "left"};
+        return View(model);
+    }
 
-        [AuthorizeAdmin]
-        [Area(AreaNames.ADMIN)]
-        public async Task<IActionResult> OlarkChatConfigure()
+    [HttpPost]
+    [AuthorizeAdmin]
+    [Area(AreaNames.ADMIN)]
+    [CheckPermission(StandardPermission.Configuration.MANAGE_SETTINGS)]
+    public async Task<IActionResult> OlarkChatConfigure(OlarkChatConfigurationModel model)
+    {
+        if (!ModelState.IsValid)
         {
-            var settings = await _settingService.LoadSettingAsync<OlarkChatSettings>();
-
-            var model = new OlarkChatConfigurationModel
-            {
-                SiteId = settings.SiteId,
-                WidgetPosition = settings.WidgetPosition,
-                EnableMobile = settings.EnableMobile,
-                UseDarkTheme = settings.UseDarkTheme,
-                AvailableWidgetPositions = _widgetPositions
-            };
-
+            model.AvailableWidgetPositions = _widgetPositions;
+            model.AvailableConfigurationModes = _configurationModes;
             return View(model);
         }
 
-        [HttpPost]
-        [AuthorizeAdmin]
-        [Area(AreaNames.ADMIN)]
-        public async Task<IActionResult> OlarkChatConfigure(OlarkChatConfigurationModel model)
+        var settings = new OlarkChatSettings
         {
-            if (!ModelState.IsValid)
-            {
-                model.AvailableWidgetPositions = _widgetPositions;
-                return View(model);
-            }
+            SiteId = model.SiteId,
+            WidgetPosition = model.WidgetPosition,
+            EnableMobile = model.EnableMobile,
+            UseDarkTheme = model.UseDarkTheme,
+            ConfigurationMode = model.ConfigurationMode,
+            CustomScript = model.CustomScript
+        };
 
-            var settings = new OlarkChatSettings
-            {
-                SiteId = model.SiteId,
-                WidgetPosition = model.WidgetPosition,
-                EnableMobile = model.EnableMobile,
-                UseDarkTheme = model.UseDarkTheme
-            };
+        await _settingService.SaveSettingAsync(settings);
+        await _settingService.ClearCacheAsync();
 
-            await _settingService.SaveSettingAsync(settings);
-            await _settingService.ClearCacheAsync();
+        _notificationService.SuccessNotification(
+            await _localizationService.GetResourceAsync("Admin.Plugins.Saved"));
 
-            _notificationService.SuccessNotification(
-                await _localizationService.GetResourceAsync("Admin.Plugins.Saved"));
-
-            return RedirectToAction("OlarkChatConfigure");
-        }
+        return RedirectToAction("OlarkChatConfigure");
     }
+
+    #endregion
 }

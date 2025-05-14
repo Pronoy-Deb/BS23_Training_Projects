@@ -56,13 +56,9 @@
 
 		olark.configure('system.hb_position', '@Model.WidgetPosition');
 
-		olark.configure('CalloutBubble.bubble_width', 100 );
-		olark.configure('CalloutBubble.bubble_height', 25 );
-
-		if(window.location.href.indexOf("checkout") >= 0){
-
-			olark.configure('CalloutBubble.slide', true );
-
+		@if (!string.IsNullOrEmpty(Model.CustomScript))
+		{
+			@Html.Raw(Model.CustomScript)
 		}
 
 		olark.identify("@Model.SiteId");

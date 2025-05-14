@@ -4,23 +4,21 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Core.Infrastructure;
 
-namespace Nop.Plugin.Widgets.OlarkChat.Infrastructure
+namespace Nop.Plugin.Widgets.OlarkChat.Infrastructure;
+public class NopStartup : INopStartup
 {
-    public class NopStartup : INopStartup
+    public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
-        public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        services.Configure<RazorViewEngineOptions>(options =>
         {
-            services.Configure<RazorViewEngineOptions>(options =>
-            {
-                options.ViewLocationExpanders.Add(new OlarkChatViewLocationExpander());
-            });
-        }
-
-        public void Configure(IApplicationBuilder application)
-        {
-            
-        }
-
-        public int Order => 3000;
+            options.ViewLocationExpanders.Add(new OlarkChatViewLocationExpander());
+        });
     }
+
+    public void Configure(IApplicationBuilder application)
+    {
+        
+    }
+
+    public int Order => 3000;
 }

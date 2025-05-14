@@ -2,23 +2,23 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <Copyright>SOME_COPYRIGHT</Copyright>
-    <Company>YOUR_COMPANY</Company>
-    <Authors>SOME_AUTHORS</Authors>
-    <PackageLicenseUrl>PACKAGE_LICENSE_URL</PackageLicenseUrl>
-    <PackageProjectUrl>PACKAGE_PROJECT_URL</PackageProjectUrl>
-    <RepositoryUrl>REPOSITORY_URL</RepositoryUrl>
+    <Company>Nop-Station</Company>
+    <Authors>Pronoy Debnath</Authors>
     <RepositoryType>Git</RepositoryType>
     <OutputPath>$(SolutionDir)\Presentation\Nop.Web\Plugins\Widgets.OlarkChat</OutputPath>
     <OutDir>$(OutputPath)</OutDir>
-    <!--Set this parameter to true to get the dlls copied from the NuGet cache to the output of your    project. You need to set this parameter to true if your plugin has a nuget package to ensure that   the dlls copied from the NuGet cache to the output of your project-->
-    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <!--Set this parameter to true to get the dlls copied from the NuGet cache to the output of your project. You need to set this parameter to true if your plugin has a nuget package to ensure that the dlls copied from the NuGet cache to the output of your project-->
     <ImplicitUsings>enable</ImplicitUsings>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Copyright>Nop-Station Team</Copyright>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
     <ProjectReference Include="$(SolutionDir)\Libraries\Nop.Core\Nop.Core.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Presentation\Nop.Web\Nop.Web.csproj" />
+    <ProjectReference Include="$(SolutionDir)\Plugins\NopStation.Plugin.Misc.Core\NopStation.Plugin.Misc.Core.csproj" />
     <ClearPluginAssemblies Include="$(SolutionDir)\Build\ClearPluginAssemblies.proj" />
   </ItemGroup>
 
