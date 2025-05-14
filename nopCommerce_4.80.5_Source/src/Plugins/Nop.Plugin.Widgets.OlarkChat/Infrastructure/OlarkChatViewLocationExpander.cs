@@ -2,7 +2,7 @@
 using Nop.Core.Infrastructure;
 using Nop.Web.Framework.Themes;
 
-namespace Nop.Plugin.Widgets.OlarkChat.Infrastructure;
+namespace NopStation.Plugin.Widgets.OlarkChat.Infrastructure;
 
 public class OlarkChatViewLocationExpander : IViewLocationExpander
 {
@@ -16,8 +16,8 @@ public class OlarkChatViewLocationExpander : IViewLocationExpander
     {
         viewLocations = new string[]
         {
-            $"/Plugins/Widgets.OlarkChat/Views/{{0}}.cshtml",
-            $"/Plugins/Widgets.OlarkChat/Views/{{1}}/{{0}}.cshtml"
+            $"/Plugins/NopStation.Plugin.Widgets.OlarkChat/Views/{{0}}.cshtml",
+            $"/Plugins/NopStation.Plugin.Widgets.OlarkChat/Views/{{1}}/{{0}}.cshtml"
         }.Concat(viewLocations);
         return viewLocations;
     }

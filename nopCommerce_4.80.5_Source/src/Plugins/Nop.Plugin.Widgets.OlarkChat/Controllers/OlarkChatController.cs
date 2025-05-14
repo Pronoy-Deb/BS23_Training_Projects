@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Nop.Plugin.Widgets.OlarkChat.Models;
+using NopStation.Plugin.Widgets.OlarkChat.Models;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Messages;
@@ -9,7 +9,7 @@ using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
 
-namespace Nop.Plugin.Widgets.OlarkChat.Controllers;
+namespace NopStation.Plugin.Widgets.OlarkChat.Controllers;
 public class OlarkChatController : BasePluginController
 {
     #region Fields

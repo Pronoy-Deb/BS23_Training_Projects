@@ -24,7 +24,7 @@
                 </div>
 
                 <nop-cards id="olarkchat-cards">
-                    <nop-card asp-name="olarkchat-basic" asp-icon="fas fa-cog" asp-title="@T("Plugins.Widgets.OlarkChat.Basic")"
+					<nop-card asp-name="olarkchat-basic" asp-icon="fas fa-cog" asp-title="@T("Admin.NopStation.OlarkChat.Basic")"
                               asp-hide-block-attribute-name="@hideBasicBlockAttributeName" asp-hide="@hideBasicBlock" asp-advanced="false">
                         <div class="form-group row">
                             <div class="col-md-3">
@@ -45,14 +45,14 @@
                                     <input class="form-check-input" type="radio" name="WidgetPosition" id="widgetPositionLeft" value="Left"
                                            @(Model.WidgetPosition == "Left" ? "checked" : "") />
                                     <label class="form-check-label" for="widgetPositionLeft">
-                                        Left
+										@T("Enums.NopStation.Plugin.Widgets.OlarkChat.WidgetPosition.Left")
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="WidgetPosition" id="widgetPositionRight" value="Right"
                                            @(Model.WidgetPosition == "Right" ? "checked" : "") />
                                     <label class="form-check-label" for="widgetPositionRight">
-                                        Right
+										@T("Enums.NopStation.Plugin.Widgets.OlarkChat.WidgetPosition.Right")
                                     </label>
                                 </div>
                                 <span asp-validation-for="WidgetPosition" class="ms-3 text-danger"></span>
@@ -81,7 +81,7 @@
                         </div>
                     </nop-card>
 
-                    <nop-card asp-name="olarkchat-advanced" asp-icon="fas fa-code" asp-title="@T("Plugins.Widgets.OlarkChat.Advanced")"
+					<nop-card asp-name="olarkchat-advanced" asp-icon="fas fa-code" asp-title="@T("Admin.NopStation.OlarkChat.Advanced")"
                               asp-hide-block-attribute-name="@hideAdvancedBlockAttributeName" asp-hide="@hideAdvancedBlock" asp-advanced="true">
                         <div class="form-group row">
                             <div class="col-md-3">
@@ -104,17 +104,17 @@
 
             <div class="card card-default mt-4">
                 <div class="card-header">
-                    @T("Plugins.Widgets.OlarkChat.Instructions.Title")
+					@T("Admin.NopStation.OlarkChat.Instructions.Title")
                 </div>
                 <div class="card-body">
                     <ol>
-                        <li>@Html.Raw(string.Format(T("Plugins.Widgets.OlarkChat.Instructions.Step1").Text, "<a href=\"https://www.olark.com\" target=\"_blank\">olark.com</a>"))</li>
-                        <li>@T("Plugins.Widgets.OlarkChat.Instructions.Step2")</li>
-                        <li>@T("Plugins.Widgets.OlarkChat.Instructions.Step3")</li>
-                        <li>@T("Plugins.Widgets.OlarkChat.Instructions.Step4")</li>
+						<li>@Html.Raw(string.Format(T("Admin.NopStation.OlarkChat.Instructions.Step1").Text, "<a href=\"https://www.olark.com\" target=\"_blank\">olark.com</a>"))</li>
+						<li>@T("Admin.NopStation.OlarkChat.Instructions.Step2")</li>
+						<li>@T("Admin.NopStation.OlarkChat.Instructions.Step3")</li>
+						<li>@T("Admin.NopStation.OlarkChat.Instructions.Step4")</li>
                     </ol>
                     <div class="alert alert-info">
-                        <strong>@T("Plugins.Widgets.OlarkChat.Instructions.Note")</strong>
+						<strong>@T("Admin.NopStation.OlarkChat.Instructions.Note")</strong>
                     </div>
                 </div>
             </div>

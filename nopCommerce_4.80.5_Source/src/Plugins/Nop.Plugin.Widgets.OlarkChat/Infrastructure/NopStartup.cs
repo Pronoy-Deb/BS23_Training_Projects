@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Core.Infrastructure;
 
-namespace Nop.Plugin.Widgets.OlarkChat.Infrastructure;
+namespace NopStation.Plugin.Widgets.OlarkChat.Infrastructure;
 public class NopStartup : INopStartup
 {
     public void ConfigureServices(IServiceCollection services, IConfiguration configuration)

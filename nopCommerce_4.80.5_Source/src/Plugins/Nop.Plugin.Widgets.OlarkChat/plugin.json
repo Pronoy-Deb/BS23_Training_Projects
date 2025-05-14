@@ -1,7 +1,7 @@
 ﻿{
   "Group": "Widgets",
   "FriendlyName": "Olark Chat",
-  "SystemName": "Widgets.OlarkChat",
+  "SystemName": "NopStation.Plugin.Widgets.OlarkChat",
   "Version": "4.80.1.0",
   "SupportedVersions": [
     "4.80"
@@ -9,7 +9,7 @@
   "LogoFile": "logo.png",
   "Author": "Pronoy Debnath",
   "DisplayOrder": 1,
-  "FileName": "Nop.Plugin.Widgets.OlarkChat.dll",
+  "FileName": "NopStation.Plugin.Widgets.OlarkChat.dll",
   "Description": "This is a simple widget plugin to provide service of live chatting.",
   "DependsOnSystemNames": [ "NopStation.Core" ]
 }
