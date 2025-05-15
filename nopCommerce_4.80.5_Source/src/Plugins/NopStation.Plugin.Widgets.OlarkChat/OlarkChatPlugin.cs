@@ -2,7 +2,6 @@
 using Nop.Services.Cms;
 using Nop.Services.Configuration;
 using Nop.Services.Plugins;
-using NopStation.Plugin.Widgets.OlarkChat.Models;
 using NopStation.Plugin.Widgets.OlarkChat.Components;
 using Nop.Services.Localization;
 using NopStation.Plugin.Misc.Core.Services;
@@ -11,9 +10,15 @@ namespace NopStation.Plugin.Widgets.OlarkChat;
 
 public class OlarkChatPlugin : BasePlugin, IWidgetPlugin, INopStationPlugin
 {
+    #region Fields
+
     private readonly ISettingService _settingService;
     private readonly IWebHelper _webHelper;
     private readonly ILocalizationService _localizationService;
+
+    #endregion
+
+    #region Ctor
 
     public OlarkChatPlugin(
         ISettingService settingService,
@@ -25,7 +30,15 @@ public class OlarkChatPlugin : BasePlugin, IWidgetPlugin, INopStationPlugin
         _localizationService = localizationService;
     }
 
+    #endregion
+
+    #region Properties
+
     public bool HideInWidgetList => false;
+
+    #endregion
+
+    #region Methods
 
     public Task<IList<string>> GetWidgetZonesAsync()
     {
@@ -34,14 +47,15 @@ public class OlarkChatPlugin : BasePlugin, IWidgetPlugin, INopStationPlugin
 
     public Type GetWidgetViewComponent(string widgetZone)
     {
-        return typeof(WidgetOlarkChatViewComponent);
+        return typeof(OlarkChatViewComponent);
     }
 
     public override async Task InstallAsync()
     {
+        await this.InstallPluginAsync();
         var settings = new OlarkChatSettings
         {
-            SiteId = "9930-373-10-1373",
+            SiteId = "",
             WidgetPosition = "right",
             EnableMobile = true
         };
@@ -53,6 +67,7 @@ public class OlarkChatPlugin : BasePlugin, IWidgetPlugin, INopStationPlugin
 
     public override async Task UninstallAsync()
     {
+        await this.UninstallPluginAsync();
         await _settingService.DeleteSettingAsync<OlarkChatSettings>();
         await base.UninstallAsync();
     }
@@ -65,7 +80,7 @@ public class OlarkChatPlugin : BasePlugin, IWidgetPlugin, INopStationPlugin
 
     public override string GetConfigurationPageUrl()
     {
-        return _webHelper.GetStoreLocation() + "Admin/OlarkChat/OlarkChatConfigure";
+        return $"{_webHelper.GetStoreLocation()}Admin/OlarkChat/OlarkChatConfigure";
     }
 
     public IDictionary<string, string> GetPluginResources()
@@ -74,6 +89,7 @@ public class OlarkChatPlugin : BasePlugin, IWidgetPlugin, INopStationPlugin
         {
             ["Admin.NopStation.OlarkChat.Fields.SiteId"] = "Site ID",
             ["Admin.NopStation.OlarkChat.Fields.SiteId.Hint"] = "Enter your Olark site ID. You can find this in your Olark dashboard under Installation settings.",
+            ["Admin.NopStation.OlarkChat.Fields.SiteId.Required"] = "Site ID is required",
 
             ["Admin.NopStation.OlarkChat.Fields.WidgetPosition"] = "Widget position",
             ["Admin.NopStation.OlarkChat.Fields.WidgetPosition.Hint"] = "Determine whether the chat widget appears on the left or right side of the screen.",
@@ -99,8 +115,11 @@ public class OlarkChatPlugin : BasePlugin, IWidgetPlugin, INopStationPlugin
 
             ["Enums.NopStation.Plugin.Widgets.OlarkChat.WidgetPosition.Left"] = "Left",
             ["Enums.NopStation.Plugin.Widgets.OlarkChat.WidgetPosition.Right"] = "Right"
+
         };
 
         return list;
     }
+
+    #endregion
 }

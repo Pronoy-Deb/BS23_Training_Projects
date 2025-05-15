@@ -1,6 +1,7 @@
 ﻿using Nop.Core.Configuration;
 
-namespace NopStation.Plugin.Widgets.OlarkChat.Models;
+namespace NopStation.Plugin.Widgets.OlarkChat;
+
 public class OlarkChatSettings : ISettings
 {
     public string SiteId { get; set; }

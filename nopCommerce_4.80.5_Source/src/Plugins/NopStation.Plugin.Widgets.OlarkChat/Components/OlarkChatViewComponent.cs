@@ -1,18 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
-using NopStation.Plugin.Widgets.OlarkChat.Models;
 using Nop.Services.Configuration;
 using Nop.Services.Customers;
+using NopStation.Plugin.Misc.Core.Components;
+using NopStation.Plugin.Widgets.OlarkChat.Models;
 
 namespace NopStation.Plugin.Widgets.OlarkChat.Components;
 
-public class WidgetOlarkChatViewComponent : ViewComponent
+public class OlarkChatViewComponent : NopStationViewComponent
 {
     private readonly ISettingService _settingService;
     private readonly IWorkContext _workContext;
     private readonly ICustomerService _customerService;
 
-    public WidgetOlarkChatViewComponent(
+    public OlarkChatViewComponent(
         ISettingService settingService,
         IWorkContext workContext,
         ICustomerService customerService)

@@ -17,7 +17,9 @@ public class OlarkChatViewLocationExpander : IViewLocationExpander
         viewLocations = new string[]
         {
             $"/Plugins/NopStation.Plugin.Widgets.OlarkChat/Views/{{0}}.cshtml",
-            $"/Plugins/NopStation.Plugin.Widgets.OlarkChat/Views/{{1}}/{{0}}.cshtml"
+            $"/Plugins/NopStation.Plugin.Widgets.OlarkChat/Views/{{1}}/{{0}}.cshtml",
+            $"/Plugins/NopStation.Plugin.Widgets.OlarkChat/Areas/Admin/Views/{{0}}.cshtml",
+            $"/Plugins/NopStation.Plugin.Widgets.OlarkChat/Areas/Admin/Views/{{1}}/{{0}}.cshtml"
         }.Concat(viewLocations);
         return viewLocations;
     }

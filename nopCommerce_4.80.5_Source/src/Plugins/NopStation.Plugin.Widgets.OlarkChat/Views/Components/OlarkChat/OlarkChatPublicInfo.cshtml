@@ -1,10 +1,6 @@
 ﻿@model OlarkChatPublicInfoModel
 
-@{
-	var enableMobile = Model.EnableMobile;
-}
-
-@if (!string.IsNullOrEmpty(Model.SiteId))
+@if (!string.IsNullOrEmpty(Model?.SiteId))
 {
 	<script type="text/javascript">
 		window.olark || (function (c) {
@@ -49,12 +45,12 @@
 		}
 
 		olark.configure('system', {
-			mobile: @enableMobile.ToString().ToLower()
+			mobile: @Model.EnableMobile.ToString().ToLower()
 		});
 
 		olark.configure('system.hb_dark_theme', @(Model.UseDarkTheme ? "true" : "false"));
 
-		olark.configure('system.hb_position', '@Model.WidgetPosition');
+		olark.configure('system.hb_position', '@Model.WidgetPosition.ToLower()');
 
 		@if (!string.IsNullOrEmpty(Model.CustomScript))
 		{

@@ -1,4 +1,5 @@
 ﻿namespace NopStation.Plugin.Widgets.OlarkChat.Models;
+
 public record OlarkChatPublicInfoModel
 {
     public string SiteId { get; set; }

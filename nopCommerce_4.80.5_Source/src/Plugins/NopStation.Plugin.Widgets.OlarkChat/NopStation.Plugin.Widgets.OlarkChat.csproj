@@ -31,16 +31,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Areas\Admin\Views\_ViewImports.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="plugin.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\_ViewImports.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\OlarkChatConfigure.cshtml">
+    <Content Include="Areas\Admin\Views\OlarkChat\OlarkChatConfigure.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Components\WidgetOlarkChat\OlarkChatPublicInfo.cshtml">
+    <Content Include="Views\Components\OlarkChat\OlarkChatPublicInfo.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -52,22 +55,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Components\WidgetOlarkChatViewComponent.cs">
+    <Compile Update="Components\OlarkChatViewComponent.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Controllers\OlarkChatController.cs">
+    <Compile Update="Areas\Admin\Controllers\OlarkChatController.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Infrastructure\NopStartup.cs">
+    <Compile Update="Infrastructure\PluginNopStartup.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Infrastructure\OlarkChatViewLocationExpander.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Models\OlarkChatConfigurationModel.cs">
+    <Compile Update="Areas\Admin\Models\OlarkChatConfigurationModel.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Models\OlarkChatSettings.cs">
+    <Compile Update="OlarkChatSettings.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Models\OlarkChatPublicInfoModel.cs">
