@@ -40,10 +40,10 @@
     <Content Include="Views\_ViewImports.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Areas\Admin\Views\OlarkChat\OlarkChatConfigure.cshtml">
+    <Content Include="Areas\Admin\Views\OlarkChat\Configure.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Components\OlarkChat\OlarkChatPublicInfo.cshtml">
+    <Content Include="Views\PublicInfo.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -64,16 +64,13 @@
     <Compile Update="Infrastructure\PluginNopStartup.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Infrastructure\OlarkChatViewLocationExpander.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
-    <Compile Update="Areas\Admin\Models\OlarkChatConfigurationModel.cs">
+    <Compile Update="Areas\Admin\Models\ConfigurationModel.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
     <Compile Update="OlarkChatSettings.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Models\OlarkChatPublicInfoModel.cs">
+    <Compile Update="Models\PublicInfoModel.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
     <Compile Update="OlarkChatPlugin.cs">

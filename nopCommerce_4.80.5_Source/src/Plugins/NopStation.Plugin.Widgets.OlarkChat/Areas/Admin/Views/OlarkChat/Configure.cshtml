@@ -1,0 +1,139 @@
+﻿@model ConfigurationModel
+
+@{
+    Layout = "_AdminLayout";
+    ViewBag.PageTitle = T("Admin.NopStation.OlarkChat.Configuration").Text;
+    //active menu item (system name)
+    NopHtml.SetActiveMenuItemSystemName("OlarkChat.Configuration");
+}
+
+<script>
+    $(function () {
+        $('#@Html.IdFor(model => model.UseScriptMode)').change(toggleUseScriptMode);
+        
+        toggleUseScriptMode();
+    });
+
+    function toggleUseScriptMode() {
+        var useScriptMode = $('#@Html.IdFor(model => model.UseScriptMode)').is(':checked');
+        if (useScriptMode == true) {
+            $('#pnlCustomScript').show();
+            $('#pnlUseAdvanceMode').hide();
+        } else {
+            $('#pnlCustomScript').hide();
+            $('#pnlUseAdvanceMode').show();
+        }
+    }
+
+</script>
+
+<form asp-controller="OlarkChat" asp-action="Configure" method="post">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T("Admin.NopStation.OlarkChat.Configuration")
+        </h1>
+        <div class="float-right">
+            <button type="submit" name="save" class="btn btn-primary">
+                <i class="far fa-save"></i>
+                @T("Admin.Common.Save")
+            </button>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="form-horizontal">
+                @await Component.InvokeAsync("StoreScopeConfiguration")
+                <div asp-validation-summary="All"></div>
+                <div class="cards-group">
+                    <div class="card card-default">
+
+                        <div class="card-header">
+                            @T("Admin.NopStation.OlarkChat.Instructions.Title")
+                        </div>
+                        <div class="card-body">
+                            <ol>
+                                <li>@Html.Raw(string.Format(T("Admin.NopStation.OlarkChat.Instructions.Step1").Text, "<a href=\"https://www.olark.com\" target=\"_blank\">olark.com</a>"))</li>
+                                <li>@T("Admin.NopStation.OlarkChat.Instructions.Step2")</li>
+                                <li>@T("Admin.NopStation.OlarkChat.Instructions.Step3")</li>
+                                <li>@T("Admin.NopStation.OlarkChat.Instructions.Step4")</li>
+                            </ol>
+                            <div class="alert alert-info">
+                                <strong>@T("Admin.NopStation.OlarkChat.Instructions.Note")</strong>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <nop-override-store-checkbox asp-for="UseScriptMode_OverrideForStore" asp-input="UseScriptMode" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                                    <nop-label asp-for="UseScriptMode" />
+                                </div>
+                                <div class="col-md-9">
+                                    <nop-editor asp-for="UseScriptMode" />
+                                    <span asp-validation-for="UseScriptMode"></span>
+                                </div>
+                            </div>
+
+                            <nop-nested-setting asp-for="UseScriptMode" disable-auto-generation="true">
+                                <div class="form-group row" id="pnlCustomScript">
+                                    <div class="col-md-3">
+                                        <nop-override-store-checkbox asp-for="CustomScript_OverrideForStore" asp-input="CustomScript" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                                        <nop-label asp-for="CustomScript" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="CustomScript" />
+                                        <span asp-validation-for="CustomScript"></span>
+                                    </div>
+                                </div>
+                            </nop-nested-setting>
+
+                            <div id="pnlUseAdvanceMode">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-override-store-checkbox asp-for="SiteId_OverrideForStore" asp-input="SiteId" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                                        <nop-label asp-for="SiteId" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="SiteId" />
+                                        <span asp-validation-for="SiteId"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-override-store-checkbox asp-for="WidgetPosition_OverrideForStore" asp-input="WidgetPosition" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                                        <nop-label asp-for="WidgetPosition" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="WidgetPosition" />
+                                        <span asp-validation-for="WidgetPosition"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-override-store-checkbox asp-for="UseDarkTheme_OverrideForStore" asp-input="UseDarkTheme" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                                        <nop-label asp-for="UseDarkTheme" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="UseDarkTheme" />
+                                        <span asp-validation-for="UseDarkTheme"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <nop-override-store-checkbox asp-for="EnableMobile_OverrideForStore" asp-input="EnableMobile" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                                        <nop-label asp-for="EnableMobile" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <nop-editor asp-for="EnableMobile" />
+                                        <span asp-validation-for="EnableMobile"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>

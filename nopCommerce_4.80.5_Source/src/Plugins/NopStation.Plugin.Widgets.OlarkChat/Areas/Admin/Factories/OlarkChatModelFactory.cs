@@ -1,4 +1,5 @@
-﻿using Nop.Services.Configuration;
+﻿using Nop.Core;
+using Nop.Services.Configuration;
 using NopStation.Plugin.Widgets.OlarkChat.Areas.Admin.Models;
 
 namespace NopStation.Plugin.Widgets.OlarkChat.Areas.Admin.Factories;
@@ -8,51 +9,50 @@ public class OlarkChatModelFactory : IOlarkChatModelFactory
     #region Fields
 
     private readonly ISettingService _settingService;
+    private readonly IStoreContext _storeContext;
 
     #endregion
 
     #region Ctor
 
-    public OlarkChatModelFactory(ISettingService settingService)
+    public OlarkChatModelFactory(ISettingService settingService,
+        IStoreContext storeContext)
     {
         _settingService = settingService;
+        _storeContext = storeContext;
     }
 
     #endregion
 
     #region Methods
 
-    public async Task<OlarkChatConfigurationModel> PrepareConfigurationModelAsync()
+    public async Task<ConfigurationModel> PrepareConfigurationModelAsync()
     {
-        var settings = await _settingService.LoadSettingAsync<OlarkChatSettings>();
+        var storeScope = await _storeContext.GetActiveStoreScopeConfigurationAsync();
+        var olarkChatSettings = await _settingService.LoadSettingAsync<OlarkChatSettings>(storeScope);
 
-        var model = new OlarkChatConfigurationModel
+        var model = new ConfigurationModel
         {
-            SiteId = settings.SiteId,
-            WidgetPosition = settings.WidgetPosition,
-            EnableMobile = settings.EnableMobile,
-            UseDarkTheme = settings.UseDarkTheme,
-            ConfigurationMode = settings.ConfigurationMode ?? "basic",
-            CustomScript = settings.CustomScript,
+            ActiveStoreScopeConfiguration = storeScope,
+            SiteId = olarkChatSettings.SiteId,
+            UseScriptMode = olarkChatSettings.UseScriptMode,
+            CustomScript = olarkChatSettings.CustomScript,
+            WidgetPosition = olarkChatSettings.WidgetPosition,
+            UseDarkTheme = olarkChatSettings.UseDarkTheme,
+            EnableMobile = olarkChatSettings.EnableMobile,
         };
+
+        if (storeScope > 0)
+        {
+            model.SiteId_OverrideForStore = await _settingService.SettingExistsAsync(olarkChatSettings, x => x.SiteId, storeScope);
+            model.UseScriptMode_OverrideForStore = await _settingService.SettingExistsAsync(olarkChatSettings, x => x.UseScriptMode, storeScope);
+            model.CustomScript_OverrideForStore = await _settingService.SettingExistsAsync(olarkChatSettings, x => x.CustomScript, storeScope);
+            model.WidgetPosition_OverrideForStore = await _settingService.SettingExistsAsync(olarkChatSettings, x => x.WidgetPosition, storeScope);
+            model.UseDarkTheme_OverrideForStore = await _settingService.SettingExistsAsync(olarkChatSettings, x => x.UseDarkTheme, storeScope);
+            model.EnableMobile_OverrideForStore = await _settingService.SettingExistsAsync(olarkChatSettings, x => x.EnableMobile, storeScope);
+        }
 
         return model;
-    }
-
-    public async Task SaveConfigurationModelAsync(OlarkChatConfigurationModel model)
-    {
-        var settings = new OlarkChatSettings
-        {
-            SiteId = model.SiteId,
-            WidgetPosition = model.WidgetPosition?.ToLower(),
-            EnableMobile = model.EnableMobile,
-            UseDarkTheme = model.UseDarkTheme,
-            ConfigurationMode = model.ConfigurationMode,
-            CustomScript = model.CustomScript
-        };
-
-        await _settingService.SaveSettingAsync(settings);
-        await _settingService.ClearCacheAsync();
     }
 
     #endregion

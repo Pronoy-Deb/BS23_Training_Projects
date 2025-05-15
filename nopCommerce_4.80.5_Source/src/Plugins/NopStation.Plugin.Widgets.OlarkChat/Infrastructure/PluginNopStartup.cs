@@ -12,10 +12,6 @@ public class PluginNopStartup : INopStartup
     public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IOlarkChatModelFactory, OlarkChatModelFactory>();
-        services.Configure<RazorViewEngineOptions>(options =>
-        {
-            options.ViewLocationExpanders.Add(new OlarkChatViewLocationExpander());
-        });
     }
 
     public void Configure(IApplicationBuilder application)
