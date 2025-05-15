@@ -1,5 +1,7 @@
-﻿using Nop.Core;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Nop.Core;
 using Nop.Services.Configuration;
+using Nop.Services.Localization;
 using NopStation.Plugin.Widgets.OlarkChat.Areas.Admin.Models;
 
 namespace NopStation.Plugin.Widgets.OlarkChat.Areas.Admin.Factories;
@@ -10,16 +12,19 @@ public class OlarkChatModelFactory : IOlarkChatModelFactory
 
     private readonly ISettingService _settingService;
     private readonly IStoreContext _storeContext;
+    private readonly ILocalizationService _localizationService;
 
     #endregion
 
     #region Ctor
 
     public OlarkChatModelFactory(ISettingService settingService,
-        IStoreContext storeContext)
+        IStoreContext storeContext,
+        ILocalizationService localizationService)
     {
         _settingService = settingService;
         _storeContext = storeContext;
+        _localizationService = localizationService;
     }
 
     #endregion
@@ -41,6 +46,17 @@ public class OlarkChatModelFactory : IOlarkChatModelFactory
             UseDarkTheme = olarkChatSettings.UseDarkTheme,
             EnableMobile = olarkChatSettings.EnableMobile,
         };
+
+        model.AvailableWidgetPositions.Add(new SelectListItem
+        {
+            Value = "right",
+            Text = await _localizationService.GetResourceAsync("Admin.NopStation.OlarkChat.Configuration.Fields.WidgetPosition.Right")
+        });
+        model.AvailableWidgetPositions.Add(new SelectListItem
+        {
+            Value = "left",
+            Text = await _localizationService.GetResourceAsync("Admin.NopStation.OlarkChat.Configuration.Fields.WidgetPosition.Left")
+        });
 
         if (storeScope > 0)
         {

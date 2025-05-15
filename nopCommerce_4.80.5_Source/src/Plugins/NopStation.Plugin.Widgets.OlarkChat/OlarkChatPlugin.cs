@@ -83,7 +83,10 @@ public class OlarkChatPlugin : BasePlugin, IWidgetPlugin, INopStationPlugin
         {
             ["Admin.NopStation.OlarkChat.Configuration"] = "OlarkChat settings",
             ["Admin.NopStation.OlarkChat.Menu.OlarkChat"] = "OlarkChat",
-            ["Admin.NopStation.OlarkChat.Menu.Configuration"] = "Configuration",
+            ["Admin.NopStation.OlarkChat.Menu.Configuration"] = "Configuration"
+            ,
+            ["Admin.NopStation.OlarkChat.Configuration.Fields.WidgetPosition.Right"] = "Right",
+            ["Admin.NopStation.OlarkChat.Configuration.Fields.WidgetPosition.Left"] = "Left",
 
             ["Admin.NopStation.OlarkChat.Configuration.Fields.SiteId"] = "Site ID",
             ["Admin.NopStation.OlarkChat.Configuration.Fields.SiteId.Hint"] = "Enter your Olark site ID. You can find this in your Olark dashboard under Installation settings.",

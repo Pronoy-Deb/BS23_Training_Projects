@@ -81,7 +81,7 @@
                                         <nop-label asp-for="CustomScript" />
                                     </div>
                                     <div class="col-md-9">
-                                        <nop-editor asp-for="CustomScript" />
+                                        <nop-textarea asp-for="CustomScript" />
                                         <span asp-validation-for="CustomScript"></span>
                                     </div>
                                 </div>
@@ -104,7 +104,7 @@
                                         <nop-label asp-for="WidgetPosition" />
                                     </div>
                                     <div class="col-md-9">
-                                        <nop-editor asp-for="WidgetPosition" />
+                                        <nop-select asp-for="WidgetPosition" asp-items="Model.AvailableWidgetPositions" />
                                         <span asp-validation-for="WidgetPosition"></span>
                                     </div>
                                 </div>

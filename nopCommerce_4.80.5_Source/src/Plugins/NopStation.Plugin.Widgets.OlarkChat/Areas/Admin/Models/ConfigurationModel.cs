@@ -1,10 +1,16 @@
 ﻿using Nop.Web.Framework.Mvc.ModelBinding;
 using Nop.Web.Framework.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace NopStation.Plugin.Widgets.OlarkChat.Areas.Admin.Models;
 
 public record ConfigurationModel : BaseNopModel
 {
+    public ConfigurationModel()
+    {
+        AvailableWidgetPositions = [];
+    }
+
     public int ActiveStoreScopeConfiguration { get; set; }
 
     [NopResourceDisplayName("Admin.NopStation.OlarkChat.Configuration.Fields.UseScriptMode")]
@@ -30,4 +36,6 @@ public record ConfigurationModel : BaseNopModel
     [NopResourceDisplayName("Admin.NopStation.OlarkChat.Configuration.Fields.EnableMobile")]
     public bool EnableMobile { get; set; }
     public bool EnableMobile_OverrideForStore { get; set; }
+
+    public IList<SelectListItem> AvailableWidgetPositions { get; set; }
 }
